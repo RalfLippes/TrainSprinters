@@ -68,12 +68,20 @@ case: railNL
 
 variabelen: Stations, Trajecten, Reistijden, Verbindingen.
 
-versimpelde aannames: ze mogen op zelfde moment op zelfde spoor rijden. Ze mogen op hetzelfde moment op hetzelfde station zijn. Trein kan meerdere keren langs zelfde station. Als station langs is geweest is het goed, maakt niet uit welke kant de trein op gaat. Constante snelheid van 100 km/u ? 
+versimpelde aannames: ze mogen op zelfde moment op zelfde verbinding rijden. Ze mogen op hetzelfde moment op hetzelfde station zijn. Trein kan meerdere keren over zelfde verbinding. Als station langs is geweest is het goed, maakt niet uit welke kant de trein op gaat. Constante snelheid van 100 km/u ? 
 
 Gemiddelde van het voorbeeld? We weten alleen afstand en 1 voorbeeld, moeten we zelf een snelheid kiezen? 
 Tijdslimiet van 2 uur eraf zodat we geen rekening hoeven te houden met snelheid?
 
-Verbindingen weglaten? Dan is het makkelijker.
+Maakt niet uit welke kant je op rijdt bij een verbinding. 
+
+Wat is r? altijd 22 zonder repetitie. Of variabele r?
+
+Mag trein van elke verbinding naar elke andere verbinding? Of moeten ze ook echt aangesloten zitten?
+
+Volgorde maakt niet uit, Repetitie mag voor andere treinen, niet voor 1 trein zelf. Dus repetitie = nee
+
+Als er meer treinen komen, hoe bereken je de opties waarbij ze het samen oplossen?
 
 
 

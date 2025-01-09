@@ -32,21 +32,31 @@ class Trajectory:
 
         # create given number of connection objects
         for i in range(self.number_of_connections):
-            connection_object = self.connection_function()
 
-            # append name of stations to the list
-            if len(stations) > 0:
-                stations.append(connection_object.end_station)
+            if len(stations) == 0:
+                # Start with a random connection and append its first station to the list
+                connection_object = self.connection_function()
+                start_station = connection_object.start_station
+                stations.append(start_station)
+
+                # Extract a random possible station to travel to and append to the list
+                possible_stations = possible_connections[start_station]
+                chosen_station = random.choice(possible_stations)
+                stations.append(chosen_station)
 
             else:
-                stations.append(connection_object.start_station)
-                stations.append(connection_object.end_station)
+                departure_station = stations[-1]
+                possible_stations = possible_connections[departure_station]
+                chosen_station = random.choice(possible_stations)
+                stations.append(chosen_station)
 
+            connection_object connections_dictionary[station_1 + "-" + station_2]
             # if duration time goes over 120: don't add connection and return list
             if duration + connection_object.duration > 120:
                 return stations, duration
             else:
                 duration += connection_object.duration
+            duration = 10
 
         return stations, duration
 
@@ -72,7 +82,8 @@ def create_trajectories(trajectory_amount, connection_function):
 
         # add duration of each connection to the total
         print(current_connections)
-        for connection in range(len(current_connections)):
+        for connection in range(len(current_connections) - 1):
+            # print(connection)
             connection_name = current_connections[connection] + '-' + current_connections[connection + 1]
             total_duration += test_dict[connection_name].duration
 
@@ -118,3 +129,5 @@ possible_connections, corrected_df = get_possible_directions("ConnectiesHolland.
 test_dict = create_connections(corrected_df)
 
 test_df = create_trajectories(5, random_connection)
+
+print(test_df)

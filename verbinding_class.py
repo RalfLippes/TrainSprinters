@@ -1,0 +1,120 @@
+import pandas as pd
+import random
+from csv_possibility_reader import get_possible_directions
+
+class Connection:
+    """
+    Contains all the aspects of a connection, including start station, end station
+    and the duration of riding the connection.
+    """
+    def __init__(self, start_station, end_station, duration):
+        self.start_station = start_station
+        self.end_station = end_station
+        self.duration = duration
+
+class Trajectory:
+    """
+    Initializes a trajectory with a given number of connections. The way the
+    connections are chosen is dictated by the connection function that should be
+    given to this class.
+    """
+    def __init__(self, number_of_connections, connection_function):
+        self.number_of_connections = number_of_connections
+        self.connection_function = connection_function
+
+    def choose_connections(self):
+        """
+        Makes a list of n connections that are chosen using the connection function.
+        Repeats the function number_of_connections times
+        """
+        stations = []
+        duration = 0
+
+        # create given number of connection objects
+        for i in range(self.number_of_connections):
+            connection_object = self.connection_function()
+
+            # append name of stations to the list
+            if len(stations) > 0:
+                stations.append(connection_object.end_station)
+
+            else:
+                stations.append(connection_object.start_station)
+                stations.append(connection_object.end_station)
+
+            # if duration time goes over 120: don't add connection and return list
+            if duration + connection_object.duration > 120:
+                return stations, duration
+            else:
+                duration += connection_object.duration
+
+        return stations, duration
+
+def create_trajectories(trajectory_amount, connection_function):
+    """
+    Creates a given number of trajectories. Uses a specified method to select
+    connections for the trajectories. Returns a dataframe with each train and its
+    trajectory, as well as the total score of this itinerary.
+    """
+    # create empty dataframe to store data in
+    dataframe = pd.DataFrame(index = range(trajectory_amount + 1), columns = ['train', 'stations'])
+    total_duration = 0
+    connections_set = set()
+
+    # create right amount of trajectories
+    for i in range(trajectory_amount):
+        current_trajectory = Trajectory(random.randint(1, 14), random_connection)
+
+        # store connections and train number in dataframe
+        current_connections, current_duration = current_trajectory.choose_connections()
+        dataframe.loc[i, 'stations'] = current_connections
+        dataframe.loc[i, 'train'] = 'train_' + str(i + 1)
+
+        # add duration of each connection to the total
+        print(current_connections)
+        for connection in range(len(current_connections)):
+            connection_name = current_connections[connection] + '-' + current_connections[connection + 1]
+            total_duration += test_dict[connection_name].duration
+
+        # put all the unique connections into the set of connections
+        connections_set = connections_set.union(set(current_connections))
+
+    # find the number of connections that were ridden, calculate score and add to df
+    connection_number = len(connections_set)
+    score = calculate_score(connection_number, trajectory_amount, total_duration)
+    dataframe.iloc[-1, dataframe.columns.get_loc('train')] = 'score'
+    dataframe.iloc[-1, dataframe.columns.get_loc('stations')] = score
+
+    return dataframe
+
+def calculate_score(connections, trajectory_amount, duration, total_connections = 28):
+    p = connections / total_connections
+    return p * 10000 - (trajectory_amount * 100 + duration)
+
+def create_connections(data):
+    """
+    reads a csv file and creates Connection objects for every connection listed
+    in the file. Returns a dictionary with the name of the connection as the key,
+    and the corresponding object as the value.
+    """
+    connections_dictionary = {}
+
+    # find names of start station, end station and duration of connection
+    for index, row in data.iterrows():
+        station_1 = row.iloc[0]
+        station_2 = row.iloc[1]
+        duration = row.iloc[2]
+
+        # initialize Connection object with correct data and add to dictionary
+        connections_dictionary[station_1 + "-" + station_2] = Connection(station_1, station_2, duration)
+
+    return connections_dictionary
+
+def random_connection():
+    connection = random.choice(list(test_dict.keys()))
+    return test_dict[connection]
+
+possible_connections, corrected_df = get_possible_directions("ConnectiesHolland.csv")
+test_dict = create_connections(corrected_df)
+
+test_df = create_trajectories(5, random_connection)

@@ -24,8 +24,10 @@ class Trajectory:
 
     def choose_connections(self):
         """
-        Makes a list of n connections that are chosen using the connection function.
-        Repeats the function number_of_connections times
+        Makes a list of n random connections, starting by choosing a first station
+        dictated by the connection function. The repeats finding a random possible
+        connection number_of_connections amount of times. Returns list of stations
+        that the trajectory passes and the total duration of the trajectory.
         """
         stations = []
         duration = 0
@@ -48,15 +50,15 @@ class Trajectory:
                 departure_station = stations[-1]
                 possible_stations = possible_connections[departure_station]
                 chosen_station = random.choice(possible_stations)
-                stations.append(chosen_station)
+                connection_object = test_dict[departure_station + "-" + chosen_station]
 
-            connection_object connections_dictionary[station_1 + "-" + station_2]
-            # if duration time goes over 120: don't add connection and return list
-            if duration + connection_object.duration > 120:
-                return stations, duration
-            else:
-                duration += connection_object.duration
-            duration = 10
+                # if duration time goes over 120: don't add connection and return list
+                if duration + connection_object.duration > 120:
+                    return stations, duration
+                else:
+                    duration += connection_object.duration
+
+                stations.append(chosen_station)
 
         return stations, duration
 
@@ -81,14 +83,15 @@ def create_trajectories(trajectory_amount, connection_function):
         dataframe.loc[i, 'train'] = 'train_' + str(i + 1)
 
         # add duration of each connection to the total
-        print(current_connections)
         for connection in range(len(current_connections) - 1):
-            # print(connection)
             connection_name = current_connections[connection] + '-' + current_connections[connection + 1]
             total_duration += test_dict[connection_name].duration
 
+            # make set of start and end station and add to set of total connections
+            connection_name = set((current_connections[connection], current_connections[connection + 1]))
+
         # put all the unique connections into the set of connections
-        connections_set = connections_set.union(set(current_connections))
+        connections_set = connections_set.union(set(connection_name))
 
     # find the number of connections that were ridden, calculate score and add to df
     connection_number = len(connections_set)
@@ -99,6 +102,9 @@ def create_trajectories(trajectory_amount, connection_function):
     return dataframe
 
 def calculate_score(connections, trajectory_amount, duration, total_connections = 28):
+    """
+    Calculates the quality of the itinerary. Outputs a score.
+    """
     p = connections / total_connections
     return p * 10000 - (trajectory_amount * 100 + duration)
 
@@ -128,6 +134,6 @@ def random_connection():
 possible_connections, corrected_df = get_possible_directions("ConnectiesHolland.csv")
 test_dict = create_connections(corrected_df)
 
-test_df = create_trajectories(5, random_connection)
+test_df = create_trajectories(7, random_connection)
 
 print(test_df)

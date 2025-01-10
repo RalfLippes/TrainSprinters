@@ -23,10 +23,15 @@ def create_connections(data):
 
     return connections_dictionary
 
-
 if __name__ == "__main__":
+    # make variables with possible directions, and dictionaries with connection objects
     possible_directions, corrected_df, original_df = get_possible_directions("data/Noord_Holland/ConnectiesHolland.csv")
     full_connection_dict = create_connections(corrected_df)
     original_connection_dict = create_connections(original_df)
-    dataframe = create_trajectories(3, choose_random_connections, full_connection_dict, original_connection_dict, full_connection_dict, possible_directions)
+
+    # make dataframe with trajectories according to the random algorithm
+    dataframe = create_trajectories(7, choose_random_connections, full_connection_dict, original_connection_dict, full_connection_dict, possible_directions)
     print(dataframe)
+
+    # create map of trajectories that have been created
+    create_map(dataframe, "data/Noord_Holland/StationsHolland.csv")

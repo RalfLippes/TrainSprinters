@@ -23,6 +23,13 @@ class Trajectory:
         """Manually add a connection object to the connection list"""
         self.connection_list.append(connection_object)
 
+def calculate_score(connections, trajectory_amount, duration, total_connections = 28):
+    """
+    Calculates the quality of the itinerary. Outputs a score.
+    """
+    p = connections / total_connections
+    return p * 10000 - (trajectory_amount * 100 + duration)
+
 def choose_random_connections(connection_object_dict, possible_connections_dict):
     """
     Takes a dictionary with strings as keys in the form 'Startstation-Endstation'
@@ -110,9 +117,6 @@ def create_trajectories(trajectory_amount, connection_algorithm, full_connection
         dataframe.loc[i, 'stations'] = station_list
         dataframe.loc[i, 'train'] = 'train_' + str(i + 1)
 
-        print(station_list)
-
-    print(total_duration)
     # make a set of tuples with (start_station, end_station) for original connections
     original_set = set()
     for item in original_connection_dict:
@@ -120,7 +124,6 @@ def create_trajectories(trajectory_amount, connection_algorithm, full_connection
 
     # find all connections of the trajectories that are valid and count them
     set_connections = set.intersection(connections_set, original_set)
-    print(len(set_connections))
     connection_number = len(set_connections)
 
     # calculate itinerary score and put into dataframe

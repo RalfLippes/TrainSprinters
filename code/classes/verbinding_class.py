@@ -127,10 +127,6 @@ def create_connections(data):
 
     return connections_dictionary
 
-def random_connection():
-    connection = random.choice(list(test_dict.keys()))
-    return test_dict[connection]
-
 possible_connections, corrected_df = get_possible_directions("ConnectiesHolland.csv")
 test_dict = create_connections(corrected_df)
 

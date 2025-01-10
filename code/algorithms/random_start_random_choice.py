@@ -114,10 +114,7 @@ def choose_random_connections(connection_object_dict, possible_connections_dict)
             connection_object = random.choice(list(connection_object_dict.values()))
             start_station = connection_object.start_station
             objects.append(connection_object)
-
-            # Extract a random possible station to travel to and append to the list
-            possible_stations = possible_connections_dict[start_station]
-            chosen_station = random.choice(possible_stations)
+            duration += connection_object.duration
 
         else:
             departure_station = objects[-1].end_station
@@ -177,19 +174,29 @@ def create_trajectories(trajectory_amount, connection_algorithm, full_connection
             # add duration of connection to total
             total_duration += item.duration
 
+            # add start and end station as a tuple to the set of connections
+            connections_set = connections_set.union({(item.start_station + item.end_station)})
+
             iteration += 1
 
-        print(station_list)
         # fill in dataframe with correct data
         dataframe.loc[i, 'stations'] = station_list
         dataframe.loc[i, 'train'] = 'train_' + str(i + 1)
 
-        connections_set = connections_set.union(set(current_connections))
-    print(f"total duration: {total_duration}")
-    # find the number of connections that were ridden, calculate score and add to df
-    original_connections = set(original_connection_dict.values())
-    connections_set = original_connections.intersection(connections_set)
-    connection_number = len(connections_set)
+        print(station_list)
+
+    print(total_duration)
+    # make a set of tuples with (start_station, end_station) for original connections
+    original_set = set()
+    for item in original_connection_dict:
+        original_set = original_set.union({(original_connection_dict[item].start_station + original_connection_dict[item].end_station)})
+
+    # find all connections of the trajectories that are valid and count them
+    set_connections = set.intersection(connections_set, original_set)
+    print(len(set_connections))
+    connection_number = len(set_connections)
+
+    # calculate itinerary score and put into dataframe
     score = calculate_score(connection_number, trajectory_amount, total_duration)
     dataframe.iloc[-1, dataframe.columns.get_loc('train')] = 'score'
     dataframe.iloc[-1, dataframe.columns.get_loc('stations')] = score
@@ -198,3 +205,5 @@ def create_trajectories(trajectory_amount, connection_algorithm, full_connection
 
 dataframe = create_trajectories(3, choose_random_connections, test_dict, original_dict, test_dict, possible_connections)
 print(dataframe)
+
+print(calculate_score(10, 3, 336))

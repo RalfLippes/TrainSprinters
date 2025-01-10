@@ -15,9 +15,9 @@ def create_map(trajectories):
     # Create a single plot
     plt.figure(figsize=(6, 10))
 
-    img = mpimg.imread("randstad.jpeg")
+    #img = mpimg.imread("randstad.jpeg")
 
-    plt.imshow(img, extent=[4.0, 5.5, 51.5, 53.0], aspect='auto')
+    plt.imshow(extent=[4.0, 5.5, 51.5, 53.0], aspect='auto')
 
     for index, row in stations.iterrows():
 
@@ -56,5 +56,3 @@ def create_map(trajectories):
     plt.legend(loc='best', fontsize=8)
 
     return plt.show()
-
-create_map(test_df)

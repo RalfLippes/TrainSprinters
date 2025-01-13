@@ -26,20 +26,37 @@ def create_connections(data):
     return connections_dictionary
 
 if __name__ == "__main__":
-    # make variables with possible directions, and dictionaries with connection objects
-    possible_directions, corrected_df, original_df = get_possible_directions("data/Noord_Holland/ConnectiesHolland.csv")
-    full_connection_dict = create_connections(corrected_df)
-    original_connection_dict = create_connections(original_df)
 
-    # make dataframe with trajectories according to the random algorithm
-    dataframe = create_trajectories(7, choose_random_connections, full_connection_dict, original_connection_dict, full_connection_dict, possible_directions)
-    #print(dataframe)
 
-    # test baseline algorithm
-    needed_connections = copy.deepcopy(original_connection_dict)
-    dataframe2 = create_better_trajectories(7, generate_trajectory, full_connection_dict, original_connection_dict, needed_connections, full_connection_dict, possible_directions)
-    print(dataframe2)
+    for i in range(4, 8):
+
+
+        total_connections = 0
+        connections_list = []
+        for j in range(100):
+            # make variables with possible directions, and dictionaries with connection objects
+            possible_directions, corrected_df, original_df = get_possible_directions("data/Noord_Holland/ConnectiesHolland.csv")
+            full_connection_dict = create_connections(corrected_df)
+            original_connection_dict = create_connections(original_df)
+
+            # make dataframe with trajectories according to the random algorithm
+            dataframe = create_trajectories(7, choose_random_connections, full_connection_dict, original_connection_dict, full_connection_dict, possible_directions)
+            #print(dataframe)
+
+            # test baseline algorithm
+            needed_connections = copy.deepcopy(original_connection_dict)
+            dataframe2, connection_number  = create_better_trajectories(i, generate_trajectory, full_connection_dict, original_connection_dict, needed_connections, full_connection_dict, possible_directions)
+            # print(dataframe2)
+            # print(connection_number)
+            if connection_number == 28:
+                total_connections += 1
+                connections_list.append(dataframe2)
+
+        print(f' total = {total_connections} with {i} amount of trajectories')
+        print(connections_list)
+
+
 
     # create map of trajectories that have been created
-    #create_map(dataframe, "data/Noord_Holland/StationsHolland.csv")
+    create_map(dataframe, "data/Noord_Holland/StationsHolland.csv")
     create_map(dataframe2, "data/Noord_Holland/StationsHolland.csv")

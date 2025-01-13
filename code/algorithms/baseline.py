@@ -36,7 +36,7 @@ def generate_trajectory(connection_object_dict, possible_connections_dict, neede
 
     # make random amount of connections between 1 and 14
     if len(needed_connections_dict) > 0:
-        for i in range(14):
+        for i in range(random.randint(1, 14)):
             # if there is no objects yet, we need a random starting point
             if len(objects) == 0:
                 # Start with a random needed connection and append to list

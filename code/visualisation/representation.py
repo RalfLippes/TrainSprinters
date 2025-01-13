@@ -1,23 +1,20 @@
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
+import pandas as pd
 
-def create_map(trajectories):
+def create_map(trajectories, station_locations):
     """
     this function takes a csv file that includes the y,x coordinates of different
     stations and a dataframe that includes each train with its trajectory. Returns
     a plotted graph of all trajectories showing which cities they pass.
     """
 
-    stations = pd.read_csv("StationsHolland.csv")
+    stations = pd.read_csv(station_locations)
 
     coordinates_stations = {}
 
     # Create a single plot
     plt.figure(figsize=(6, 10))
-
-    img = mpimg.imread("randstad.jpeg")
-
-    plt.imshow(img, extent=[4.0, 5.5, 51.5, 53.0], aspect='auto')
 
     for index, row in stations.iterrows():
 
@@ -56,5 +53,3 @@ def create_map(trajectories):
     plt.legend(loc='best', fontsize=8)
 
     return plt.show()
-
-create_map(test_df)

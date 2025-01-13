@@ -1,6 +1,5 @@
 import pandas as pd
 
-
 def get_possible_directions(csv_file):
     original_df = pd.read_csv(csv_file)
 

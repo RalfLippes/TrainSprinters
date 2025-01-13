@@ -1,8 +1,10 @@
-#from load_data import get_possible_directions
-#from verbinding_class import Connection
-#from verbinding_class import Trajectory
-#from code.algorithms import random_start_random_choice #choose_random_connections
-def calculate_score(connections, trajectory_amount, duration, total_connections = 28):
+from data.Noord_Holland.load_data import get_possible_directions
+from code.classes.traject_class import Trajectory
+from code.classes.verbinding_class import Connection
+from code.visualisation.representation import create_map
+from code.algorithms.random_start_random_choice import choose_random_connections, create_trajectories
+
+def create_connections(data):
     """
     Calculates the quality of the itinerary. Outputs a score.
     """
@@ -12,9 +14,17 @@ def calculate_score(connections, trajectory_amount, duration, total_connections 
 if __name__ == "__main__":
 
 
+    return connections_dictionary
 
+if __name__ == "__main__":
+    # make variables with possible directions, and dictionaries with connection objects
+    possible_directions, corrected_df, original_df = get_possible_directions("data/Noord_Holland/ConnectiesHolland.csv")
+    full_connection_dict = create_connections(corrected_df)
+    original_connection_dict = create_connections(original_df)
 
-    # dataframe = create_trajectories(3, choose_random_connections, test_dict, original_dict, test_dict, possible_connections)
-    # directions, corrected_df = get_possible_directions("ConnectiesHolland.csv")
-    # test_dict = create_connections(corrected_df)
-    # test_df = create_trajectories(7, random_connection)
+    # make dataframe with trajectories according to the random algorithm
+    dataframe = create_trajectories(7, choose_random_connections, full_connection_dict, original_connection_dict, full_connection_dict, possible_directions)
+    print(dataframe)
+
+    # create map of trajectories that have been created
+    create_map(dataframe, "data/Noord_Holland/StationsHolland.csv")

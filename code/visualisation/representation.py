@@ -44,7 +44,7 @@ def create_map(trajectories, station_locations):
             y_coordinates.append(y)
 
             #plot a line for every trajectory
-        plt.plot(x_coordinates, y_coordinates, label = row[0])
+        plt.plot(x_coordinates, y_coordinates, label = row.iloc[0])
 
 
     plt.title("NS trajectories in North and south Holland", fontsize=14)

@@ -5,6 +5,7 @@ from code.visualisation.representation import create_map
 from code.algorithms.random_start_random_choice import generate_trajectory, create_better_trajectories
 from code.algorithms.baseline import choose_random_connections, create_trajectories
 import copy
+import random
 
 def create_connections(data):
     """
@@ -27,17 +28,16 @@ def create_connections(data):
 
 if __name__ == "__main__":
 
+    # make variables with possible directions, and dictionaries with connection objects
+    possible_directions, corrected_df, original_df = get_possible_directions("data/Noord_Holland/ConnectiesHolland.csv")
+    full_connection_dict = create_connections(corrected_df)
+    original_connection_dict = create_connections(original_df)
 
     for i in range(4, 8):
-
 
         total_connections = 0
         connections_list = []
         for j in range(100):
-            # make variables with possible directions, and dictionaries with connection objects
-            possible_directions, corrected_df, original_df = get_possible_directions("data/Noord_Holland/ConnectiesHolland.csv")
-            full_connection_dict = create_connections(corrected_df)
-            original_connection_dict = create_connections(original_df)
 
             # make dataframe with trajectories according to the random algorithm
             dataframe = create_trajectories(7, choose_random_connections, full_connection_dict, original_connection_dict, full_connection_dict, possible_directions)
@@ -55,8 +55,15 @@ if __name__ == "__main__":
         print(f' total = {total_connections} with {i} amount of trajectories')
         print(connections_list)
 
+    # get statistics from random samples of solutions
+    for i in range(4,8):
+        score = []
+        connections = []
+        duration = []
+        for j in range(100):
+            current_df = create_trajectories(i, choose_random_connections, full_connection_dict, original_connection_dict, full_connection_dict, possible_directions)
+            score.append(current_df['stations'].iloc[-1])
+            connections.append()
+        print(f"average score for {i} trajectories is {sum(score) / 100}")
 
-
-    # create map of trajectories that have been created
-    create_map(dataframe, "data/Noord_Holland/StationsHolland.csv")
     create_map(dataframe2, "data/Noord_Holland/StationsHolland.csv")

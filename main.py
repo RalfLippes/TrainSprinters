@@ -2,11 +2,15 @@ from data.Noord_Holland.load_data import get_possible_directions
 from code.classes.traject_class import Trajectory
 from code.classes.verbinding_class import Connection
 from code.visualisation.representation import create_map
+from code.visualisation.plot_distribution import plot_distribution
 from code.algorithms.random_start_random_choice import generate_trajectory, create_better_trajectories
 from code.algorithms.baseline import choose_random_connections, create_trajectories
 import copy
 import random
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 def create_connections(data):
     """
@@ -27,6 +31,8 @@ def create_connections(data):
 
     return connections_dictionary
 
+
+
 if __name__ == "__main__":
 
     # make variables with possible directions, and dictionaries with connection objects
@@ -34,51 +40,95 @@ if __name__ == "__main__":
     full_connection_dict = create_connections(corrected_df)
     original_connection_dict = create_connections(original_df)
 
-    # find solutions by iterating the greedy algorithm
-    for i in range(4, 8):
+    # for i in range(4, 8):
+    #
+    #     total_connections = 0
+    #     connections_list = []
+    #     for j in range(100):
+    #
+    #         # make dataframe with trajectories according to the random algorithm
+    #         dataframe = create_trajectories(7, choose_random_connections, full_connection_dict, original_connection_dict, full_connection_dict, possible_directions)
+    #         #print(dataframe)
+    #
+    #         # test baseline algorithm
+    #         needed_connections = copy.deepcopy(original_connection_dict)
+    #         dataframe2, connection_number  = create_better_trajectories(i, generate_trajectory, full_connection_dict, original_connection_dict, needed_connections, full_connection_dict, possible_directions)
+    #         # print(dataframe2)
+    #         # print(connection_number)
+    #         if connection_number == 28:
+    #             total_connections += 1
+    #             connections_list.append(dataframe2)
+    #
+    #     print(f' total = {total_connections} with {i} amount of trajectories')
+    #     print(connections_list)
 
-        total_connections = 0
-        connections_list = []
-        for j in range(100):
 
-            # make dataframe with trajectories according to the random algorithm
-            dataframe = create_trajectories(7, choose_random_connections, full_connection_dict, original_connection_dict, full_connection_dict, possible_directions)
-            #print(dataframe)
 
-            # test baseline algorithm
-            needed_connections = copy.deepcopy(original_connection_dict)
-            dataframe2, connection_number  = create_better_trajectories(i, generate_trajectory, full_connection_dict, original_connection_dict, needed_connections, full_connection_dict, possible_directions)
-            # print(dataframe2)
-            # print(connection_number)
-            if connection_number == 28:
-                total_connections += 1
-                connections_list.append(dataframe2)
 
-        print(f' total = {total_connections} with {i} amount of trajectories')
-        print(connections_list)
 
     # get statistics from random samples of solutions
+    results = []
+    total_score = []
+    total_connections = []
+
     for i in range(4,8):
         score = []
         connections = []
         duration = []
+        highest_score = 0
+
+        fully_connected_iterations = 0
         for j in range(100):
-            # create a random itinerary with i trajectories
-            current_df = create_trajectories(i, choose_random_connections, full_connection_dict, original_connection_dict, full_connection_dict, possible_directions)
+            current_df, connection_number = create_trajectories(
+                i, choose_random_connections, full_connection_dict,
+                original_connection_dict, full_connection_dict, possible_directions)
 
-            # add every connection to the list
-            for _, row in current_df.iterrows():
-                if type(row.stations) == list:
-                    connections.extend(row.stations)
 
-            # add score to list
             score.append(current_df['stations'].iloc[-1])
+            total_score.append(current_df['stations'].iloc[-1])
 
-        # store lists in dataframe and print dataframes + average score
-        dataframe_score = pd.DataFrame(score)
-        dataframe_connections = pd.DataFrame(connections)
-        print(dataframe_score)
-        print(dataframe_connections)
+            connections.append(connection_number)
+            total_connections.append(connection_number)
+
+            if connection_number == 28:
+                fully_connected_iterations += 1
+
+            if current_df['stations'].iloc[-1] > highest_score:
+                highest_score = current_df['stations'].iloc[-1]
+
+
         print(f"average score for {i} trajectories is {sum(score) / 100}")
+        print(f"highest score = {highest_score}")
 
-    create_map(dataframe2, "data/Noord_Holland/StationsHolland.csv")
+
+        results.append({
+            'Trajectories': i,
+            'Average Score': np.mean(score),
+            'Median Score': np.median(score),
+            'Std Dev Score': np.std(score),
+            'Highest Score': highest_score,
+            'Average Connections': np.mean(connections),
+            'Median Connections': np.median(connections),
+            'Std Dev Connections': np.std(connections),
+            'Fully Connected Iteration': fully_connected_iterations
+        })
+
+    df = pd.DataFrame(results)
+
+    average_row = df.mean(numeric_only=True)
+
+    # Add a label for the average row
+    average_row['Trajectories'] = 'Average'
+
+    # Append the average row to the DataFrame
+    df = pd.concat([df, pd.DataFrame([average_row])])
+
+
+    plot_distribution(total_score, 30, "Average distribution of Scores" , "Score")
+    plot_distribution(total_connections, 29, "Average distribution of Connections", "Connections")
+
+
+    # Display the DataFrame
+    print(df)
+
+    # create_map(dataframe2, "data/Noord_Holland/StationsHolland.csv")

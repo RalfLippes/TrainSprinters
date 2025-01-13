@@ -122,5 +122,4 @@ def create_trajectories(trajectory_amount, connection_algorithm, full_connection
     dataframe.iloc[-1, dataframe.columns.get_loc('train')] = 'score'
     dataframe.iloc[-1, dataframe.columns.get_loc('stations')] = score
 
-    return dataframe
-    
+    return dataframe, connection_number

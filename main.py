@@ -6,6 +6,7 @@ from code.algorithms.random_start_random_choice import generate_trajectory, crea
 from code.algorithms.baseline import choose_random_connections, create_trajectories
 import copy
 import random
+import pandas as pd
 
 def create_connections(data):
     """
@@ -33,6 +34,7 @@ if __name__ == "__main__":
     full_connection_dict = create_connections(corrected_df)
     original_connection_dict = create_connections(original_df)
 
+    # find solutions by iterating the greedy algorithm
     for i in range(4, 8):
 
         total_connections = 0
@@ -61,9 +63,22 @@ if __name__ == "__main__":
         connections = []
         duration = []
         for j in range(100):
+            # create a random itinerary with i trajectories
             current_df = create_trajectories(i, choose_random_connections, full_connection_dict, original_connection_dict, full_connection_dict, possible_directions)
+
+            # add every connection to the list
+            for _, row in current_df.iterrows():
+                if type(row.stations) == list:
+                    connections.extend(row.stations)
+
+            # add score to list
             score.append(current_df['stations'].iloc[-1])
-            connections.append()
+
+        # store lists in dataframe and print dataframes + average score
+        dataframe_score = pd.DataFrame(score)
+        dataframe_connections = pd.DataFrame(connections)
+        print(dataframe_score)
+        print(dataframe_connections)
         print(f"average score for {i} trajectories is {sum(score) / 100}")
 
     create_map(dataframe2, "data/Noord_Holland/StationsHolland.csv")

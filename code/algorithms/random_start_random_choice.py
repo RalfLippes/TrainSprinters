@@ -64,14 +64,14 @@ def generate_trajectory(connection_object_dict, possible_connections_dict, neede
                 possible_stations = possible_connections_dict[departure_station]
                 for station in possible_stations:
                     if departure_station + '-' + station in new_needed_connections_dict:
-                        connection_object = connection_object_dict[departure_station + "-" + station]
+                        connection_object = new_needed_connections_dict[departure_station + "-" + station]
                         #TODO: make sure to try other stations instead of returning
                         # if duration time goes over 120: don't add connection and return list
                         if duration + connection_object.duration > 120:
                             return objects, new_needed_connections_dict
 
                         # add object, count duration and remove connection from needed connections
-                        objects.append(needed_connections_dict[departure_station + '-' + station])
+                        objects.append(connection_object)
                         duration += connection_object.duration
                         new_needed_connections_dict.pop(departure_station + '-' + station)
                         break

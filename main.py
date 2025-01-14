@@ -60,12 +60,12 @@ if __name__ == "__main__":
     print(dataframe2)
 
     # find average values from the baseline algorithms
-    total_score, total_connections, baseline_dataframe = prepare_data_baseline(10000,
+    total_score, total_connections, baseline_dataframe = prepare_data_baseline(100,
         full_connection_dict, original_connection_dict, possible_directions,
         choose_random_connections)
 
     score_7_trajectories, connections_7_trajectories, dataframe_7_trajectories = prepare_data_baseline(
-        10000, full_connection_dict, original_connection_dict, possible_directions,
+        100, full_connection_dict, original_connection_dict, possible_directions,
         choose_random_connections, False)
 
     # set correct amount of bins

@@ -141,7 +141,8 @@ def create_better_trajectories(trajectory_amount, connection_algorithm, full_con
             iteration += 1
 
         # fill in dataframe with correct data
-        dataframe.loc[i, 'stations'] = station_list
+        stations_string = f"[{', '.join(station_list)}]"
+        dataframe.loc[i, 'stations'] = stations_string
         dataframe.loc[i, 'train'] = 'train_' + str(i + 1)
 
     # make a set of tuples with (start_station, end_station) for original connections

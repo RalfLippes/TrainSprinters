@@ -2,24 +2,30 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import pandas as pd
+import random
 from ..algorithms.baseline import create_trajectories
 
-def plot_distribution(data, bins_amount, title, xlabel):
+def plot_distribution(data, bins_amount, title, xlabel, plot_name):
     plt.figure(figsize=(8, 6))
     sns.histplot(data, kde=True, bins=bins_amount, color='skyblue', label='Histogram with KDE', kde_kws={'bw_adjust': 1.5})
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel('Frequency')
     plt.legend()
+    plt.savefig(plot_name)
     plt.show()
 
-def prepare_data_baseline(iterations, full_connection_dict, original_connection_dict, possible_directions, choose_random_connections):
+
+def prepare_data_baseline(iterations, full_connection_dict, original_connection_dict,
+    possible_directions, choose_random_connections, use_all_trajectories = True):
     # get statistics from random samples of solutions
     results = []
     total_score = []
     total_connections = []
 
-    for i in range(4,8):
+    loop_range = range(4, 8) if use_all_trajectories else range(7, 8)
+
+    for i in loop_range:
         score = []
         connections = []
         duration = []
@@ -29,7 +35,8 @@ def prepare_data_baseline(iterations, full_connection_dict, original_connection_
         for j in range(iterations):
             current_df, connection_number = create_trajectories(
                 i, choose_random_connections, full_connection_dict,
-                original_connection_dict, full_connection_dict, possible_directions)
+                original_connection_dict, full_connection_dict, possible_directions,
+                random.randint(1,14))
 
 
             score.append(current_df['stations'].iloc[-1])

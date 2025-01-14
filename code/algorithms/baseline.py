@@ -21,7 +21,7 @@ def calculate_score(connections, trajectory_amount, duration, total_connections 
     p = connections / total_connections
     return p * 10000 - (trajectory_amount * 100 + duration)
 
-def choose_random_connections(connection_object_dict, possible_connections_dict):
+def choose_random_connections(connection_object_dict, possible_connections_dict, connection_amount):
     """
     Takes a dictionary with strings as keys in the form 'Startstation-Endstation'
     and values of connection objects. Makes a list of n random connections,
@@ -34,7 +34,7 @@ def choose_random_connections(connection_object_dict, possible_connections_dict)
     duration = 0
 
     # create given number of connection objects
-    while duration <= 120:
+    for i in range(connection_amount):
 
         if len(objects) == 0:
             # Start with a random connection and append its first station to the list

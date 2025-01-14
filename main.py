@@ -60,16 +60,27 @@ if __name__ == "__main__":
     #     print(connections_list)
 
     # find average values from the baseline algorithms
-    total_score, total_connections, baseline_dataframe = prepare_data_baseline(100,
+    total_score, total_connections, baseline_dataframe = prepare_data_baseline(10000,
         full_connection_dict, original_connection_dict, possible_directions,
         choose_random_connections)
+
+    score_7_trajectories, connections_7_trajectories, dataframe_7_trajectories = prepare_data_baseline(
+        10000, full_connection_dict, original_connection_dict, possible_directions,
+        choose_random_connections, False)
 
     # set correct amount of bins
     bin_edges = np.linspace(0, 28, 29)
 
     # plot the values
-    plot_distribution(total_score, 30, "Average distribution of Scores" , "Score")
-    plot_distribution(total_connections, bin_edges, "Average distribution of Connections", "Connections")
+    plot_distribution(total_score, 30, "Average distribution of Scores" , "Score",
+        "code/visualisation/total_score_distribution")
+    plot_distribution(total_connections, bin_edges, "Average distribution of Connections",
+        "Connections", "code/visualisation/total_connections_distribution")
+    plot_distribution(score_7_trajectories, 30, "Average distribution of Scores with 7 Trajectories" ,
+        "Score", "code/visualisation/7_trajectories_score_distribution")
+    plot_distribution(connections_7_trajectories, bin_edges,
+        "Average distribution of unique connections with 7 Trajectories" , "Connections",
+        "code/visualisation/7_trajectories_connections_distribution")
 
     # display the dataframe
     print(baseline_dataframe)

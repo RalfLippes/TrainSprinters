@@ -44,13 +44,13 @@ def generate_trajectory(connection_object_dict, possible_connections_dict, neede
     duration = 0
     new_needed_connections_dict = copy.deepcopy(needed_connections_dict)
 
-    # make random amount of connections between 1 and 14
-    if len(needed_connections_dict) > 0:
-        for i in range(random.randint(1, 14)):
+    # make random amount of connections between 1 and 24
+    if len(new_needed_connections_dict) > 0:
+        for i in range(random.randint(1, 24)):
             # if there is no objects yet, we need a random starting point
-            if len(objects) == 0:
+            if len(objects) <= 0:
                 # Start with a random needed connection and append to list
-                connection_object = random.choice(list(needed_connections_dict.values()))
+                connection_object = random.choice(list(new_needed_connections_dict.values()))
                 start_station = connection_object.start_station
                 objects.append(connection_object)
                 duration += connection_object.duration
@@ -64,17 +64,16 @@ def generate_trajectory(connection_object_dict, possible_connections_dict, neede
                 possible_stations = possible_connections_dict[departure_station]
                 for station in possible_stations:
                     if departure_station + '-' + station in new_needed_connections_dict:
+                        connection_object = connection_object_dict[departure_station + "-" + station]
+                        #TODO: make sure to try other stations instead of returning
                         # if duration time goes over 120: don't add connection and return list
                         if duration + connection_object.duration > 120:
                             return objects, new_needed_connections_dict
 
+                        # add object, count duration and remove connection from needed connections
                         objects.append(needed_connections_dict[departure_station + '-' + station])
-
-                        # remove connection from needed connections
-                        new_needed_connections_dict.pop(departure_station + '-' + station)
-
-                        # count duration and remove connection from needed connections
                         duration += connection_object.duration
+                        new_needed_connections_dict.pop(departure_station + '-' + station)
                         break
 
                 # store length after and check if previous loop has added any connections

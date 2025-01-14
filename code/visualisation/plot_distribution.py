@@ -36,7 +36,7 @@ def prepare_data_baseline(iterations, full_connection_dict, original_connection_
             current_df, connection_number = create_trajectories(
                 i, choose_random_connections, full_connection_dict,
                 original_connection_dict, full_connection_dict, possible_directions,
-                random.randint(1,14))
+                random.randint(1, 24))
 
 
             score.append(current_df['stations'].iloc[-1])

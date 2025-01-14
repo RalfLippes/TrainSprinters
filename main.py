@@ -83,6 +83,6 @@ if __name__ == "__main__":
         "code/visualisation/7_trajectories_connections_distribution")
 
     # display the dataframe
-    print(baseline_dataframe)
+    baseline_dataframe.to_csv('code/visualisation/trajectories_statistics.csv', index=False)
 
     # create_map(dataframe2, "data/Noord_Holland/StationsHolland.csv")

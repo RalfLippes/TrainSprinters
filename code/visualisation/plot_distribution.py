@@ -78,7 +78,4 @@ def prepare_data_baseline(iterations, full_connection_dict, original_connection_
     # Append the average row to the DataFrame
     df = pd.concat([df, pd.DataFrame([average_row])])
 
-    # Display the DataFrame
-    print(df)
-
     return total_score, total_connections, df

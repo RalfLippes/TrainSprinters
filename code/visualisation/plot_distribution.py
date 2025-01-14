@@ -71,11 +71,12 @@ def prepare_data_baseline(iterations, full_connection_dict, original_connection_
     df = pd.DataFrame(results)
 
     average_row = df.mean(numeric_only=True)
+    average_row = pd.DataFrame(average_row).T
 
     # Add a label for the average row
     average_row['Trajectories'] = 'Average'
 
     # Append the average row to the DataFrame
-    df = pd.concat([df, pd.DataFrame([average_row])])
+    df = pd.concat([df, average_row], ignore_index=True)
 
     return total_score, total_connections, df

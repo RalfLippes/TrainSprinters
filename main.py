@@ -2,15 +2,13 @@ from data.Noord_Holland.load_data import get_possible_directions
 from code.classes.traject_class import Trajectory
 from code.classes.verbinding_class import Connection
 from code.visualisation.representation import create_map
-from code.visualisation.plot_distribution import plot_distribution
+from code.visualisation.plot_distribution import plot_distribution, prepare_data_baseline
 from code.algorithms.random_start_random_choice import generate_trajectory, create_better_trajectories
 from code.algorithms.baseline import choose_random_connections, create_trajectories
 import copy
 import random
-import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
+import pandas as pd
 
 def create_connections(data):
     """
@@ -30,7 +28,6 @@ def create_connections(data):
         connections_dictionary[station_1 + "-" + station_2] = Connection(station_1, station_2, duration)
 
     return connections_dictionary
-
 
 
 if __name__ == "__main__":
@@ -62,73 +59,19 @@ if __name__ == "__main__":
     #     print(f' total = {total_connections} with {i} amount of trajectories')
     #     print(connections_list)
 
+    # find average values from the baseline algorithms
+    total_score, total_connections, baseline_dataframe = prepare_data_baseline(100,
+        full_connection_dict, original_connection_dict, possible_directions,
+        choose_random_connections)
 
+    # set correct amount of bins
+    bin_edges = np.linspace(0, 28, 29)
 
-
-
-    # get statistics from random samples of solutions
-    results = []
-    total_score = []
-    total_connections = []
-
-    for i in range(4,8):
-        score = []
-        connections = []
-        duration = []
-        highest_score = 0
-
-        fully_connected_iterations = 0
-        for j in range(100):
-            current_df, connection_number = create_trajectories(
-                i, choose_random_connections, full_connection_dict,
-                original_connection_dict, full_connection_dict, possible_directions)
-
-
-            score.append(current_df['stations'].iloc[-1])
-            total_score.append(current_df['stations'].iloc[-1])
-
-            connections.append(connection_number)
-            total_connections.append(connection_number)
-
-            if connection_number == 28:
-                fully_connected_iterations += 1
-
-            if current_df['stations'].iloc[-1] > highest_score:
-                highest_score = current_df['stations'].iloc[-1]
-
-
-        print(f"average score for {i} trajectories is {sum(score) / 100}")
-        print(f"highest score = {highest_score}")
-
-
-        results.append({
-            'Trajectories': i,
-            'Average Score': np.mean(score),
-            'Median Score': np.median(score),
-            'Std Dev Score': np.std(score),
-            'Highest Score': highest_score,
-            'Average Connections': np.mean(connections),
-            'Median Connections': np.median(connections),
-            'Std Dev Connections': np.std(connections),
-            'Fully Connected Iteration': fully_connected_iterations
-        })
-
-    df = pd.DataFrame(results)
-
-    average_row = df.mean(numeric_only=True)
-
-    # Add a label for the average row
-    average_row['Trajectories'] = 'Average'
-
-    # Append the average row to the DataFrame
-    df = pd.concat([df, pd.DataFrame([average_row])])
-
-
+    # plot the values
     plot_distribution(total_score, 30, "Average distribution of Scores" , "Score")
-    plot_distribution(total_connections, 29, "Average distribution of Connections", "Connections")
+    plot_distribution(total_connections, bin_edges, "Average distribution of Connections", "Connections")
 
-
-    # Display the DataFrame
-    print(df)
+    # display the dataframe
+    print(baseline_dataframe)
 
     # create_map(dataframe2, "data/Noord_Holland/StationsHolland.csv")

@@ -51,7 +51,7 @@ def generate_trajectory(connection_object_dict, possible_connections_dict,
         if len(objects) <= 0:
             # check if all connections have been ridden
             if len(new_needed_connections_dict) == 0:
-                completed = True
+                complete = True
                 break
 
             # create random connection and store values
@@ -67,16 +67,17 @@ def generate_trajectory(connection_object_dict, possible_connections_dict,
             length_before = len(objects)
             departure_station = objects[-1].end_station
 
-            # check possible stations (connections) and append to list if it is still needed
+            # randomize connections and append if it is still needed
             possible_stations = possible_connections_dict[departure_station]
+            random.shuffle(possible_stations)
             for station in possible_stations:
                 if departure_station + '-' + station in new_needed_connections_dict:
                     connection_object = new_needed_connections_dict[departure_station
                         + "-" + station]
-                    #TODO: make sure to try other stations instead of returning
-                    # if duration time goes over 120: don't add connection and return list
+
+                    # if duration time goes over 120: don't add connection and go to next one
                     if duration + connection_object.duration > 120:
-                        break
+                        continue
 
                     # add object, count duration and remove connection from needed connections
                     objects.append(connection_object)
@@ -87,17 +88,22 @@ def generate_trajectory(connection_object_dict, possible_connections_dict,
             # check if previous loop has added any connections
             length_after = len(objects)
             if length_after == length_before:
-                # choose random possible connection
-                chosen_station = random.choice(possible_stations)
-                connection_object = connection_object_dict[departure_station + "-" +
+                # go through random order of possible connections
+                random.shuffle(possible_stations)
+                for station in possible_stations:
+                    chosen_station = station
+                    connection_object = connection_object_dict[departure_station + "-" +
                     chosen_station]
 
-                # if duration time goes over 120: don't add connection and return list
-                if duration + connection_object.duration > 120:
-                    break
+                    # if duration time goes over 120: go to next connection
+                    if duration + connection_object.duration > 120:
+                        continue
 
-                duration += connection_object.duration
-                objects.append(connection_object)
+                    # if valid, count duration and add connection object to list
+                    duration += connection_object.duration
+                    objects.append(connection_object)
+
+                complete = True
 
     return objects, new_needed_connections_dict
 

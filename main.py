@@ -43,10 +43,11 @@ def test_my_algorithm(penalty_weight, max_duration, max_connections, trajectory_
         trajectory_list = []
         # create certain amount of trajectories
         for i in range(trajectory_amount):
-            trajectories_test, new_needed_connections_dict = create_simulated_annealing_trajectory(test,
-                new_needed_connections_dict, possible_directions,
-                full_connection_dict, penalty_weight, max_duration, max_connections)
-            trajectory_list.append(trajectories_test)
+            if len(new_needed_connections_dict) > 0:
+                trajectories_test, new_needed_connections_dict = create_simulated_annealing_trajectory(test,
+                    new_needed_connections_dict, possible_directions,
+                    full_connection_dict, penalty_weight, max_duration, max_connections)
+                trajectory_list.append(trajectories_test)
 
         # make it into dataframe and print + visualize
         dataframe_test, number_connections = create_dataframe_annealing(trajectory_list, trajectory_amount,
@@ -54,6 +55,7 @@ def test_my_algorithm(penalty_weight, max_duration, max_connections, trajectory_
         if dataframe_test['stations'].iloc[-1] > highest_score:
             highest_score = dataframe_test['stations'].iloc[-1]
             best_dataframe = dataframe_test
+        print(f"{a / iterations * 100}% done")
 
     return best_dataframe
 
@@ -125,12 +127,13 @@ if __name__ == "__main__":
     max_duration = 120
     trajectory_amount = 4
     max_connections = 24
+    iterations = 1000000
 
     # load data
     test = load_station_location_data("data/Noord_Holland/StationsHolland.csv")
 
     best_dataframe = test_my_algorithm(penalty_weight, max_duration, max_connections,
-        trajectory_amount, 1000)
+        trajectory_amount, iterations)
     print(best_dataframe)
     create_map(best_dataframe, "data/Noord_Holland/StationsHolland.csv")
 

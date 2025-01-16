@@ -49,11 +49,25 @@ def choose_random_connections(connection_object_dict, possible_connections_dict,
             chosen_station = random.choice(possible_stations)
             connection_object = connection_object_dict[departure_station + "-" + chosen_station]
 
-            # if duration time goes over 120: don't add connection and return list
-            if duration + connection_object.duration > 120:
-                return objects
-            else:
-                duration += connection_object.duration
+            # Create a copy of the possible station list before looping
+            temp_possible_stations = copy.deepcopy(possible_stations)
+
+            # if duration time goes over 120 enter a loop where we try other connections 
+            while duration + connection_object.duration > 120:
+
+                # Remove the station we already tried
+                temp_possible_stations.remove(chosen_station)
+
+                # Return the objects if the list is empty after removing
+                if len(list(temp_possible_stations)) == 0:
+                    return objects
+
+                else:
+                    chosen_station = random.choice(temp_possible_stations)
+                    connection_object = connection_object_dict[departure_station + "-" + chosen_station]
+
+
+            duration += connection_object.duration
 
             objects.append(connection_object)
 
@@ -105,7 +119,8 @@ def create_trajectories(trajectory_amount, connection_algorithm, full_connection
             iteration += 1
 
         # fill in dataframe with correct data
-        dataframe.loc[i, 'stations'] = station_list
+        stations_string = f"[{', '.join(station_list)}]"
+        dataframe.loc[i, 'stations'] = stations_string
         dataframe.loc[i, 'train'] = 'train_' + str(i + 1)
 
     # make a set of tuples with (start_station, end_station) for original connections

@@ -6,6 +6,7 @@ from code.visualisation.plot_distribution import plot_distribution, prepare_data
 from code.algorithms.greedy import generate_trajectory, create_better_trajectories
 from code.algorithms.baseline import choose_random_connections, create_trajectories
 from code.algorithms.three_deep_algorithm import n_deep_algorithm, create_deep_trajectories
+from code.algorithms.simulated_annealing import load_station_location_data, annealing_cost_function, find_nearest_connection, create_simulated_annealing_trajectory, create_dataframe_annealing
 import copy
 import random
 import numpy as np
@@ -30,68 +31,120 @@ def create_connections(data):
 
     return connections_dictionary
 
+def test_my_algorithm(penalty_weight, max_duration, max_connections, trajectory_amount,
+    iterations):
+    best_dataframe = None
+    highest_score = 0
+    total_highest_score = 0
+    total_best_dataframe = None
+
+    for a in range(iterations):
+        new_needed_connections_dict = copy.deepcopy(original_connection_dict)
+        trajectory_list = []
+        # create certain amount of trajectories
+        for i in range(trajectory_amount):
+            trajectories_test, new_needed_connections_dict = create_simulated_annealing_trajectory(test,
+                new_needed_connections_dict, possible_directions,
+                full_connection_dict, penalty_weight, max_duration, max_connections)
+            trajectory_list.append(trajectories_test)
+
+        # make it into dataframe and print + visualize
+        dataframe_test, number_connections = create_dataframe_annealing(trajectory_list, trajectory_amount,
+            new_needed_connections_dict, 28)
+        if dataframe_test['stations'].iloc[-1] > highest_score:
+            highest_score = dataframe_test['stations'].iloc[-1]
+            best_dataframe = dataframe_test
+
+    return best_dataframe
+
+
+def run_n_deep_algorithm(iterations, depth, loading_popup=False):
+    # Load data and prepare variables
+    possible_directions, corrected_df, original_df = get_possible_directions("data/Noord_Holland/ConnectiesHolland.csv")
+    full_connection_dict = create_connections(corrected_df)
+    original_connection_dict = create_connections(original_df)
+
+
+    avg_scores = {}
+    highest_scores = {}
+    best_dataframe = []
+
+
+    for i in range(4, 8):
+        total_score = 0  # Initialize total score for the current trajectory amount
+        highest_score = float('-inf')  # Initialize the highest score for this trajectory amount
+
+        for j in range(iterations):
+            needed_connections_dict = copy.deepcopy(original_connection_dict)
+            possible_connections_dict = possible_directions
+
+
+            dataframe, connections_made = create_deep_trajectories(
+                trajectory_amount=i,
+                connection_algorithm=n_deep_algorithm,
+                full_connection_dict=full_connection_dict,
+                original_connection_dict=original_connection_dict,
+                needed_connections_dict=needed_connections_dict,
+                arg1=full_connection_dict,
+                arg2=possible_connections_dict,
+                arg3=needed_connections_dict,
+                arg4=depth #= Depth,
+             )
+
+
+            score = dataframe.loc[dataframe.index[-1], 'stations']
+            total_score += score
+
+            # Update highest score if the current score is higher
+            if score > highest_score:
+                highest_score = score
+                best_dataframe = dataframe
+
+            if loading_popup == True:
+                if j % (iterations/10) == 0 and j > 0:
+                    print(f"Traject {i}: {j} iteration completed...")
+
+        # Calculate the average score for the current trajectory amount
+        avg_scores[i] = total_score / iterations
+        highest_scores[i] = highest_score  # Store the highest score for the current trajectory amount
+
+
+        print(f"Average score for {i} trajectories: {avg_scores[i]}")
+        print(f"Highest score for {i} trajectories: {highest_scores[i]}")
+    print(best_dataframe)
+
+    best_dataframe.to_csv("output2.csv", index=False)
+
+
+
 
 if __name__ == "__main__":
 
+    # set parameters
+    penalty_weight = 0.01
+    max_duration = 120
+    trajectory_amount = 4
+    max_connections = 24
 
-    def run_n_deep_algorithm(iterations, depth, loading_popup=False):
-        # Load data and prepare variables
-        possible_directions, corrected_df, original_df = get_possible_directions("data/Noord_Holland/ConnectiesHolland.csv")
-        full_connection_dict = create_connections(corrected_df)
-        original_connection_dict = create_connections(original_df)
+    # load data
+    test = load_station_location_data("data/Noord_Holland/StationsHolland.csv")
 
-
-        avg_scores = {}
-        highest_scores = {}
-        best_dataframe = []
-
-
-        for i in range(4, 8):
-            total_score = 0  # Initialize total score for the current trajectory amount
-            highest_score = float('-inf')  # Initialize the highest score for this trajectory amount
-
-            for j in range(iterations):
-                needed_connections_dict = copy.deepcopy(original_connection_dict)
-                possible_connections_dict = possible_directions
+    best_dataframe = test_my_algorithm(penalty_weight, max_duration, max_connections,
+        trajectory_amount, 1000)
+    print(best_dataframe)
+    create_map(best_dataframe, "data/Noord_Holland/StationsHolland.csv")
 
 
-                dataframe, connections_made = create_deep_trajectories(
-                    trajectory_amount=i,
-                    connection_algorithm=n_deep_algorithm,
-                    full_connection_dict=full_connection_dict,
-                    original_connection_dict=original_connection_dict,
-                    needed_connections_dict=needed_connections_dict,
-                    arg1=full_connection_dict,
-                    arg2=possible_connections_dict,
-                    arg3=needed_connections_dict,
-                    arg4=depth #= Depth,
-                 )
 
 
-                score = dataframe.loc[dataframe.index[-1], 'stations']
-                total_score += score
-
-                # Update highest score if the current score is higher
-                if score > highest_score:
-                    highest_score = score
-                    best_dataframe = dataframe
-
-                if loading_popup == True:
-                    if j % (iterations/10) == 0 and j > 0:
-                        print(f"Traject {i}: {j} iteration completed...")
-
-            # Calculate the average score for the current trajectory amount
-            avg_scores[i] = total_score / iterations
-            highest_scores[i] = highest_score  # Store the highest score for the current trajectory amount
 
 
-            print(f"Average score for {i} trajectories: {avg_scores[i]}")
-            print(f"Highest score for {i} trajectories: {highest_scores[i]}")
-        print(best_dataframe)
+    # Call the n_deep algorithm
+    # run_n_deep_algorithm(100, 3, loading_popup=False)
 
-        best_dataframe.to_csv("output2.csv", index=False)
 
-    run_n_deep_algorithm(100, 3, loading_popup=False)
+
+
 
 
 
@@ -145,5 +198,5 @@ if __name__ == "__main__":
     #
     # # display the dataframe
     # baseline_dataframe.to_csv('code/visualisation/trajectories_statistics.csv', index=False)
-    #
-    # # create_map(dataframe2, "data/Noord_Holland/StationsHolland.csv")
+
+    # create_map(dataframe2, "data/Noord_Holland/StationsHolland.csv")

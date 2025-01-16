@@ -1,6 +1,8 @@
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import pandas as pd
+import ast
+import re
 
 def create_map(trajectories, station_locations):
     """
@@ -33,8 +35,13 @@ def create_map(trajectories, station_locations):
         x_coordinates = []
         y_coordinates = []
 
+        # remove brackets and split on commas, then turn into list of strings
+        cleaned_string = row.iloc[1].strip("[]")
+        split_string = cleaned_string.split(",")
+        stations_list = [str(item).strip() for item in split_string]
+
         #save the coordinates of every station passed in a trajectory
-        for station in row.iloc[1]:
+        for station in stations_list:
 
             #Add every x and y coordinate to a list
             y = coordinates_stations[station][0]

@@ -57,7 +57,6 @@ def test_my_algorithm(penalty_weight, max_duration, max_connections, trajectory_
 
     return best_dataframe
 
-
 def run_n_deep_algorithm(iterations, depth, loading_popup=False):
     # Load data and prepare variables
     possible_directions, corrected_df, original_df = get_possible_directions("data/Noord_Holland/ConnectiesHolland.csv")
@@ -115,10 +114,11 @@ def run_n_deep_algorithm(iterations, depth, loading_popup=False):
 
     best_dataframe.to_csv("output2.csv", index=False)
 
-
-
-
 if __name__ == "__main__":
+    # load data
+    possible_directions, corrected_df, original_df = get_possible_directions("data/Noord_Holland/ConnectiesHolland.csv")
+    full_connection_dict = create_connections(corrected_df)
+    original_connection_dict = create_connections(original_df)
 
     # set parameters
     penalty_weight = 0.01

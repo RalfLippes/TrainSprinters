@@ -9,13 +9,6 @@ the station where a connection begins that has not been ridden yet using
 simulated annealing. Punishes riding connections that have already been ridden.
 """
 
-def calculate_score(connections, trajectory_amount, duration, total_connections = 28):
-    """
-    Calculates the quality of the itinerary. Outputs a score.
-    """
-    p = connections / total_connections
-    return p * 10000 - (trajectory_amount * 100 + duration)
-
 def load_station_location_data(station_locations):
     """
     Uses a station csv file to create a dictionary of stations with their

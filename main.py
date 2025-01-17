@@ -10,6 +10,8 @@ from code.algorithms.annealing_steps import load_station_location_data, annealin
 from code.other_functions.create_connection_dict import create_connections
 from code.algorithms.call_algorithm.run_n_deep_algorithm import run_n_deep_algorithm
 from code.algorithms.call_algorithm.call_simulated_annaeling import run_simulated_annaeling
+from code.algorithms.simulated_annealing import simulated_annealing
+from code.visualisation.oplossing_naar_dataframe import create_dataframe_from_solution
 import copy
 import random
 import numpy as np
@@ -20,28 +22,49 @@ if __name__ == "__main__":
     possible_directions, corrected_df, original_df = get_possible_directions("data/Noord_Holland/ConnectiesHolland.csv")
     full_connection_dict = create_connections(corrected_df)
     original_connection_dict = create_connections(original_df)
-    stations = pd.read_csv("data/Noord_Holland/StationsHolland.csv")
-    # load data
-    test = load_station_objects(stations)
+    stations_csv = pd.read_csv("data/Noord_Holland/StationsHolland.csv")
+    station_locations = load_station_objects(stations_csv)
+
+
+    # TEST THE SIMULATE_ANNEALING ALGORITHM
+    # ----------------------------
+    # create schedule with 5 random trajectories
+    trajectories = []
+    for i in range(5):
+        trajectories.append(choose_random_connections(full_connection_dict, possible_directions, 24))
+
+    # do a few simulated annealings k
+    best_score = 0
+    best_solution = None
+    for i in range(100):
+        try_out = simulated_annealing(trajectories, choose_random_connections, full_connection_dict,
+            possible_directions, 24, 4, 10000, 0.999, 10000, original_connection_dict)
+        if try_out.calculate_score(original_connection_dict) > best_score:
+            best_solution = try_out
+        print(f"{i / 100 * 100}% done")
+    df = create_dataframe_from_solution(best_solution, original_connection_dict)
+    create_map(df, "data/Noord_Holland/StationsHolland.csv")
+    print(df)
+    # ----------------------------
 
 
     # TEST THE SIMULATE_ANNEALING ALGORITHM
     # ----------------------------
 
     # set parameters
-    penalty_weight = 0.01
-    max_duration = 120
-    trajectory_amount = 4
-    max_connections = 100
-    iterations = 100
-
-    best_dataframe = run_simulated_annaeling(penalty_weight, max_duration, max_connections,
-        trajectory_amount, iterations, original_connection_dict, test, possible_directions,
-        full_connection_dict)
-    print(best_dataframe)
-    create_map(best_dataframe, "data/Noord_Holland/StationsHolland.csv")
-
-    best_dataframe.to_csv("data/output.csv", index=False)
+    # penalty_weight = 0.01
+    # max_duration = 120
+    # trajectory_amount = 4
+    # max_connections = 100
+    # iterations = 100
+    #
+    # best_dataframe = run_simulated_annaeling(penalty_weight, max_duration, max_connections,
+    #     trajectory_amount, iterations, original_connection_dict, station_locations, possible_directions,
+    #     full_connection_dict)
+    # print(best_dataframe)
+    # create_map(best_dataframe, "data/Noord_Holland/StationsHolland.csv")
+    #
+    # best_dataframe.to_csv("data/output.csv", index=False)
 
     # ----------------------------
 

@@ -1,116 +1,77 @@
 import random
 import pandas as pd
 import copy
+from code.classes.traject_class import Trajectory
+from code.classes.verbinding_class import Connection
+from code.other_functions.calculate_score import calculate_score
 
-class Connection:
+def generate_trajectory(connection_object_dict, possible_connections_dict,
+    needed_connections_dict):
     """
-    Contains all the aspects of a connection, including start station, end station
-    and the duration of riding the connection.
+    generates a random trajectory by preferring to choose from the connections that
+    have not been chosen yet (provided in needed_connections). Takes a dictionary
+    with connections that haven't been ridden yet, a dictionary with all possible
+    connections and a dictionary with all possible target station from each possible
+    starting station. Returns list of connection objects (trajectory) and the updated
+    needed connections dictionary.
     """
-    def __init__(self, start_station, end_station, duration):
-        self.start_station = start_station
-        self.end_station = end_station
-        self.duration = duration
-
-class Trajectory:
-    """
-    Initializes a trajectory which will store connection objects. Contains a function
-    to add a connection to the list of connections.
-    """
-    def __init__(self):
-        self.connection_list = []
-
-    def add_connection(self, connection_object):
-        """Manually add a connection object to the connection list"""
-        self.connection_list.append(connection_object)
-
-def calculate_score(connections, trajectory_amount, duration, total_connections = 28):
-    """
-    Calculates the quality of the itinerary. Outputs a score.
-    """
-    p = connections / total_connections
-    return p * 10000 - (trajectory_amount * 100 + duration)
-
-
-
-def n_deep_algorithm(connection_object_dict, possible_connections_dict,
-                     needed_connections_dict, depth=3):
-    """
-    Generates a trajectory by looking n connections into the future to select the best path.
-    Evaluates paths based on the highest score, prioritizing the number of new connections
-    and minimizing the duration of the route.
-    """
-    def evaluate_future_paths(current_station, remaining_connections, current_duration, depth_left):
-        """
-        Recursively evaluates the score of future paths up to the given depth.
-        Returns the best score and corresponding path.
-        """
-        if depth_left == 0 or len(remaining_connections) == 0:
-            # Base case: calculate score for current state
-            connections_made = len(needed_connections_dict) - len(remaining_connections)
-            score = calculate_score(connections_made, 1, current_duration)
-            return score, []
-
-        best_score = float('-inf')
-        best_path = []
-
-        possible_stations = possible_connections_dict.get(current_station, [])
-        for station in possible_stations:
-            connection_key = f"{current_station}-{station}"
-            if connection_key in remaining_connections:
-                connection = remaining_connections[connection_key]
-                if current_duration + connection.duration > 120:
-                    continue  # Skip if adding this connection exceeds time limit
-
-                # Recursively evaluate future paths
-                new_remaining_connections = copy.deepcopy(remaining_connections)
-                new_remaining_connections.pop(connection_key)
-                future_score, future_path = evaluate_future_paths(
-                    connection.end_station, new_remaining_connections,
-                    current_duration + connection.duration, depth_left - 1
-                )
-
-                # Update best score and path if this option is better
-                if future_score > best_score:
-                    best_score = future_score
-                    best_path = [connection] + future_path
-
-        return best_score, best_path
-
-    # Initialize variables
     objects = []
     duration = 0
     new_needed_connections_dict = copy.deepcopy(needed_connections_dict)
-    current_station = None
+    complete = False
 
-    # Generate trajectory by looking `depth` steps into the future
-    while len(new_needed_connections_dict) > 0:
-        if len(objects) == 0:
-            # Start with a random needed connection
-            connection = random.choice(list(new_needed_connections_dict.values()))
-            objects.append(connection)
-            duration += connection.duration
-            current_station = connection.end_station
-            new_needed_connections_dict.pop(f"{connection.start_station}-{connection.end_station}")
-        else:
-            # Look `depth` steps ahead to choose the best path
-            _, best_path = evaluate_future_paths(
-                current_station, new_needed_connections_dict, duration, depth
-            )
-
-            if len(best_path) == 0:
-                break  # No valid path found
-
-            # Add the first connection from the best path to the trajectory
-            next_connection = best_path[0]
-            objects.append(next_connection)
-            duration += next_connection.duration
-            current_station = next_connection.end_station
-            new_needed_connections_dict.pop(f"{next_connection.start_station}-{next_connection.end_station}")
-
-            # Stop if adding this connection exceeds time limit
-            if duration > 120:
+    while not complete:
+        # if there are no connections yet, choose a random one that is available
+        if len(objects) <= 0:
+            # check if all connections have been ridden
+            if len(new_needed_connections_dict) == 0:
+                completed = True
                 break
+
+            # create random connection and store values
+            connection_object = random.choice(list(new_needed_connections_dict.values()))
+            start_station = connection_object.start_station
+            objects.append(connection_object)
+            duration += connection_object.duration
+            new_needed_connections_dict.pop(start_station + '-' +
+                connection_object.end_station)
+
+        # if we have >0 objects, go on from the end station of the previous connection
+        else:
+            length_before = len(objects)
+            departure_station = objects[-1].end_station
+
+            # check possible stations (connections) and append to list if it is still needed
+            possible_stations = possible_connections_dict[departure_station]
+            for station in possible_stations:
+                if departure_station + '-' + station in new_needed_connections_dict:
+                    connection_object = new_needed_connections_dict[departure_station
+                        + "-" + station]
+                    #TODO: make sure to try other stations instead of returning
+                    # if duration time goes over 120: don't add connection and return list
+                    if duration + connection_object.duration > 120:
+                        break
+
+                    # add object, count duration and remove connection from needed connections
+                    objects.append(connection_object)
+                    duration += connection_object.duration
+                    new_needed_connections_dict.pop(departure_station + '-' + station)
+                    break
+
+            # check if previous loop has added any connections
+            length_after = len(objects)
+            if length_after == length_before:
+                # choose random possible connection
+                chosen_station = random.choice(possible_stations)
+                connection_object = connection_object_dict[departure_station + "-" +
+                    chosen_station]
+
+                # if duration time goes over 120: don't add connection and return list
+                if duration + connection_object.duration > 120:
+                    break
+
+                duration += connection_object.duration
+                objects.append(connection_object)
 
     return objects, new_needed_connections_dict
 
@@ -189,19 +150,3 @@ def create_better_trajectories(trajectory_amount, connection_algorithm,
     dataframe.iloc[-1, dataframe.columns.get_loc('stations')] = score
 
     return dataframe, connection_number
-
-
-
-dataframe, connections_made = create_better_trajectories(
-    trajectory_amount=5,
-    connection_algorithm=n_deep_algorithm,
-    full_connection_dict=full_connection_dict,
-    original_connection_dict=original_connection_dict,
-    needed_connections_dict=needed_connections_dict,
-    arg1=full_connection_dict,
-    arg2=possible_connections_dict,
-    arg3=needed_connections_dict,
-    arg4=3  # Depth for n_deep_algorithm
-)
-
-print(dataframe)

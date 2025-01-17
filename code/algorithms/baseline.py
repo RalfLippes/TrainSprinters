@@ -1,25 +1,9 @@
 import random
 import copy
 import pandas as pd
-
-class Trajectory:
-    """
-    Initializes a trajectory which will store connection objects. Contains a function
-    to add a connection to the list of connections.
-    """
-    def __init__(self):
-        self.connection_list = []
-
-    def add_connection(self, connection_object):
-        """Manually add a connection object to the connection list"""
-        self.connection_list.append(connection_object)
-
-def calculate_score(connections, trajectory_amount, duration, total_connections = 28):
-    """
-    Calculates the quality of the itinerary. Outputs a score.
-    """
-    p = connections / total_connections
-    return p * 10000 - (trajectory_amount * 100 + duration)
+from code.classes.traject_class import Trajectory
+from code.classes.verbinding_class import Connection
+from code.other_functions.calculate_score import calculate_score
 
 def choose_random_connections(connection_object_dict, possible_connections_dict, connection_amount):
     """
@@ -52,7 +36,7 @@ def choose_random_connections(connection_object_dict, possible_connections_dict,
             # Create a copy of the possible station list before looping
             temp_possible_stations = copy.deepcopy(possible_stations)
 
-            # if duration time goes over 120 enter a loop where we try other connections 
+            # if duration time goes over 120 enter a loop where we try other connections
             while duration + connection_object.duration > 120:
 
                 # Remove the station we already tried

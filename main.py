@@ -1,7 +1,7 @@
 from data.Noord_Holland.load_data import get_possible_directions
 from code.classes.traject_class import Trajectory
 from code.classes.verbinding_class import Connection
-from code.visualisation.representation import create_map
+from code.visualisation.representation import create_map, plot_trajectories
 from code.visualisation.plot_distribution import plot_distribution, prepare_data_baseline
 from code.algorithms.greedy import generate_trajectory, create_better_trajectories
 from code.algorithms.baseline import choose_random_connections, create_trajectories
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     best_dataframe = run_simulated_annaeling(penalty_weight, max_duration, max_connections,
         trajectory_amount, 1000)
     print(best_dataframe)
-    create_map(best_dataframe, "data/Noord_Holland/StationsHolland.csv")
+    plot_trajectories(best_dataframe, "data/Noord_Holland/StationsHolland.csv")
 
     best_dataframe.to_csv("data/output.csv", index=False)
 

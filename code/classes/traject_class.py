@@ -9,3 +9,7 @@ class Trajectory:
     def add_connection(self, connection_object):
         """Manually add a connection object to the connection list"""
         self.connection_list.append(connection_object)
+
+    def keep_connections(self, index):
+        """Keeps all connections up to and including the given index"""
+        self.connection_list = self.connection_list[:index + 1]

@@ -25,21 +25,21 @@ if __name__ == "__main__":
     # TEST THE SIMULATE_ANNEALING ALGORITHM
     # ----------------------------
 
-    # # set parameters
-    # penalty_weight = 0.01
-    # max_duration = 120
-    # trajectory_amount = 4
-    # max_connections = 24
+    # set parameters
+    penalty_weight = 0.01
+    max_duration = 120
+    trajectory_amount = 4
+    max_connections = 24
+
+    # load data
     #
-    # # load data
-    # #
-    #
-    # best_dataframe = run_simulated_annaeling(penalty_weight, max_duration, max_connections,
-    #     trajectory_amount, 1000)
-    # print(best_dataframe)
-    # create_map(best_dataframe, "data/Noord_Holland/StationsHolland.csv")
-    #
-    # best_dataframe.to_csv("output.csv", index=False)
+
+    best_dataframe = run_simulated_annaeling(penalty_weight, max_duration, max_connections,
+        trajectory_amount, 1000)
+    print(best_dataframe)
+    create_map(best_dataframe, "data/Noord_Holland/StationsHolland.csv")
+
+    best_dataframe.to_csv("data/output.csv", index=False)
 
     # ----------------------------
 
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     #             total_connections += 1
     #             connections_list.append(dataframe2)
     #
-    #         dataframe2.to_csv("output.csv", index=False)
+    #         dataframe2.to_csv("data/output.csv", index=False)
     #
     #     print(f' total = {total_connections} with {i} amount of trajectories')
     #     print(connections_list)

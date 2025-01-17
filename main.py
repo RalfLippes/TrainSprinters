@@ -36,7 +36,8 @@ if __name__ == "__main__":
     iterations = 100
 
     best_dataframe = run_simulated_annaeling(penalty_weight, max_duration, max_connections,
-        trajectory_amount, 1000)
+        trajectory_amount, iterations, original_connection_dict, test, possible_directions,
+        full_connection_dict)
     print(best_dataframe)
     create_map(best_dataframe, "data/Noord_Holland/StationsHolland.csv")
 

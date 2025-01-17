@@ -14,21 +14,21 @@ def choose_random_connections(connection_object_dict, possible_connections_dict,
     Returns list of stations that the trajectory passes and the total duration
     of the trajectory.
     """
-    objects = []
+    trajectory = Trajectory()
     duration = 0
 
     # create given number of connection objects
     for i in range(connection_amount):
 
-        if len(objects) == 0:
+        if len(trajectory.connection_list) == 0:
             # Start with a random connection and append its first station to the list
             connection_object = random.choice(list(connection_object_dict.values()))
             start_station = connection_object.start_station
-            objects.append(connection_object)
+            trajectory.add_connection(connection_object)
             duration += connection_object.duration
 
         else:
-            departure_station = objects[-1].end_station
+            departure_station = trajectory.connection_list[-1].end_station
             possible_stations = possible_connections_dict[departure_station]
             chosen_station = random.choice(possible_stations)
             connection_object = connection_object_dict[departure_station + "-" + chosen_station]
@@ -44,7 +44,7 @@ def choose_random_connections(connection_object_dict, possible_connections_dict,
 
                 # Return the objects if the list is empty after removing
                 if len(list(temp_possible_stations)) == 0:
-                    return objects
+                    return trajectory
 
                 else:
                     chosen_station = random.choice(temp_possible_stations)
@@ -53,9 +53,9 @@ def choose_random_connections(connection_object_dict, possible_connections_dict,
 
             duration += connection_object.duration
 
-            objects.append(connection_object)
+            trajectory.add_connection(connection_object)
 
-    return objects
+    return trajectory
 
 def create_trajectories(trajectory_amount, connection_algorithm, full_connection_dict, original_connection_dict, arg1 = None, arg2 = None, arg3 = None, arg4 = None, arg5 = None, arg6 = None, arg7 = None, arg8 = None, arg9 = None, arg10 = None):
     """

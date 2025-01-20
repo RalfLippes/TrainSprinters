@@ -11,7 +11,7 @@ class Solution:
     def add_trajectory(self, trajectory):
         self.solution.append(trajectory)
 
-    def calculate_score(self, original_connection_dict):
+    def calculate_solution_score(self, original_connection_dict):
         """Calculates the score of this schedule"""
         connection_set = set()
         duration = 0
@@ -27,3 +27,17 @@ class Solution:
 
         return calculate_score(connections, trajectory_amount,
             duration, total_connections = 28)
+
+    def amount_connection(self, original_connection_dict):
+        """calculates the amount of connection in a solution"""
+        connection_set = set()
+
+        for trajectory in self.solution:
+            for connection in trajectory.connection_list:
+                if connection.start_station + '-' + connection.end_station in original_connection_dict:
+                    connection_key = f"{connection.start_station}-{connection.end_station}"
+                    connection_set.add(connection_key)
+
+        return len(connection_set)
+
+        

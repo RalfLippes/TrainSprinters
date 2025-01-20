@@ -1,7 +1,8 @@
 from data.Noord_Holland.load_data import get_possible_directions, create_connections, load_station_objects
 from code.classes.traject_class import Trajectory
 from code.classes.verbinding_class import Connection
-from code.visualisation.representation import create_map, plot_trajectories
+from code.classes.oplossing_class import Solution
+from code.visualisation.representation import create_map
 from code.visualisation.plot_distribution import plot_distribution, prepare_data_baseline
 from code.algorithms.greedy import generate_trajectory, create_better_trajectories
 from code.algorithms.baseline import choose_random_connections, create_trajectories
@@ -19,31 +20,38 @@ import pandas as pd
 
 if __name__ == "__main__":
 
-    possible_directions, corrected_df, original_df = get_possible_directions("data/Noord_Holland/ConnectiesHolland.csv")
+    possible_directions, corrected_df, original_df = get_possible_directions("data/Nationaal/ConnectiesNationaal.csv")
     full_connection_dict = create_connections(corrected_df)
     original_connection_dict = create_connections(original_df)
-    stations_csv = pd.read_csv("data/Noord_Holland/StationsHolland.csv")
+    stations_csv = pd.read_csv("data/Nationaal/StationsNationaal.csv")
     station_locations = load_station_objects(stations_csv)
 
 
     # TEST THE SIMULATE_ANNEALING ALGORITHM
     # ----------------------------
-    # create schedule with 5 random trajectories
-    trajectories = []
-    for i in range(5):
-        trajectories.append(choose_random_connections(full_connection_dict, possible_directions, 24))
-
-    # do a few simulated annealings k
+    # do a few simulated annealings
+    temperature = 250
+    cooling_rate = 0.95
     best_score = 0
     best_solution = None
-    for i in range(100):
-        try_out = simulated_annealing(trajectories, choose_random_connections, full_connection_dict,
-            possible_directions, 24, 4, 10000, 0.999, 10000, original_connection_dict)
-        if try_out.calculate_score(original_connection_dict) > best_score:
-            best_solution = try_out
-        print(f"{i / 100 * 100}% done")
+    best_temperature = None
+    best_cooling_rate = None
+
+
+    for x in range(1):
+        for a in range(9, 20):
+            trajectories = Solution()
+            for b in range(a):
+                trajectories.add_trajectory(choose_random_connections(full_connection_dict, possible_directions, 36))
+            try_out = simulated_annealing(trajectories, choose_random_connections, full_connection_dict,
+                possible_directions, 36, a, temperature, cooling_rate, 2000, original_connection_dict)
+            if try_out.calculate_solution_score(original_connection_dict) > best_score:
+                best_solution = try_out
+
+            print("1 done")
+
     df = create_dataframe_from_solution(best_solution, original_connection_dict)
-    create_map(df, "data/Noord_Holland/StationsHolland.csv")
+    create_map(df, "data/Nationaal/StationsNationaal.csv")
     print(df)
     # ----------------------------
 

@@ -11,7 +11,7 @@ class Solution:
     def add_trajectory(self, trajectory):
         self.solution.append(trajectory)
 
-    def calculate_score(self, original_connection_dict):
+    def calculate_solution_score(self, original_connection_dict):
         """Calculates the score of this schedule"""
         connection_set = set()
         duration = 0

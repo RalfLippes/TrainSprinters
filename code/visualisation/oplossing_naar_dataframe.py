@@ -4,7 +4,7 @@ def create_dataframe_from_solution(solution, original_connection_dict):
     """
     Creates dataframe in correct format from solution object.
     """
-    score = solution.calculate_score(original_connection_dict)
+    score = solution.calculate_solution_score(original_connection_dict)
     dataframe = pd.DataFrame(columns = ['train', 'stations'])
     row_index = 0
 

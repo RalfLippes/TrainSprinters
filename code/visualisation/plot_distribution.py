@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import random
 from ..algorithms.baseline import create_trajectories
+from code.classes.oplossing_class import Solution
 
 def plot_distribution(data, bins_amount, title, xlabel, plot_name):
     plt.figure(figsize=(8, 6))
@@ -16,14 +17,14 @@ def plot_distribution(data, bins_amount, title, xlabel, plot_name):
     plt.show()
 
 
-def prepare_data_baseline(iterations, full_connection_dict, original_connection_dict,
-    possible_directions, choose_random_connections, use_all_trajectories = True):
+def prepare_data_baseline(all_connections_number, iterations, full_connection_dict, original_connection_dict,
+    possible_directions, choose_random_connections, max_connections, max_duration, min_trains, max_trains):
     # get statistics from random samples of solutions
     results = []
     total_score = []
     total_connections = []
 
-    loop_range = range(4, 8) if use_all_trajectories else range(7, 8)
+    loop_range = range(min_trains, max_trains + 1)
 
     for i in loop_range:
         score = []
@@ -33,11 +34,14 @@ def prepare_data_baseline(iterations, full_connection_dict, original_connection_
 
         fully_connected_iterations = 0
         for j in range(iterations):
-            current_df, connection_number = create_trajectories(
-                i, choose_random_connections, full_connection_dict,
-                original_connection_dict, full_connection_dict, possible_directions,
-                random.randint(1, 24))
+            solution = Solution()
+            for number in range(i):
+                solution.add_trajectory(choose_random_connections(full_connection_dict,
+                    possible_directions, max_connections, max_duration))
 
+            connection_number = solution.amount_connection(original_connection_dict)
+            current_df = solution.create_dataframe_from_solution(original_connection_dict,
+                all_connections_number)
 
             score.append(current_df['stations'].iloc[-1])
             total_score.append(current_df['stations'].iloc[-1])
@@ -45,7 +49,7 @@ def prepare_data_baseline(iterations, full_connection_dict, original_connection_
             connections.append(connection_number)
             total_connections.append(connection_number)
 
-            if connection_number == 28:
+            if connection_number == all_connections_number:
                 fully_connected_iterations += 1
 
             if current_df['stations'].iloc[-1] > highest_score:

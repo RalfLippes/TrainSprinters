@@ -5,7 +5,7 @@ from code.classes.traject_class import Trajectory
 from code.classes.verbinding_class import Connection
 from code.other_functions.calculate_score import calculate_score
 
-def choose_random_connections(connection_object_dict, possible_connections_dict, connection_amount):
+def choose_random_connections(connection_object_dict, possible_connections_dict, max_connections, max_duration):
     """
     Takes a dictionary with strings as keys in the form 'Startstation-Endstation'
     and values of connection objects. Makes a list of n random connections,
@@ -18,7 +18,7 @@ def choose_random_connections(connection_object_dict, possible_connections_dict,
     duration = 0
 
     # create given number of connection objects
-    for i in range(connection_amount):
+    for i in range(random.randint(1, max_connections + 1)):
 
         if len(trajectory.connection_list) == 0:
             # Start with a random connection and append its first station to the list
@@ -37,7 +37,7 @@ def choose_random_connections(connection_object_dict, possible_connections_dict,
             temp_possible_stations = copy.deepcopy(possible_stations)
 
             # if duration time goes over 120 enter a loop where we try other connections
-            while duration + connection_object.duration > 120:
+            while duration + connection_object.duration > max_duration:
 
                 # Remove the station we already tried
                 temp_possible_stations.remove(chosen_station)
@@ -57,7 +57,7 @@ def choose_random_connections(connection_object_dict, possible_connections_dict,
 
     return trajectory
 
-def create_trajectories(trajectory_amount, connection_algorithm, full_connection_dict, original_connection_dict, arg1 = None, arg2 = None, arg3 = None, arg4 = None, arg5 = None, arg6 = None, arg7 = None, arg8 = None, arg9 = None, arg10 = None):
+def create_trajectories(trajectory_amount, connection_algorithm, full_connection_dict, original_connection_dict, total_connections, arg1 = None, arg2 = None, arg3 = None, arg4 = None, arg5 = None, arg6 = None, arg7 = None, arg8 = None, arg9 = None, arg10 = None):
     """
     Creates a given number of trajectories. Uses a specified method to select
     connections for the trajectories. Make sure to provide the arguments needed
@@ -84,7 +84,7 @@ def create_trajectories(trajectory_amount, connection_algorithm, full_connection
         iteration = 0
 
         # make list of stations from objects in list
-        for item in list(current_connections):
+        for item in current_connections.connection_list:
             # append start and end station for first station in trajectory
             if iteration == 0:
                 station_list.append(item.start_station)
@@ -117,7 +117,7 @@ def create_trajectories(trajectory_amount, connection_algorithm, full_connection
     connection_number = len(set_connections)
 
     # calculate itinerary score and put into dataframe
-    score = calculate_score(connection_number, trajectory_amount, total_duration)
+    score = calculate_score(connection_number, trajectory_amount, total_duration, total_connections)
     dataframe.iloc[-1, dataframe.columns.get_loc('train')] = 'score'
     dataframe.iloc[-1, dataframe.columns.get_loc('stations')] = score
 

@@ -25,7 +25,6 @@ class Solution:
                     connection_set.add(connection_key)
                 duration += connection.duration
         connections = len(connection_set)
-
         return calculate_score(connections, trajectory_amount,
             duration, total_connections)
 
@@ -40,6 +39,14 @@ class Solution:
                     connection_set.add(connection_key)
 
         return len(connection_set)
+
+    def find_duration(self):
+        total_duration = 0
+        for trajectory in self.solution:
+            for connection in trajectory.connection_list:
+                total_duration += connection.duration
+
+        return total_duration
 
     def create_dataframe_from_solution(self, original_connection_dict, total_connections):
         """

@@ -66,13 +66,13 @@ if __name__ == "__main__":
     # max_connections = 100
     # iterations = 100
     #
-    # best_dataframe = run_simulated_annaeling(penalty_weight, max_duration, max_connections,
-    #     trajectory_amount, iterations, original_connection_dict, station_locations, possible_directions,
-    #     full_connection_dict)
-    # print(best_dataframe)
-    # create_map(best_dataframe, "data/Noord_Holland/StationsHolland.csv")
-    #
-    # best_dataframe.to_csv("data/output.csv", index=False)
+
+    best_dataframe = run_simulated_annaeling(penalty_weight, max_duration, max_connections,
+        trajectory_amount, 1000)
+    print(best_dataframe)
+    plot_trajectories(best_dataframe, "data/Noord_Holland/StationsHolland.csv")
+
+    best_dataframe.to_csv("data/output.csv", index=False)
 
     # ----------------------------
 

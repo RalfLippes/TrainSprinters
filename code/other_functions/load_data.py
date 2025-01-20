@@ -74,3 +74,40 @@ def load_station_objects(csv_file):
         stations_dictionary[station] = Station(x, y, station)
 
     return stations_dictionary
+
+def set_parameters(holland_national, connections_path_1, stations_path_1,
+    connections_path_2, stations_path_2):
+
+    if holland_national.lower() == 'holland':
+        possible_directions, corrected_df, original_df = get_possible_directions(connections_path_2)
+        stations_csv = pd.read_csv(stations_path_2)
+        full_connection_dict = create_connections(corrected_df)
+        original_connection_dict = create_connections(original_df)
+        station_locations = load_station_objects(stations_csv)
+        total_connections = 28
+        max_connections = 24
+        temperature = 250
+        cooling_rate = 0.95
+        min_trains = 4
+        max_trains = 7
+        iterations = 2000
+        max_duration = 120
+
+    elif holland_national.lower() == 'nationaal':
+        possible_directions, corrected_df, original_df = get_possible_directions(connections_path_1)
+        stations_csv = pd.read_csv(stations_path_1)
+        full_connection_dict = create_connections(corrected_df)
+        original_connection_dict = create_connections(original_df)
+        station_locations = load_station_objects(stations_csv)
+        total_connections = 89
+        max_connections = 36
+        temperature = 1000
+        cooling_rate = 0.99
+        min_trains = 9
+        max_trains = 20
+        iterations = 10000
+        max_duration = 180
+
+    return (possible_directions, full_connection_dict, original_connection_dict,
+    station_locations, total_connections, max_connections, temperature, cooling_rate,
+    min_trains, max_trains, iterations, max_duration)

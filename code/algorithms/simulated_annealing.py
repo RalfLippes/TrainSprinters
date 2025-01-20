@@ -63,7 +63,7 @@ def simulated_annealing(trajectories, connection_function, connection_object_dic
 
     # set current objects to input values
     current_trajectories = trajectories.solution
-    current_connections = find_connection_amount(current_trajectories, original_connection_dict)
+    current_connections = trajectories.amount_connection(original_connection_dict)
     current_duration = find_duration(current_trajectories)
     current_score = calculate_score(current_connections, trajectory_amount,
         current_duration, total_connections = 28)

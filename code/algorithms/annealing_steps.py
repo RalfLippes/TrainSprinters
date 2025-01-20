@@ -117,7 +117,7 @@ def trim_trajectory(trajectory, needed_connections_dict):
 
     return trajectory
 
-def create_simulated_annealing_trajectory(coordinates_stations, needed_connections_dict,
+def create_annealing_steps_trajectory(coordinates_stations, needed_connections_dict,
     possible_connections_dict, full_connection_dict, penalty_weight, max_duration, max_connections):
     """
     Creates a trajectory using simulated annealing.

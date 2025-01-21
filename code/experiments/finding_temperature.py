@@ -14,14 +14,14 @@ def find_best_temp_and_cooling(full_connection_dict, possible_directions,
     Experiment function to try and find the best combination of temperature and
     cooling rate for the simulated annealing function. Runs the simulated annealing
     algorithm with different values of temperature and cooling rate and returns
-    various statistics such as average and standard deviation (per temperature and
-    cooling rate combination).
+    various a dataframe with the average score per combination of temperature and
+    cooling rate.
     """
     solution_list = []
     combinations_dictionary = {}
 
     # create 100 solutions to test these on
-    for i in range(2):
+    for i in range(100):
         solution = Solution()
         needed_connections_dict = copy.deepcopy(original_connection_dict)
         for a in range(random.randint(min_trains, max_trains)):

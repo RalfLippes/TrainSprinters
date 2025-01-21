@@ -128,11 +128,12 @@ def create_annealing_steps_trajectory(coordinates_stations, needed_connections_d
     temperature = max_connections
 
     # choose first connection at random and add information to the list
-    current_connection = needed_connections_dict[random.choice(list(new_needed_connections_dict))]
-    trajectory.add_connection(current_connection)
-    total_duration += current_connection.duration
-    current_station = coordinates_stations[current_connection.end_station]
-    new_needed_connections_dict.pop(current_connection.start_station + '-' + current_connection.end_station)
+    if len(new_needed_connections_dict) > 0:
+        current_connection = needed_connections_dict[random.choice(list(new_needed_connections_dict))]
+        trajectory.add_connection(current_connection)
+        total_duration += current_connection.duration
+        current_station = coordinates_stations[current_connection.end_station]
+        new_needed_connections_dict.pop(current_connection.start_station + '-' + current_connection.end_station)
 
     # repeat until the trajectory is complete (temperature is 0)
     while temperature != 0 and len(new_needed_connections_dict) > 0:

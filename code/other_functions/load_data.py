@@ -92,6 +92,7 @@ def set_parameters(holland_national, connections_path_1, stations_path_1,
         max_trains = 7
         iterations = 2000
         max_duration = 120
+        plot_title = 'Average Scores by Temperature and Cooling Rate for Holland'
 
     elif holland_national.lower() == 'nationaal':
         possible_directions, corrected_df, original_df = get_possible_directions(connections_path_1)
@@ -107,7 +108,8 @@ def set_parameters(holland_national, connections_path_1, stations_path_1,
         max_trains = 20
         iterations = 10000
         max_duration = 180
+        plot_title = 'Average Scores by Temperature and Cooling Rate for the Netherlands'
 
     return (possible_directions, full_connection_dict, original_connection_dict,
     station_locations, total_connections, max_connections, temperature, cooling_rate,
-    min_trains, max_trains, iterations, max_duration)
+    min_trains, max_trains, iterations, max_duration, plot_title)

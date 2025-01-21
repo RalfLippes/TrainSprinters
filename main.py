@@ -10,14 +10,19 @@ from code.algorithms.baseline import choose_random_connections, create_trajector
 from code.algorithms.three_deep_algorithm import n_deep_algorithm, create_deep_trajectories
 from code.algorithms.annealing_steps import load_station_location_data, annealing_cost_function, find_nearest_connection, create_annealing_steps_trajectory, create_dataframe_annealing
 from code.algorithms.simulated_annealing import simulated_annealing
+from code.algorithms.call_algorithm.run_simulated_annealing import run_with_time_limit, plot_outcomes_simulated_annealing
 from code.experiments.finding_temperature import find_best_temp_and_cooling
 import copy
 import random
 import numpy as np
 import pandas as pd
 import argparse
+import time
 
 if __name__ == "__main__":
+
+    # set a seed for the randomizations
+    random.seed(42)
 
     # arg parser
     parser = argparse.ArgumentParser(description = 'Holland or Nationaal')
@@ -28,7 +33,8 @@ if __name__ == "__main__":
     try:
         (possible_directions, full_connection_dict, original_connection_dict,
             station_locations, total_connections, max_connections, temperature,
-            cooling_rate, min_trains, max_trains, iterations, max_duration, plot_title
+            cooling_rate, min_trains, max_trains, iterations, max_duration, plot_title,
+            penalty_weight
         ) = set_parameters(args.holland_nationaal, "data/Nationaal/ConnectiesNationaal.csv",
             "data/Nationaal/StationsNationaal.csv", "data/Noord_Holland/ConnectiesHolland.csv",
             "data/Noord_Holland/StationsHolland.csv")
@@ -37,16 +43,36 @@ if __name__ == "__main__":
         print("Please run main in format 'python main.py [holland/nationaal]'")
         print("-------------------------------------------------------------")
 
-    temperature_values = [10000, 5000, 2000, 1000, 500, 200, 100, 50]
-    cooling_rate_values = [0.9999, 0.999, 0.99, 0.95, 0.9, 0.8]
-    penalty_weight = 0.1
-    combinations_df = find_best_temp_and_cooling(full_connection_dict, possible_directions,
-        original_connection_dict, station_locations, max_duration, max_connections, min_trains,
-        max_trains, total_connections, iterations, penalty_weight, temperature_values,
-        cooling_rate_values)
+    # ----------------------------
 
-    print(combinations_df.head(10))
-    plot_temp_cool_scores(combinations_df, plot_title)
+    # run sim anneal for a given amount of seconds
+    #----------------------------
+    best_score, best_iteration, best_solution, scores = run_with_time_limit(21600,
+        min_trains, max_trains, original_connection_dict,
+        station_locations, possible_directions, full_connection_dict, penalty_weight,
+        max_duration, max_connections, temperature, cooling_rate, iterations, total_connections)
+    sim_dataframe = best_solution.create_dataframe_from_solution(original_connection_dict, total_connections)
+    print(sim_dataframe)
+    plot_outcomes_simulated_annealing(scores, args.holland_nationaal)
+    if args.holland_nationaal == 'holland':
+        sim_dataframe.to_csv("data/output/simulated_best_solution_holland.csv")
+    else:
+        sim_dataframe.to_csv("data/output/simulated_best_solution_national.csv")
+
+    # ----------------------------
+
+    #Find out the best temperature and cooling rates
+    #----------------------------
+    # temperature_values = [10000, 5000, 2000, 1000, 500, 200, 100, 50]
+    # cooling_rate_values = [0.9999, 0.999, 0.99, 0.95, 0.9, 0.8]
+    # penalty_weight = 0.1
+    # combinations_df = find_best_temp_and_cooling(full_connection_dict, possible_directions,
+    #     original_connection_dict, station_locations, max_duration, max_connections, min_trains,
+    #     max_trains, total_connections, iterations, penalty_weight, temperature_values,
+    #     cooling_rate_values)
+    #
+    # print(combinations_df.head(10))
+    # plot_temp_cool_scores(combinations_df, plot_title)
 
     # TEST THE SIMULATE_ANNEALING ALGORITHM
     # ----------------------------
@@ -98,20 +124,6 @@ if __name__ == "__main__":
     #
     # plot_distribution(baseline_dataframe, 50, 'Title', 'Score', 'Baseline national plot')
 
-
-    # ----------------------------
-
-    # TEST THE ANNEALING_STEPS ALGORITHM
-    # ----------------------------
-
-    # set parameters
-    # penalty_weight = 0.01
-    # max_duration = 120
-    # trajectory_amount = 4
-    # max_connections = 100
-    # iterations = 100
-    #
-
     # ----------------------------
 
 
@@ -121,7 +133,6 @@ if __name__ == "__main__":
     # run_n_deep_algorithm(100, 3, loading_popup=False)
 
     # ----------------------------
-
 
     # TEST THE BASE_LINE ALGORITHM
     # ----------------------------
@@ -157,28 +168,30 @@ if __name__ == "__main__":
     # total_score, total_connections, baseline_dataframe = prepare_data_baseline(100,
     #     full_connection_dict, original_connection_dict, possible_directions,
     #     choose_random_connections)
-    #
+
     # score_7_trajectories, connections_7_trajectories, dataframe_7_trajectories = prepare_data_baseline(
-    #     100, full_connection_dict, original_connection_dict, possible_directions,
-    #     choose_random_connections, False)
+    #     28, 100, full_connection_dict, original_connection_dict, possible_directions,
+    #     choose_random_connections, max_connections, max_duration, min_trains, max_trains)
     #
     # # set correct amount of bins
     # bin_edges = np.linspace(0, 28, 29)
     #
-    # # plot the values
+    # # plot the values for 7 trajectories
+    # plot_distribution(score_7_trajectories, 10000, "Average distribution of Scores with 7 Trajectories" ,
+    #     "Score", "7_trajectories_score_distribution")
+    # plot_distribution(connections_7_trajectories, bin_edges,
+    #     "Average distribution of unique connections with 7 Trajectories" , "Connections",
+    #     "7_trajectories_connections_distribution")
+
+    # # plot the values for all trajectory amounts
     # plot_distribution(total_score, 30, "Average distribution of Scores" , "Score",
     #     "code/visualisation/total_score_distribution")
     # plot_distribution(total_connections, bin_edges, "Average distribution of Connections",
     #     "Connections", "code/visualisation/total_connections_distribution")
-    # plot_distribution(score_7_trajectories, 30, "Average distribution of Scores with 7 Trajectories" ,
-    #     "Score", "code/visualisation/7_trajectories_score_distribution")
-    # plot_distribution(connections_7_trajectories, bin_edges,
-    #     "Average distribution of unique connections with 7 Trajectories" , "Connections",
-    #     "code/visualisation/7_trajectories_connections_distribution")
-    #
+
     # # display the dataframe
     # baseline_dataframe.to_csv('code/visualisation/trajectories_statistics.csv', index=False)
-
+    #
     # create_map(dataframe2, "data/Noord_Holland/StationsHolland.csv")
 
     # ----------------------------

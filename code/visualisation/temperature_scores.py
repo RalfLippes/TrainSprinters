@@ -10,4 +10,4 @@ def plot_temp_cool_scores(scores_dataframe, title):
     plt.title(title)
     plt.xlabel('Cooling Rate')
     plt.ylabel('Temperature')
-    plt.savefig(f"data/output/{plot_title}.png")
+    plt.savefig(f"data/output/{title}.png")

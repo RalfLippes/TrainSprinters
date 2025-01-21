@@ -86,8 +86,8 @@ def set_parameters(holland_national, connections_path_1, stations_path_1,
         station_locations = load_station_objects(stations_csv)
         total_connections = 28
         max_connections = 24
-        temperature = 250
-        cooling_rate = 0.95
+        temperature = 500
+        cooling_rate = 0.9
         min_trains = 4
         max_trains = 7
         iterations = 2000
@@ -106,10 +106,12 @@ def set_parameters(holland_national, connections_path_1, stations_path_1,
         cooling_rate = 0.99
         min_trains = 9
         max_trains = 20
-        iterations = 10000
+        iterations = 8000
         max_duration = 180
         plot_title = 'Average Scores by Temperature and Cooling Rate for the Netherlands'
 
+    penalty_weight = 0.1
+
     return (possible_directions, full_connection_dict, original_connection_dict,
     station_locations, total_connections, max_connections, temperature, cooling_rate,
-    min_trains, max_trains, iterations, max_duration, plot_title)
+    min_trains, max_trains, iterations, max_duration, plot_title, penalty_weight)

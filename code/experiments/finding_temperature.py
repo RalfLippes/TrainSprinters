@@ -21,7 +21,7 @@ def find_best_temp_and_cooling(full_connection_dict, possible_directions,
     combinations_dictionary = {}
 
     # create 100 solutions to test these on
-    for i in range(100):
+    for i in range(50):
         solution = Solution()
         needed_connections_dict = copy.deepcopy(original_connection_dict)
         for a in range(random.randint(min_trains, max_trains)):

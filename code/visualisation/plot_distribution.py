@@ -8,12 +8,13 @@ from code.classes.oplossing_class import Solution
 
 def plot_distribution(data, bins_amount, title, xlabel, plot_name):
     plt.figure(figsize=(8, 6))
-    sns.histplot(data, kde=True, bins=bins_amount, color='skyblue', label='Histogram with KDE', kde_kws={'bw_adjust': 1.5})
+    sns.histplot(data, kde=True, bins='auto', color='skyblue', label='Histogram with KDE', kde_kws={'bw_adjust': 1.5})
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel('Frequency')
+    plt.xlim(0, 10000)
     plt.legend()
-    plt.savefig(plot_name)
+    plt.savefig(f"data/output/{plot_name}")
     plt.show()
 
 

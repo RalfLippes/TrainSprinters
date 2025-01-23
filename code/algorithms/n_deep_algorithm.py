@@ -5,13 +5,11 @@ from code.classes.traject_class import Trajectory
 from code.classes.verbinding_class import Connection
 from code.other_functions.calculate_score import calculate_score
 
-
 def calculate_new_score(new_connections_made, current_time):
     """
     Calculates the score based on new connections and time.
     """
     return calculate_score(new_connections_made, 1, current_time)
-
 
 def get_valid_next_connections(current_station, available_connections, possible_connections, current_time, time_limit=120):
     """
@@ -26,7 +24,6 @@ def get_valid_next_connections(current_station, available_connections, possible_
         if connection is not None and current_time + connection.duration <= time_limit:
             valid_connections.append((connection_key, connection, next_station))
     return valid_connections
-
 
 def explore_paths(current_station, available_connections, used_connections, needed_connections,
                   possible_connections, current_time, steps_left):
@@ -66,7 +63,6 @@ def explore_paths(current_station, available_connections, used_connections, need
 
     return best_score, list(best_path)
 
-
 def initialize_route(needed_connections):
     """
     Initializes the route with a random connection from the needed connections.
@@ -77,9 +73,8 @@ def initialize_route(needed_connections):
     current_station = first_connection.end_station
     used_connections = {f"{first_connection.start_station}-{first_connection.end_station}"}
     needed_connections.pop(f"{first_connection.start_station}-{first_connection.end_station}")
-    
-    return route, total_time, current_station, used_connections
 
+    return route, total_time, current_station, used_connections
 
 def n_deep_algorithm(connection_data, possible_connections, needed_connections, depth=3):
     """
@@ -116,9 +111,6 @@ def n_deep_algorithm(connection_data, possible_connections, needed_connections, 
                 break
 
     return route, remaining_needed_connections
-
-
-
 
 def create_deep_trajectories(trajectory_amount, connection_algorithm,
     full_connection_dict, original_connection_dict, needed_connections_dict,

@@ -4,10 +4,11 @@ import copy
 import matplotlib.pyplot as plt
 from code.classes.oplossing_class import Solution
 from code.algorithms.annealing_steps import create_solution_annealing
+from code.visualisation.representation import plot_trajectories
 
 def annealing_steps_with_time_limit(time_limit, min_trains, max_trains, original_connection_dict,
     station_dictionary, possible_directions, full_connection_dict, penalty_weight,
-    max_duration, max_connections, temperature, cooling_rate, iterations, total_connections):
+    max_duration, max_connections, temperature, cooling_rate, total_connections):
     """
     Runs the annealing steps algorithm for a given amount of time. Saves and returns
     the best score, the iteration number of the best score and the best solution.
@@ -64,15 +65,14 @@ def plot_outcomes_annealing_steps(scores, national = False):
         plt.savefig('data/output/annealing_steps_histogram_holland.png')
 
 def handle_annealing_steps(args, possible_directions, full_connection_dict, original_connection_dict,
-    station_dictionary, total_connections, max_connections, temperature,
-    cooling_rate, min_trains, max_trains, iterations, max_duration, plot_title,
-    penalty_weight):
+    station_dictionary, max_connections, temperature, cooling_rate, min_trains, max_trains,
+    max_duration, plot_title, penalty_weight, total_connections):
     """Runs the annealing steps algorithm for a given time and saves the results."""
     # save best scores, best iteration, best solution and all scores
     best_score, best_iteration, best_solution, scores = annealing_steps_with_time_limit(
         args.time, min_trains, max_trains, original_connection_dict, station_dictionary,
         possible_directions, full_connection_dict, penalty_weight, max_duration,
-        max_connections, temperature, cooling_rate, iterations, total_connections)
+        max_connections, temperature, cooling_rate, total_connections)
 
     # create a dataframe from the scores
     dataframe = best_solution.create_dataframe_from_solution(original_connection_dict,

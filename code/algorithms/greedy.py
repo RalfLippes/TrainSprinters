@@ -7,7 +7,7 @@ from code.classes.oplossing_class import Solution
 from code.other_functions.calculate_score import calculate_score
 
 def generate_trajectory(full_connection_dict, possible_directions,
-    needed_connections_dict):
+    needed_connections_dict, max_duration):
     """
     generates a random trajectory by preferring to choose from the connections that
     have not been chosen yet (provided in needed_connections). Takes a dictionary
@@ -51,7 +51,7 @@ def generate_trajectory(full_connection_dict, possible_directions,
                         + "-" + station]
 
                     # if duration time goes over 120: don't add connection and go to next one
-                    if duration + connection_object.duration > 120:
+                    if duration + connection_object.duration > max_duration:
                         continue
 
                     # add object, count duration and remove connection from needed connections
@@ -71,7 +71,7 @@ def generate_trajectory(full_connection_dict, possible_directions,
                     chosen_station]
 
                     # if duration time goes over 120: go to next connection
-                    if duration + connection_object.duration > 120:
+                    if duration + connection_object.duration > max_duration:
                         continue
 
                     # if valid, count duration and add connection object to list
@@ -83,7 +83,8 @@ def generate_trajectory(full_connection_dict, possible_directions,
     return trajectory, new_needed_connections_dict
 
 def create_better_trajectories(trajectory_amount, full_connection_dict,
-    original_connection_dict, needed_connections_dict, possible_directions):
+    original_connection_dict, needed_connections_dict, possible_directions,
+    max_duration):
     """
     Creates a given number of trajectories. Uses greedy algorithm to select
     connections for the trajectories. Returns a solution object.
@@ -98,7 +99,8 @@ def create_better_trajectories(trajectory_amount, full_connection_dict,
         # find connections according to the given connection algorithm
         if len(needed_connections) > 0:
             current_connections, needed_connections = generate_trajectory(
-                full_connection_dict, possible_directions, needed_connections_dict)
+                full_connection_dict, possible_directions, needed_connections_dict,
+                max_duration)
 
         solution.add_trajectory(current_connections)
 

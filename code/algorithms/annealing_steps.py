@@ -128,20 +128,27 @@ def create_annealing_steps_trajectory(coordinates_stations, needed_connections_d
     temperature = max_connections
 
     # choose first connection at random and add information to the list
-    current_connection = needed_connections_dict[random.choice(list(new_needed_connections_dict))]
-    trajectory.add_connection(current_connection)
-    total_duration += current_connection.duration
-    current_station = coordinates_stations[current_connection.end_station]
-    new_needed_connections_dict.pop(current_connection.start_station + '-' + current_connection.end_station)
+    if len(new_needed_connections_dict) > 0:
+        current_connection = needed_connections_dict[random.choice(list(new_needed_connections_dict))]
+        trajectory.add_connection(current_connection)
+        total_duration += current_connection.duration
+        current_station = coordinates_stations[current_connection.end_station]
+        new_needed_connections_dict.pop(current_connection.start_station + '-' + current_connection.end_station)
 
     # repeat until the trajectory is complete (temperature is 0)
     while temperature != 0 and len(new_needed_connections_dict) > 0:
         nearest_connection = find_nearest_connection(coordinates_stations,
             current_station, new_needed_connections_dict)
         at_destination = False
+        max_attempts = 1000
+        attempts = 0
 
         # if not, loop this until we are at the nearest connection
         while not at_destination:
+            attempts += 1
+            if attempts > max_attempts:
+                temperature = 0
+                break
             possible_connections = possible_connections_dict[current_station.name]
 
             # check if the current station is already at the start of the nearest connection
@@ -162,6 +169,7 @@ def create_annealing_steps_trajectory(coordinates_stations, needed_connections_d
 
                 # if this goes over time limit, stop searching
                 else:
+                    trajectory = trim_trajectory(trajectory, needed_connections_dict)
                     return trajectory, new_needed_connections_dict
 
             # check if a direct connection to nearest connection start station is possible
@@ -183,6 +191,7 @@ def create_annealing_steps_trajectory(coordinates_stations, needed_connections_d
 
                 # if this goes over time limit, stop searching
                 else:
+                    trajectory = trim_trajectory(trajectory, needed_connections_dict)
                     return trajectory, new_needed_connections_dict
 
             # variable to check if any routes are accepted
@@ -246,7 +255,6 @@ def create_annealing_steps_trajectory(coordinates_stations, needed_connections_d
 
     # remove stations after last needed station (since those aren't necessary)
     trajectory = trim_trajectory(trajectory, needed_connections_dict)
-
     return trajectory, new_needed_connections_dict
 
 def create_dataframe_annealing(trajectories, trajectory_amount,

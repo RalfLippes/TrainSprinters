@@ -1,5 +1,5 @@
 from code.algorithms.annealing_steps import load_station_location_data, annealing_cost_function, find_nearest_connection, create_annealing_steps_trajectory, create_dataframe_annealing
-from data.Noord_Holland.load_data import get_possible_directions
+from code.other_functions.load_data import get_possible_directions
 from code.other_functions.create_connection_dict import create_connections
 import copy
 

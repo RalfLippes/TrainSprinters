@@ -1,6 +1,7 @@
 from code.other_functions.load_data import get_possible_directions, create_connections, load_station_objects, set_parameters
 from code.other_functions.argparser import create_arg_parser
 from code.algorithms.call_algorithm.run_simulated_annealing import handle_simulated_annealing
+from code.algorithms.call_algorithm.run_hill_climber import handle_hill_climber
 from code.algorithms.call_algorithm.run_annealing_steps import handle_annealing_steps
 from code.algorithms.call_algorithm.run_greedy import handle_greedy
 from code.algorithms.call_algorithm.run_baseline import handle_baseline
@@ -40,6 +41,11 @@ if __name__ == "__main__":
         handle_simulated_annealing(args, possible_directions, full_connection_dict, original_connection_dict,
             station_dictionary, total_connections, max_connections, temperature,
             cooling_rate, min_trains, max_trains, iterations, max_duration, plot_title,
+            penalty_weight)
+
+    if args.run_algorithm.lower() == 'hill_climber':
+        handle_hill_climber(args, possible_directions, full_connection_dict, original_connection_dict,
+            station_dictionary, total_connections, max_connections, min_trains, max_trains, iterations, max_duration, plot_title,
             penalty_weight)
 
     # run greedy

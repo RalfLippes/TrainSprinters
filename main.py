@@ -74,8 +74,8 @@ if __name__ == "__main__":
 
     # TEST THE N_DEEP_ALGORITHM ALGORITHM
     # ----------------------------
-
-    # run_n_deep_algorithm(100, 3, loading_popup=False)
+    random.seed()
+    run_n_deep_algorithm(100, 14, loading_popup=False)
 
     # ----------------------------
 

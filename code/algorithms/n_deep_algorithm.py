@@ -4,6 +4,7 @@ import copy
 from code.classes.traject_class import Trajectory
 from code.classes.verbinding_class import Connection
 from code.other_functions.calculate_score import calculate_score
+import random
 
 
 def calculate_new_score(new_connections_made, current_time):
@@ -11,7 +12,6 @@ def calculate_new_score(new_connections_made, current_time):
     Calculates the score based on new connections and time.
     """
     return calculate_score(new_connections_made, 1, current_time)
-
 
 def get_valid_next_connections(current_station, available_connections, possible_connections, current_time, time_limit=120):
     """
@@ -27,32 +27,45 @@ def get_valid_next_connections(current_station, available_connections, possible_
             valid_connections.append((connection_key, connection, next_station))
     return valid_connections
 
-
 def explore_paths(current_station, available_connections, used_connections, needed_connections,
-                  possible_connections, current_time, steps_left):
+                  possible_connections, current_time, steps_left, steps_without_new_connection=0, max_no_new_steps=8):
     """
     Explores possible routes up to a certain depth. Returns the best score and path.
+    Terminates if no new connections are made within a specified number of steps.
     """
+    # If steps run out or there are no available connections
     if steps_left == 0 or not available_connections:
         new_connections_made = len(needed_connections) - len(available_connections)
         return calculate_new_score(new_connections_made, current_time), []
+
+    # Terminate if too many steps have passed without new connections
+    if steps_without_new_connection >= max_no_new_steps:
+        return float('-inf'), []
 
     path_scores = {}
     valid_connections = get_valid_next_connections(
         current_station, available_connections, possible_connections, current_time)
 
     for connection_key, connection, next_station in valid_connections:
+        # Check if this connection makes a new connection
+        is_new_connection = connection_key in needed_connections
+
         updated_used_connections = used_connections.copy()
         updated_used_connections.add(connection_key)
 
         updated_available_connections = copy.deepcopy(available_connections)
         updated_available_connections.pop(connection_key)
 
+        # Increment steps_without_new_connection if no new connection is made
+        new_steps_without_new_connection = steps_without_new_connection + (0 if is_new_connection else 1)
+
+        # Explore further paths
         future_score, future_path = explore_paths(
             next_station, updated_available_connections, updated_used_connections, needed_connections,
-            possible_connections, current_time + connection.duration, steps_left - 1)
+            possible_connections, current_time + connection.duration, steps_left - 1, new_steps_without_new_connection, max_no_new_steps)
 
-        if connection_key in needed_connections:
+        # Add bonus for new connections
+        if is_new_connection:
             future_score += 300  # Bonus for new connections
 
         # Add the new connection in the front of the tuple and set the score
@@ -67,6 +80,8 @@ def explore_paths(current_station, available_connections, used_connections, need
     return best_score, list(best_path)
 
 
+
+
 def initialize_route(needed_connections):
     """
     Initializes the route with a random connection from the needed connections.
@@ -77,9 +92,8 @@ def initialize_route(needed_connections):
     current_station = first_connection.end_station
     used_connections = {f"{first_connection.start_station}-{first_connection.end_station}"}
     needed_connections.pop(f"{first_connection.start_station}-{first_connection.end_station}")
-    
-    return route, total_time, current_station, used_connections
 
+    return route, total_time, current_station, used_connections
 
 def n_deep_algorithm(connection_data, possible_connections, needed_connections, depth=3):
     """
@@ -95,12 +109,12 @@ def n_deep_algorithm(connection_data, possible_connections, needed_connections, 
         if not route:
             # Initialize the route with a random needed connection
             route, total_time, current_station, used_connections = initialize_route(remaining_needed_connections)
+
         else:
             # Explore paths to decide the next connection
             _, best_path = explore_paths(
                 current_station, remaining_needed_connections, used_connections,
-                needed_connections, possible_connections, total_time, depth
-            )
+                needed_connections, possible_connections, total_time, depth)
 
             if not best_path:
                 break
@@ -116,9 +130,6 @@ def n_deep_algorithm(connection_data, possible_connections, needed_connections, 
                 break
 
     return route, remaining_needed_connections
-
-
-
 
 def create_deep_trajectories(trajectory_amount, connection_algorithm,
     full_connection_dict, original_connection_dict, needed_connections_dict,

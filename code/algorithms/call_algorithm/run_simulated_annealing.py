@@ -7,9 +7,10 @@ from code.algorithms.annealing_steps import create_annealing_steps_trajectory
 from code.algorithms.simulated_annealing import simulated_annealing
 from code.algorithms.baseline import choose_random_connections
 
-def run_with_time_limit(time_limit, min_trains, max_trains, original_connection_dict,
-    station_locations, possible_directions, full_connection_dict, penalty_weight,
-    max_duration, max_connections, temperature, cooling_rate, iterations, total_connections):
+def simulated_annealing_with_time_limit(time_limit, min_trains, max_trains,
+    original_connection_dict, station_locations, possible_directions, full_connection_dict,
+    penalty_weight, max_duration, max_connections, temperature, cooling_rate,
+    iterations, total_connections):
     """
     Runs the simulated annealing algorithm for a given amount of time. Saves and returns
     the best score, the iteration number of the best score and the best solution.
@@ -72,5 +73,30 @@ def plot_outcomes_simulated_annealing(scores, national = False):
     else:
         plt.savefig('data/output/simulated_annealing_histogram_holland.png')
 
-    # show plot
-    plt.show()
+def handle_simulated_annealing(args, possible_directions, full_connection_dict, original_connection_dict,
+    station_locations, total_connections, max_connections, temperature,
+    cooling_rate, min_trains, max_trains, iterations, max_duration, plot_title,
+    penalty_weight):
+    """Runs the simulated annealing algorithm for a given time and saves the results."""
+    # save best scores, best iteration, best solution and all scores
+    best_score, best_iteration, best_solution, scores = simulated_annealing_with_time_limit(
+        args.time, min_trains, max_trains, original_connection_dict, station_locations,
+        possible_directions, full_connection_dict, penalty_weight, max_duration,
+        max_connections, temperature, cooling_rate, iterations, total_connections)
+
+    # create a dataframe from the scores
+    dataframe = best_solution.create_dataframe_from_solution(original_connection_dict,
+        total_connections)
+
+    # save the dataframe to a csv file under the right name
+    if args.holland_nationaal == 'holland':
+        dataframe.to_csv("data/output/simulated_best_solution_holland.csv")
+    else:
+        dataframe.to_csv("data/output/simulated_best_solution_national.csv")
+
+    # plot if necessary
+    if args.plot_scores:
+        plot_outcomes_simulated_annealing(
+            scores, national = args.holland_nationaal == "nationaal")
+
+    print(f"The best iteration was iteration number {best_iteration}")

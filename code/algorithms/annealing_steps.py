@@ -1,29 +1,17 @@
-import pandas as pd
+# import pandas as pd
 import math
 import random
 import copy
 from code.classes.traject_class import Trajectory
+from code.classes.oplossing_class import Solution
+# from code.other_functions.calculate_score import calculate_score
 """
 Algorithm that tries to minimize the distance between the current station and
 the station where a connection begins that has not been ridden yet using
-simulated annealing. Punishes riding connections that have already been ridden.
+a sort of simulated annealing algorithm.
 """
 
-def load_station_location_data(station_locations):
-    """
-    Uses a station csv file to create a dictionary of stations with their
-    coordinates as values.
-    """
-    stations = pd.read_csv(station_locations)
-    coordinates_stations = {}
-
-    for index, row in stations.iterrows():
-        #save the name of the station name and its coordinates in a dictionary
-        coordinates_stations[row.iloc[0]]= [row.iloc[1], row.iloc[2]]
-
-    return coordinates_stations
-
-def annealing_cost_function(coordinates_stations, current_station, step_station,
+def annealing_cost_function(station_dictionary, current_station, step_station,
     destination, full_connection_dict, penalty_weight, total_duration, max_duration):
     """
     Calculates the cost of riding a connection. Checks the distance, and penalizes
@@ -37,8 +25,8 @@ def annealing_cost_function(coordinates_stations, current_station, step_station,
         return math.inf
 
     # get both station objects
-    station_1 = coordinates_stations[step_station]
-    station_2 = coordinates_stations[destination]
+    station_1 = station_dictionary[step_station]
+    station_2 = station_dictionary[destination]
 
     # calculate euclidean distance
     euclidean_distance = math.sqrt((station_2.x - station_1.x) ** 2 + (station_2.y - station_1.y) ** 2)
@@ -70,7 +58,7 @@ def accept_solution(old_cost, new_cost, temperature):
         # accept only if criterion is larger than random number between 0-1
         return random.random() < criterion
 
-def find_nearest_connection(coordinates_stations, current_station, needed_connections_dict):
+def find_nearest_connection(station_dictionary, current_station, needed_connections_dict):
     """
     Finds the nearest connection in needed_connections_dict hat has not been ridden.
     Uses current station to calculate distances. Returns the closest 'new' connection
@@ -82,8 +70,8 @@ def find_nearest_connection(coordinates_stations, current_station, needed_connec
 
     # check which needed connection is closest to current station
     for connection in needed_connections_dict:
-        x2 = coordinates_stations[needed_connections_dict[connection].start_station].x
-        y2 = coordinates_stations[needed_connections_dict[connection].start_station].y
+        x2 = station_dictionary[needed_connections_dict[connection].start_station].x
+        y2 = station_dictionary[needed_connections_dict[connection].start_station].y
         euclidean_distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
         # check if better than current best, then save distance and connection object
@@ -117,194 +105,235 @@ def trim_trajectory(trajectory, needed_connections_dict):
 
     return trajectory
 
-def create_annealing_steps_trajectory(coordinates_stations, needed_connections_dict,
-    possible_connections_dict, full_connection_dict, penalty_weight, max_duration, max_connections):
-    """
-    Creates a trajectory using simulated annealing.
-    """
-    total_duration = 0
+def initialize_trajectory(station_dictionary, needed_connections_dict, max_connections):
+    """Initializes the trajectory with a random starting connection."""
     trajectory = Trajectory()
     new_needed_connections_dict = copy.deepcopy(needed_connections_dict)
+    total_duration = 0
     temperature = max_connections
 
-    # choose first connection at random and add information to the list
-    if len(new_needed_connections_dict) > 0:
-        current_connection = needed_connections_dict[random.choice(list(new_needed_connections_dict))]
-        trajectory.add_connection(current_connection)
-        total_duration += current_connection.duration
-        current_station = coordinates_stations[current_connection.end_station]
-        new_needed_connections_dict.pop(current_connection.start_station + '-' + current_connection.end_station)
+    # return if no connections are needed
+    if not new_needed_connections_dict:
+        return trajectory, new_needed_connections_dict, total_duration, None, temperature
 
-    # repeat until the trajectory is complete (temperature is 0)
+    # choose first connection at random (from connections that are still needed)
+    first_connection = new_needed_connections_dict[random.choice(list(new_needed_connections_dict))]
+
+    # add information to variables
+    trajectory.add_connection(first_connection)
+    total_duration += first_connection.duration
+    current_station = station_dictionary[first_connection.end_station]
+
+    # remove connection from needed connections
+    new_needed_connections_dict.pop(first_connection.start_station + '-' + first_connection.end_station)
+
+    return trajectory, new_needed_connections_dict, total_duration, current_station, temperature
+
+def attempt_direct_connection(station_dictionary, current_station, nearest_connection, total_duration,
+    new_needed_connections_dict, trajectory, full_connection_dict, temperature):
+    """Attempts to connect directly to the nearest connection's start station."""
+    # check if station is start point of nearest connection
+    if current_station.name == nearest_connection.start_station:
+        if total_duration + nearest_connection.duration <= 120:
+            # if riding connection is possible, add info to variables
+            total_duration += nearest_connection.duration
+            new_needed_connections_dict.pop(current_station.name + '-' +
+                nearest_connection.end_station)
+            current_station = station_dictionary[nearest_connection.end_station]
+            current_connection = nearest_connection
+            if (not trajectory.connection_list or
+                trajectory.connection_list[-1].end_station != nearest_connection.end_station):
+                trajectory.add_connection(nearest_connection)
+
+            return (trajectory, new_needed_connections_dict, total_duration,
+                temperature - 1, current_station, True)
+
+        # if it goes over time, trajectory is done
+        else:
+            trajectory = trim_trajectory(trajectory, new_needed_connections_dict)
+            return (trajectory, new_needed_connections_dict, total_duration, temperature,
+                None, True)
+
+    # check if connection to start of nearest connection is possible
+    connection_key = current_station.name + '-' + nearest_connection.start_station
+    if connection_key in full_connection_dict:
+        # check if this connection can be ridden
+        if total_duration + full_connection_dict[connection_key].duration <= 120:
+            # if so, add info
+            total_duration += full_connection_dict[connection_key].duration
+            if connection_key in new_needed_connections_dict:
+                 new_needed_connections_dict.pop(connection_key)
+            current_station = station_dictionary[nearest_connection.start_station]
+            current_connection = full_connection_dict[connection_key]
+            trajectory.add_connection(current_connection)
+            return (trajectory, new_needed_connections_dict, total_duration,
+                temperature - 1, current_station, True)
+
+        # if it goes over time, trajectory is done
+        else:
+            trajectory = trim_trajectory(trajectory, new_needed_connections_dict)
+            return (trajectory, new_needed_connections_dict, total_duration, temperature,
+                None, True)
+
+    return (trajectory, new_needed_connections_dict, total_duration, temperature,
+        current_station, False)
+
+def find_best_annealing_move(current_station, nearest_connection, total_duration,
+    new_needed_connections_dict, trajectory, full_connection_dict, temperature,
+    station_dictionary, penalty_weight, max_duration):
+    """Does a random move and checks if that move will be executed."""
+    possible_connections = [key.split('-')[1]
+        for key in full_connection_dict if key.split('-')[0] == current_station.name]
+    accepted_any = False
+
+    # randomize order of possible connections
+    random_connections = copy.copy(possible_connections)
+    random.shuffle(random_connections)
+
+    # check every connection possible
+    for random_station in random_connections:
+        if random_station == current_station.name:
+            continue
+
+        # skip connections that are not possible
+        connection_key = current_station.name + '-' + random_station
+        if connection_key not in full_connection_dict:
+            continue
+
+        # check current and step cost
+        current_connection = trajectory.connection_list[-1]
+        current_cost = annealing_cost_function(station_dictionary,
+            current_connection.start_station, current_station.name,
+            nearest_connection.start_station, full_connection_dict,
+            penalty_weight, total_duration, max_duration)
+        station_cost = annealing_cost_function(station_dictionary,
+            current_station.name, random_station,
+            nearest_connection.start_station, full_connection_dict,
+            penalty_weight, total_duration, max_duration)
+
+        # decide if the new step will be accepted
+        if temperature == 0:
+            acceptance = False
+        else:
+            acceptance = accept_solution(current_cost, station_cost, temperature)
+
+        # check next station if it is not accepted
+        if not acceptance:
+            continue
+
+        # if accepted, check if step can be made
+        accepted_any = True
+        connection_to_add = full_connection_dict[connection_key]
+        if total_duration + connection_to_add.duration <= 120:
+            # add connection info to variables
+            total_duration += connection_to_add.duration
+            if connection_key in new_needed_connections_dict:
+                new_needed_connections_dict.pop(connection_key)
+            current_station = station_dictionary[random_station]
+            current_connection = connection_to_add
+            trajectory.add_connection(connection_to_add)
+            temperature -= 1
+
+            break
+
+    return (trajectory, new_needed_connections_dict, total_duration, temperature,
+        current_station, accepted_any)
+
+def move_towards_nearest_connection(station_dictionary, current_station, nearest_connection,
+    total_duration, new_needed_connections_dict, trajectory, full_connection_dict,
+    max_duration, temperature, penalty_weight):
+    """Tries to move toward the nearest connection."""
+    at_destination = False
+    max_attempts = 1000
+    attempts = 0
+
+    # keep trying while we're not at the destination
+    while not at_destination:
+        attempts += 1
+        if attempts > max_attempts:
+            temperature = 0
+            break
+
+        # check if we can make a direct connection to nearest connection
+        (trajectory, new_needed_connections_dict, total_duration, temperature,
+        new_current_station, at_destination) = attempt_direct_connection(
+            station_dictionary, current_station, nearest_connection,
+            total_duration, new_needed_connections_dict, trajectory,
+            full_connection_dict, temperature)
+
+        # check if new_current_station is None, return if it is
+        if new_current_station is None:
+            return (trajectory, new_needed_connections_dict, total_duration,
+                temperature, new_current_station, True)
+
+        current_station = new_current_station
+
+        # if we reached the destination, return values
+        if at_destination:
+            break
+
+        # if not, do annealing on random possible steps we can take
+        (trajectory, new_needed_connections_dict, total_duration, temperature,
+        current_station, accepted_any) = find_best_annealing_move(current_station,
+            nearest_connection, total_duration, new_needed_connections_dict,
+            trajectory, full_connection_dict, temperature, station_dictionary,
+            penalty_weight, max_duration)
+
+        # if nothing is accepted, trajectory is done
+        if not accepted_any:
+            temperature = 0
+            break
+
+    return (trajectory, new_needed_connections_dict, total_duration, temperature,
+        current_station, False)
+
+def create_annealing_steps_trajectory(station_dictionary, needed_connections_dict,
+    possible_connections_dict, full_connection_dict, penalty_weight, max_duration,
+    max_connections):
+    """
+    Creates a trajectory using the 'annealing steps' algorithm.
+    """
+    # initialize the trajectory
+    (trajectory, new_needed_connections_dict, total_duration, current_station,
+    temperature) = initialize_trajectory(station_dictionary, needed_connections_dict,
+        max_connections)
+
+    # keep looping while temp is above 0 and there are connections needed
     while temperature != 0 and len(new_needed_connections_dict) > 0:
-        nearest_connection = find_nearest_connection(coordinates_stations,
+        nearest_connection = find_nearest_connection(station_dictionary,
             current_station, new_needed_connections_dict)
-        at_destination = False
-        max_attempts = 1000
-        attempts = 0
 
-        # if not, loop this until we are at the nearest connection
-        while not at_destination:
-            attempts += 1
-            if attempts > max_attempts:
-                temperature = 0
-                break
-            possible_connections = possible_connections_dict[current_station.name]
+        (trajectory, new_needed_connections_dict, total_duration, temperature,
+        current_station, time_limit_exceeded) = move_towards_nearest_connection(
+            station_dictionary, current_station, nearest_connection, total_duration,
+            new_needed_connections_dict, trajectory, full_connection_dict,
+            max_duration, temperature, penalty_weight)
 
-            # check if the current station is already at the start of the nearest connection
-            if current_station.name == nearest_connection.start_station:
-                # if it is, directly add that connection
-                if total_duration + nearest_connection.duration <= 120:
-                    total_duration += nearest_connection.duration
-                    new_needed_connections_dict.pop(current_station.name + '-' + nearest_connection.end_station)
-                    current_station = coordinates_stations[nearest_connection.end_station]
-                    current_connection = nearest_connection
-                    if not trajectory.connection_list or trajectory.connection_list[-1].end_station != nearest_connection.end_station:
-                        trajectory.add_connection(nearest_connection)
-
-                    # we are at the destination and temperature can be decreased
-                    at_destination = True
-                    temperature -= 1
-                    break
-
-                # if this goes over time limit, stop searching
-                else:
-                    trajectory = trim_trajectory(trajectory, needed_connections_dict)
-                    return trajectory, new_needed_connections_dict
-
-            # check if a direct connection to nearest connection start station is possible
-            connection_key = current_station.name + '-' + nearest_connection.start_station
-            if connection_key in full_connection_dict:
-                # update current station and connection if we can get there on time
-                if total_duration + full_connection_dict[connection_key].duration <= 120:
-                    total_duration += full_connection_dict[connection_key].duration
-                    if connection_key in new_needed_connections_dict:
-                        new_needed_connections_dict.pop(connection_key)
-                    current_station = coordinates_stations[nearest_connection.start_station]
-                    current_connection = full_connection_dict[connection_key] # Use the correct connection object
-                    trajectory.add_connection(current_connection)
-
-                    # we are at destination, temperature can be decreased
-                    at_destination = True
-                    temperature -= 1
-                    break
-
-                # if this goes over time limit, stop searching
-                else:
-                    trajectory = trim_trajectory(trajectory, needed_connections_dict)
-                    return trajectory, new_needed_connections_dict
-
-            # variable to check if any routes are accepted
-            accepted_any = False
-
-            # if we need to travel further, shuffle possible connections and loop over them
-            random.shuffle(possible_connections)
-
-            for random_station in possible_connections:
-                if random_station == current_station.name:
-                    continue
-
-                # ensure connection exists before getting cost
-                connection_key = current_station.name + '-' + random_station
-                if connection_key not in full_connection_dict:
-                    continue
-
-                # calculate costs of current station and given step
-                current_cost = annealing_cost_function(coordinates_stations,
-                    current_connection.start_station, current_station.name,
-                    nearest_connection.start_station, full_connection_dict,
-                    penalty_weight, total_duration, max_duration)
-                station_cost = annealing_cost_function(coordinates_stations,
-                    current_station.name, random_station,
-                    nearest_connection.start_station, full_connection_dict,
-                    penalty_weight, total_duration, max_duration)
-
-                # check if new step will be accepted
-                if temperature == 0:
-                    acceptance = False
-                else:
-                    acceptance = accept_solution(current_cost, station_cost, temperature)
-
-                # continue if it is not accepted
-                if not acceptance:
-                    continue
-
-                accepted_any = True
-
-                # if accepted check duration and add all relevant info to the variables
-                connection_to_add = full_connection_dict[connection_key]
-
-                if total_duration + connection_to_add.duration <= 120:
-                    total_duration += connection_to_add.duration
-                    if connection_key in new_needed_connections_dict:
-                        new_needed_connections_dict.pop(connection_key)
-
-                    # update current station and connection
-                    current_station = coordinates_stations[random_station]
-                    current_connection = connection_to_add
-
-                    # add connection and reduce temperature
-                    trajectory.add_connection(connection_to_add)
-                    temperature -= 1
-
-                break
-            # if no connections were accepted, trajectory is done
-            if not accepted_any:
-                temperature = 0
-                break
+        if time_limit_exceeded:
+              break
 
     # remove stations after last needed station (since those aren't necessary)
     trajectory = trim_trajectory(trajectory, needed_connections_dict)
     return trajectory, new_needed_connections_dict
 
-def create_dataframe_annealing(trajectories, trajectory_amount,
-    needed_connections_dict, total_connections = 28):
-
-    # create empty dataframe to store data in
-    dataframe = pd.DataFrame(columns=['train', 'stations'])
-    total_duration = 0
-    row_index = 0
+def create_solution_annealing(station_locations, original_connection_dict,
+    possible_directions, full_connection_dict, penalty_weight,
+    max_duration, max_connections, trajectory_amount):
+    """
+    Runs annealing steps for a certain amount of iterations to create a solution.
+    Returns this solution object.
+    """
+    # create solution object to store trajectories
+    solution = Solution()
+    needed_connections_dict = copy.deepcopy(original_connection_dict)
 
     # create right amount of trajectories
-    for trajectory in trajectories:
-        #trajectory = object.connection_list
-        station_list = []
-        iteration = 0
+    for trajectory in range(trajectory_amount):
+        current_trajectory, needed_connections_dict = create_annealing_steps_trajectory(
+            station_locations, needed_connections_dict, possible_directions,
+            full_connection_dict, penalty_weight, max_duration, max_connections)
 
-        # skip iteration if trajectory is empty
-        if len(trajectory.connection_list) == 0:
-            continue
+        # add trajectory to solution
+        solution.add_trajectory(current_trajectory)
 
-        # make list of stations from objects in list
-        for iteration, item in enumerate(trajectory.connection_list):
-
-            # append start and end station for first station in trajectory
-            if iteration == 0:
-                station_list.append(item.start_station)
-                station_list.append(item.end_station)
-
-            # otherwise add only end station
-            else:
-                station_list.append(item.end_station)
-
-            # add duration of connection to total
-            total_duration += item.duration
-
-            iteration += 1
-
-        # fill in dataframe with correct data
-        stations_string = f"[{', '.join(station_list)}]"
-        dataframe.loc[row_index, 'stations'] = stations_string
-        dataframe.loc[row_index, 'train'] = 'train_' + str(row_index + 1)
-
-        row_index += 1
-
-    # calculate the number of original connections ridden
-    connection_number = total_connections - len(needed_connections_dict)
-
-    # calculate itinerary score and put into dataframe
-    score = calculate_score(connection_number, trajectory_amount, total_duration, total_connections)
-    dataframe.loc[row_index, 'train'] = 'score'
-    dataframe.loc[row_index, 'stations'] = score
-
-    return dataframe, connection_number
+    return solution

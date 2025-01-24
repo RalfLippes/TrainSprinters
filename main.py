@@ -1,22 +1,4 @@
 from code.other_functions.load_data import get_possible_directions, create_connections, load_station_objects, set_parameters
-
-from code.classes.traject_class import Trajectory
-from code.classes.verbinding_class import Connection
-from code.classes.oplossing_class import Solution
-from code.visualisation.representation import create_map, simulate_solution_over_time
-from code.visualisation.plot_distribution import plot_distribution, prepare_data_baseline
-from code.visualisation.temperature_scores import plot_temp_cool_scores
-from code.algorithms.greedy import generate_trajectory, create_better_trajectories
-from code.algorithms.baseline import choose_random_connections, create_trajectories
-from code.algorithms.n_deep_algorithm import n_deep_algorithm, create_deep_trajectories
-from code.algorithms.annealing_steps import load_station_location_data, annealing_cost_function, find_nearest_connection, create_annealing_steps_trajectory, create_dataframe_annealing
-from code.algorithms.simulated_annealing import simulated_annealing
-from code.algorithms.hill_climber import hill_climber
-from code.visualisation.oplossing_naar_dataframe import create_dataframe_from_solution
-from code.algorithms.call_algorithm.run_simulated_annealing import run_with_time_limit, plot_outcomes_simulated_annealing
-from code.experiments.finding_temperature import find_best_temp_and_cooling
-from code.algorithms.call_algorithm.run_n_deep_algorithm import run_n_deep_algorithm
-import copy
 from code.other_functions.argparser import create_arg_parser
 from code.algorithms.call_algorithm.run_simulated_annealing import handle_simulated_annealing
 from code.algorithms.call_algorithm.run_annealing_steps import handle_annealing_steps
@@ -64,95 +46,6 @@ if __name__ == "__main__":
             original_connection_dict, station_dictionary, max_connections, temperature,
             cooling_rate, min_trains, max_trains, max_duration, plot_title, penalty_weight,
             total_connections)
-
-
-    # TEST THE SIMULATE_ANNEALING ALGORITHM
-    # ----------------------------
-    # do a few simulated annealings
-
-    best_score = 0
-    best_solution = None
-    best_temperature = None
-    best_cooling_rate = None
-    penalty_weight = 0.1
-    data = []
-
-    for x in range(1):
-        for a in range(min_trains, max_trains):
-            trajectories = Solution()
-            needed_connections_dict = copy.deepcopy(original_connection_dict)
-            for b in range(a):
-                new_trajectory, needed_connections_dict = create_annealing_steps_trajectory(station_locations,
-                    needed_connections_dict, possible_directions, full_connection_dict,
-                    penalty_weight, max_duration, max_connections)
-                trajectories.add_trajectory(new_trajectory)
-            try_out = hill_climber(trajectories, choose_random_connections,
-                full_connection_dict, possible_directions, max_connections, a,
-                iterations, original_connection_dict)
-
-            score = try_out.calculate_solution_score(original_connection_dict, total_connections)
-            data.append(score)
-
-            if try_out.calculate_solution_score(original_connection_dict, total_connections) > best_score:
-                best_solution = try_out
-                #print(f"{b} out of {a} done")
-
-
-    #plot_distribution(data, 30, "Average distribution of Scores" , "Score", "code/visualisation/hill_climber_scores")
-
-            #print("1 done")
-
-
-    df = best_solution.create_dataframe_from_solution(original_connection_dict, total_connections)
-    df.to_csv('code/visualisation/best_solution_hill_climber.csv', index=False)
-
-    print(best_solution.calculate_solution_score(original_connection_dict, total_connections))
-
-
-    plotting_data = best_solution.create_simulation_data()
-    best_solution.simulate_solution(plotting_data, stations_data, 160)
-
-
-    #plot_trajectories(df, stations_data, full_connection_dict)
-
-    # ----------------------------
-
-    # TEST THE ANNEALING_STEPS ALGORITHM
-    # ----------------------------
-
-    # set parameters
-    # penalty_weight = 0.01
-    # max_duration = 120
-    # trajectory_amount = 4
-    # max_connections = 100
-    # iterations = 100
-
-    # best_score = 0
-    # best_solution = None
-    # best_temperature = None
-    # best_cooling_rate = None
-    # penalty_weight = 0.1
-
-    #
-    # for x in range(10):
-    #     for a in range(min_trains, max_trains + 1):
-    #         trajectories = Solution()
-    #         needed_connections_dict = copy.deepcopy(original_connection_dict)
-    #         for b in range(a):
-    #             new_trajectory, needed_connections_dict = create_annealing_steps_trajectory(station_locations,
-    #                 needed_connections_dict, possible_directions, full_connection_dict,
-    #                 penalty_weight, max_duration, max_connections)
-    #             trajectories.add_trajectory(new_trajectory)
-    #         try_out = simulated_annealing(trajectories, choose_random_connections,
-    #             full_connection_dict, possible_directions, max_connections, a,
-    #             temperature, cooling_rate, iterations, original_connection_dict, max_duration)
-    #         if try_out.calculate_solution_score(original_connection_dict, total_connections) > best_score:
-    #             best_solution = try_out
-    #             print(f"{b + 1} trajectories of {max_trains} max")
-    #
-    # df = best_solution.create_dataframe_from_solution(original_connection_dict, total_connections)
-    # print(df)
-    # plot_trajectories(df, "data/Noord_Holland/StationsHolland.csv")
 
     # ----------------------------
 

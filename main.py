@@ -3,6 +3,7 @@ from code.other_functions.argparser import create_arg_parser
 from code.algorithms.call_algorithm.run_simulated_annealing import handle_simulated_annealing
 from code.algorithms.call_algorithm.run_annealing_steps import handle_annealing_steps
 from code.algorithms.call_algorithm.run_greedy import handle_greedy
+from code.algorithms.call_algorithm.run_baseline import handle_baseline
 import random
 import argparse
 
@@ -27,6 +28,12 @@ if __name__ == "__main__":
         print("-------------------------------------------------------------")
         print("Please run main in format 'python main.py [holland/nationaal] [algorithm] [time in seconds] [plot? yes/no]'")
         print("-------------------------------------------------------------")
+
+    # run baseline
+    if args.run_algorithm.lower() == 'baseline':
+        handle_baseline(args, possible_directions, full_connection_dict,
+            original_connection_dict, total_connections, min_trains, max_trains,
+            max_duration, plot_title, max_connections)
 
     # run simulated annealing
     if args.run_algorithm.lower() == 'simulated_annealing':

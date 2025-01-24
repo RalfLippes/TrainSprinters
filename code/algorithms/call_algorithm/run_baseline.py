@@ -1,14 +1,12 @@
 import time
-import pandas as pd
 import copy
-import matplotlib.pyplot as plt
 from code.classes.oplossing_class import Solution
-from code.algorithms.greedy import create_better_trajectories
+from code.algorithms.baseline import create_trajectories
 
-def greedy_with_time_limit(time_limit, min_trains, max_trains, original_connection_dict,
-    possible_directions, full_connection_dict, max_duration, total_connections):
+def baseline_with_time_limit(time_limit, min_trains, max_trains, original_connection_dict,
+    possible_directions, full_connection_dict, max_duration, total_connections, max_connections):
     """
-    Runs the greedy algorithm for a given amount of time. Saves and returns
+    Runs the baseline algorithm for a given amount of time. Saves and returns
     the best score, the iteration number of the best score and the best solution.
     Also saves every score in a list and return these.
     """
@@ -26,10 +24,9 @@ def greedy_with_time_limit(time_limit, min_trains, max_trains, original_connecti
             iteration += 1
             needed_connections_dict = copy.deepcopy(original_connection_dict)
 
-            # run greedy algorithm
-            current_solution = create_better_trajectories(trajectory_amount, full_connection_dict,
-                original_connection_dict, needed_connections_dict, possible_directions,
-                max_duration)
+            # run baseline algorithm
+            current_solution = create_trajectories(trajectory_amount, full_connection_dict,
+                possible_directions, max_connections, max_duration)
 
             # calculate score and append to list
             current_score = current_solution.calculate_solution_score(original_connection_dict,
@@ -44,7 +41,7 @@ def greedy_with_time_limit(time_limit, min_trains, max_trains, original_connecti
 
     return best_score, best_iteration, best_solution, scores
 
-def plot_outcomes_greedy(scores, national = False):
+def plot_outcomes_baseline(scores, national = False):
     """
     Creates histogram of the scores that were found in the run_with_time_limit
     function. Saves it to data/output folder.
@@ -58,17 +55,18 @@ def plot_outcomes_greedy(scores, national = False):
     plt.ylabel('Frequency')
     plt.xlim(0, 10000)
     if national == True:
-        plt.savefig('data/output/greedy_histogram_national.png')
+        plt.savefig('data/output/baseline_histogram_national.png')
     else:
-        plt.savefig('data/output/greedy_histogram_holland.png')
+        plt.savefig('data/output/baseline_histogram_holland.png')
 
-def handle_greedy(args, possible_directions, full_connection_dict, original_connection_dict,
-    total_connections, min_trains, max_trains, max_duration, plot_title):
-    """Runs the greedy algorithm for a given time and saves the results."""
+def handle_baseline(args, possible_directions, full_connection_dict, original_connection_dict,
+    total_connections, min_trains, max_trains, max_duration, plot_title, max_connections):
+    """Runs the baseline algorithm for a given time and saves the results."""
     # save best scores, best iteration, best solution and all scores
-    best_score, best_iteration, best_solution, scores = greedy_with_time_limit(
+    best_score, best_iteration, best_solution, scores = baseline_with_time_limit(
         args.time, min_trains, max_trains, original_connection_dict,
-        possible_directions, full_connection_dict, max_duration, total_connections)
+        possible_directions, full_connection_dict, max_duration, total_connections,
+        max_connections)
 
     # create a dataframe from the scores
     dataframe = best_solution.create_dataframe_from_solution(original_connection_dict,
@@ -76,13 +74,13 @@ def handle_greedy(args, possible_directions, full_connection_dict, original_conn
 
     # save the dataframe to a csv file under the right name
     if args.holland_nationaal == 'holland':
-        dataframe.to_csv("data/output/greedy_best_solution_holland.csv")
+        dataframe.to_csv("data/output/baseline_best_solution_holland.csv")
     else:
-        dataframe.to_csv("data/output/greedy_best_solution_national.csv")
+        dataframe.to_csv("data/output/baseline_best_solution_national.csv")
 
     # plot if necessary
     if args.plot_scores:
-        plot_outcomes_greedy(
+        plot_outcomes_baseline(
             scores, national = args.holland_nationaal == "nationaal")
 
     print(f"The best iteration was iteration number {best_iteration}")

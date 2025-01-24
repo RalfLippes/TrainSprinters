@@ -1,4 +1,5 @@
 from code.other_functions.load_data import get_possible_directions, create_connections, load_station_objects, set_parameters
+
 from code.classes.traject_class import Trajectory
 from code.classes.verbinding_class import Connection
 from code.classes.oplossing_class import Solution
@@ -16,11 +17,12 @@ from code.algorithms.call_algorithm.run_simulated_annealing import run_with_time
 from code.experiments.finding_temperature import find_best_temp_and_cooling
 from code.algorithms.call_algorithm.run_n_deep_algorithm import run_n_deep_algorithm
 import copy
+from code.other_functions.argparser import create_arg_parser
+from code.algorithms.call_algorithm.run_simulated_annealing import handle_simulated_annealing
+from code.algorithms.call_algorithm.run_annealing_steps import handle_annealing_steps
+from code.algorithms.call_algorithm.run_greedy import handle_greedy
 import random
-import numpy as np
-import pandas as pd
 import argparse
-import time
 
 if __name__ == "__main__":
 
@@ -28,54 +30,41 @@ if __name__ == "__main__":
     random.seed(42)
 
     # arg parser
-    parser = argparse.ArgumentParser(description = 'Holland or Nationaal')
-    parser.add_argument('holland_nationaal', help = 'Wil je alle data gebruiken of alleen van Noord- en Zuid-Holland?')
-    args = parser.parse_args()
+    args = create_arg_parser().parse_args()
 
-    # # load required data and set parameters dependent on parsed arguments
-    # try:
-    #     (possible_directions, full_connection_dict, original_connection_dict,
-    #         station_locations, total_connections, max_connections, temperature,
-    #         cooling_rate, min_trains, max_trains, iterations, max_duration, plot_title,
-    #         penalty_weight
-    #     ) = set_parameters(args.holland_nationaal, "data/Nationaal/ConnectiesNationaal.csv",
-    #         "data/Nationaal/StationsNationaal.csv", "data/Noord_Holland/ConnectiesHolland.csv",
-    #         "data/Noord_Holland/StationsHolland.csv")
-    # except Exception:
-    #     print("-------------------------------------------------------------")
-    #     print("Please run main in format 'python main.py [holland/nationaal]'")
-    #     print("-------------------------------------------------------------")
-    #
-    # # ----------------------------
-    #
-    # # run sim anneal for a given amount of seconds
-    # #----------------------------
-    # best_score, best_iteration, best_solution, scores = run_with_time_limit(21600,
-    #     min_trains, max_trains, original_connection_dict,
-    #     station_locations, possible_directions, full_connection_dict, penalty_weight,
-    #     max_duration, max_connections, temperature, cooling_rate, iterations, total_connections)
-    # sim_dataframe = best_solution.create_dataframe_from_solution(original_connection_dict, total_connections)
-    # print(sim_dataframe)
-    # plot_outcomes_simulated_annealing(scores, args.holland_nationaal)
-    # if args.holland_nationaal == 'holland':
-    #     sim_dataframe.to_csv("data/output/simulated_best_solution_holland.csv")
-    # else:
-    #     sim_dataframe.to_csv("data/output/simulated_best_solution_national.csv")
+    # load required data and set parameters dependent on parsed arguments
+    try:
+        (possible_directions, full_connection_dict, original_connection_dict,
+            station_dictionary, total_connections, max_connections, temperature,
+            cooling_rate, min_trains, max_trains, iterations, max_duration, plot_title,
+            penalty_weight
+        ) = set_parameters(args.holland_nationaal, "data/Nationaal/ConnectiesNationaal.csv",
+            "data/Nationaal/StationsNationaal.csv", "data/Noord_Holland/ConnectiesHolland.csv",
+            "data/Noord_Holland/StationsHolland.csv")
+    except Exception:
+        print("-------------------------------------------------------------")
+        print("Please run main in format 'python main.py [holland/nationaal] [algorithm] [time in seconds] [plot? yes/no]'")
+        print("-------------------------------------------------------------")
 
-    # ----------------------------
+    # run simulated annealing
+    if args.run_algorithm.lower() == 'simulated_annealing':
+        handle_simulated_annealing(args, possible_directions, full_connection_dict, original_connection_dict,
+            station_dictionary, total_connections, max_connections, temperature,
+            cooling_rate, min_trains, max_trains, iterations, max_duration, plot_title,
+            penalty_weight)
 
-    #Find out the best temperature and cooling rates
-    #----------------------------
-    # temperature_values = [10000, 5000, 2000, 1000, 500, 200, 100, 50]
-    # cooling_rate_values = [0.9999, 0.999, 0.99, 0.95, 0.9, 0.8]
-    # penalty_weight = 0.1
-    # combinations_df = find_best_temp_and_cooling(full_connection_dict, possible_directions,
-    #     original_connection_dict, station_locations, max_duration, max_connections, min_trains,
-    #     max_trains, total_connections, iterations, penalty_weight, temperature_values,
-    #     cooling_rate_values)
-    #
-    # print(combinations_df.head(10))
-    # plot_temp_cool_scores(combinations_df, plot_title)
+    # run greedy
+    if args.run_algorithm.lower() == 'greedy':
+        handle_greedy(args, possible_directions, full_connection_dict, original_connection_dict,
+            total_connections, min_trains, max_trains, max_duration, plot_title)
+
+    # run annealing steps
+    if args.run_algorithm.lower() == 'annealing_steps':
+        handle_annealing_steps(args, possible_directions, full_connection_dict,
+            original_connection_dict, station_dictionary, max_connections, temperature,
+            cooling_rate, min_trains, max_trains, max_duration, plot_title, penalty_weight,
+            total_connections)
+
 
     # TEST THE SIMULATE_ANNEALING ALGORITHM
     # ----------------------------

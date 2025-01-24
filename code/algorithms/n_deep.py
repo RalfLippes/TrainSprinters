@@ -4,8 +4,8 @@ import copy
 from code.classes.traject_class import Trajectory
 from code.classes.verbinding_class import Connection
 from code.other_functions.calculate_score import calculate_score
+from code.classes.oplossing_class import Solution
 import random
-
 
 def calculate_new_score(new_connections_made, current_time):
     """
@@ -79,9 +79,6 @@ def explore_paths(current_station, available_connections, used_connections, need
 
     return best_score, list(best_path)
 
-
-
-
 def initialize_route(needed_connections):
     """
     Initializes the route with a random connection from the needed connections.
@@ -95,118 +92,62 @@ def initialize_route(needed_connections):
 
     return route, total_time, current_station, used_connections
 
-def n_deep_algorithm(connection_data, possible_connections, needed_connections, depth=3):
+def n_deep_algorithm(connection_data, possible_connections, needed_connections, depth):
     """
     Creates a route by looking several steps ahead to decide the best path.
+    Uses the `Trajectory` class to store connections and updates the `needed_connections`.
     """
-    route = []
+    traject = Trajectory()  # Initialize a new trajectory to store the connections
     total_time = 0
-    remaining_needed_connections = copy.deepcopy(needed_connections)
-    used_connections = set()
+    remaining_needed_connections = copy.deepcopy(needed_connections)  # Make a deep copy of needed connections
+    used_connections = set()  # Set to track used connections
     current_station = None
 
     while len(remaining_needed_connections) > 0:
-        if not route:
-            # Initialize the route with a random needed connection
+        if not traject.connection_list:
             route, total_time, current_station, used_connections = initialize_route(remaining_needed_connections)
+            traject.connection_list = route
 
         else:
             # Explore paths to decide the next connection
             _, best_path = explore_paths(
-                current_station, remaining_needed_connections, used_connections,
-                needed_connections, possible_connections, total_time, depth)
+                current_station, connection_data, used_connections, remaining_needed_connections,
+                possible_connections, total_time, depth
+            )
 
             if not best_path:
-                break
+                break  # If no valid path is found, stop
 
             next_connection = best_path[0]
-            route.append(next_connection)
+            traject.add_connection(next_connection)
             total_time += next_connection.duration
             current_station = next_connection.end_station
-            used_connections.add(f"{next_connection.start_station}-{next_connection.end_station}")
+            used_connections.add(f"{next_connection.start_station}{next_connection.end_station}")
+            print(remaining_needed_connections)
             remaining_needed_connections.pop(f"{next_connection.start_station}-{next_connection.end_station}")
 
             if total_time > 120:
                 break
 
-    return route, remaining_needed_connections
+    return traject, remaining_needed_connections
 
 def create_deep_trajectories(trajectory_amount, connection_algorithm,
     full_connection_dict, original_connection_dict, needed_connections_dict,
-    arg1 = None, arg2 = None, arg3 = None, arg4 = None, arg5 = None, arg6 = None,
-    arg7 = None, arg8 = None, arg9 = None, arg10 = None):
+    possible_directions, depth, total_connections):
     """
-    Creates a given number of trajectories. Uses a specified method to select
-    connections for the trajectories. Make sure to provide the arguments needed
-    for the connection function. Returns a dataframe with each train and its
-    trajectory, as well as the total score of this itinerary.
+    Creates a given number of trajectories using the specified algorithm.
+    Returns a Solution object containing the trajectories and the total score.
     """
-    # create empty dataframe to store data in
-    dataframe = pd.DataFrame(index = range(trajectory_amount + 1), columns =
-        ['train', 'stations'])
-    total_duration = 0
-    connections_set = set()
-    needed_connections = needed_connections_dict
 
-    # remove arguments that are none
-    arg_list = [arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10]
-    arg_list = [item for item in arg_list if item is not None]
+    final_solution = Solution()
+    needed_connections = copy.deepcopy(needed_connections_dict)
 
-    # create right amount of trajectories
+    # Create the required number of trajectories
     for i in range(trajectory_amount):
-        station_list = []
-        current_trajectory = Trajectory()
+        current_trajectory, needed_connections = n_deep_algorithm(
+            full_connection_dict, possible_directions, needed_connections, depth
+        )
+        final_solution.add_trajectory(current_trajectory)
 
-        # find connections according to the given connection algorithm
-        if len(needed_connections) > 0:
-            current_connections, needed_connections = connection_algorithm(
-                full_connection_dict,
-                arg2,
-                needed_connections,
-                arg4
-            )
 
-        iteration = 0
-
-        # make list of stations from objects in list
-        for item in list(current_connections):
-
-            # append start and end station for first station in trajectory
-            if iteration == 0:
-                station_list.append(item.start_station)
-                station_list.append(item.end_station)
-
-            # otherwise add only end station
-            else:
-                station_list.append(item.end_station)
-
-            # add duration of connection to total
-            total_duration += item.duration
-
-            # add start and end station as a tuple to the set of connections
-            connections_set = connections_set.union({(item.start_station +
-                item.end_station)})
-
-            iteration += 1
-
-        # fill in dataframe with correct data
-        stations_string = f"[{', '.join(station_list)}]"
-        dataframe.loc[i, 'stations'] = stations_string
-        dataframe.loc[i, 'train'] = 'train_' + str(i + 1)
-
-    # make a set of tuples with (start_station, end_station) for original connections
-    original_set = set()
-    for item in original_connection_dict:
-        original_set = original_set.union({(original_connection_dict[item].start_station +
-            original_connection_dict[item].end_station)})
-
-    # find all connections of the trajectories that are valid and count them
-    set_connections = set.intersection(connections_set, original_set)
-    connection_number = len(set_connections)
-
-    # calculate itinerary score and put into dataframe
-    score = calculate_score(connection_number, trajectory_amount, total_duration)
-    dataframe.iloc[-1, dataframe.columns.get_loc('train')] = 'score'
-    dataframe.iloc[-1, dataframe.columns.get_loc('stations')] = score
-
-    return dataframe, connection_number
+    return final_solution

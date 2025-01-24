@@ -4,6 +4,7 @@ from code.algorithms.call_algorithm.run_simulated_annealing import handle_simula
 from code.algorithms.call_algorithm.run_hill_climber import handle_hill_climber
 from code.algorithms.call_algorithm.run_annealing_steps import handle_annealing_steps
 from code.algorithms.call_algorithm.run_greedy import handle_greedy
+from code.algorithms.call_algorithm.run_n_deep import handle_n_deep
 from code.algorithms.call_algorithm.run_baseline import handle_baseline
 import random
 import argparse
@@ -20,7 +21,7 @@ if __name__ == "__main__":
     try:
         (possible_directions, full_connection_dict, original_connection_dict,
             station_dictionary, total_connections, max_connections, temperature,
-            cooling_rate, min_trains, max_trains, iterations, max_duration, plot_title,
+            cooling_rate, min_trains, max_trains, iterations, depth, max_duration, plot_title,
             penalty_weight
         ) = set_parameters(args.holland_nationaal, "data/Nationaal/ConnectiesNationaal.csv",
             "data/Nationaal/StationsNationaal.csv", "data/Noord_Holland/ConnectiesHolland.csv",
@@ -59,6 +60,19 @@ if __name__ == "__main__":
             original_connection_dict, station_dictionary, max_connections, temperature,
             cooling_rate, min_trains, max_trains, max_duration, plot_title, penalty_weight,
             total_connections)
+
+    if args.run_algorithm.lower() == 'n_deep':
+        handle_n_deep(
+            args=args,
+            depth=depth,
+            iterations=iterations,
+            min_trains=min_trains,
+            max_trains=max_trains,
+            full_connection_dict=full_connection_dict,
+            original_connection_dict=original_connection_dict,
+            possible_directions=possible_directions,
+            total_connections=total_connections
+        )
 
     # ----------------------------
 

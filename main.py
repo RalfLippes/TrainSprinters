@@ -2,7 +2,7 @@ from data.Noord_Holland.load_data import get_possible_directions, create_connect
 from code.classes.traject_class import Trajectory
 from code.classes.verbinding_class import Connection
 from code.classes.oplossing_class import Solution
-from code.visualisation.representation import create_map, plot_trajectories
+from code.visualisation.representation import create_map, simulate_solution_over_time
 from code.visualisation.plot_distribution import plot_distribution, prepare_data_baseline
 from code.algorithms.greedy import generate_trajectory, create_better_trajectories
 from code.algorithms.baseline import choose_random_connections, create_trajectories
@@ -12,6 +12,7 @@ from code.other_functions.create_connection_dict import create_connections
 from code.algorithms.call_algorithm.run_n_deep_algorithm import run_n_deep_algorithm
 from code.algorithms.call_algorithm.call_simulated_annaeling import run_simulated_annaeling
 from code.algorithms.simulated_annealing import simulated_annealing
+from code.algorithms.hill_climber import hill_climber
 from code.visualisation.oplossing_naar_dataframe import create_dataframe_from_solution
 import copy
 import random
@@ -70,6 +71,7 @@ if __name__ == "__main__":
     best_temperature = None
     best_cooling_rate = None
     penalty_weight = 0.1
+    data = []
 
     for x in range(1):
         for a in range(min_trains, max_trains):
@@ -80,18 +82,35 @@ if __name__ == "__main__":
                     needed_connections_dict, possible_directions, full_connection_dict,
                     penalty_weight, max_duration, max_connections)
                 trajectories.add_trajectory(new_trajectory)
-            try_out = simulated_annealing(trajectories, choose_random_connections,
+            try_out = hill_climber(trajectories, choose_random_connections,
                 full_connection_dict, possible_directions, max_connections, a,
-                temperature, cooling_rate, iterations, original_connection_dict)
+                iterations, original_connection_dict)
+
+            score = try_out.calculate_solution_score(original_connection_dict, total_connections)
+            data.append(score)
+
             if try_out.calculate_solution_score(original_connection_dict, total_connections) > best_score:
                 best_solution = try_out
-                print(f"{b} out of {a} done")
+                #print(f"{b} out of {a} done")
 
-            print("1 done")
+
+    #plot_distribution(data, 30, "Average distribution of Scores" , "Score", "code/visualisation/hill_climber_scores")
+
+            #print("1 done")
+
 
     df = best_solution.create_dataframe_from_solution(original_connection_dict, total_connections)
-    print(df)
-    plot_trajectories(df, stations_data)
+    df.to_csv('code/visualisation/best_solution_hill_climber.csv', index=False)
+
+    print(best_solution.calculate_solution_score(original_connection_dict, total_connections))
+
+
+    plotting_data = best_solution.create_simulation_data()
+    best_solution.simulate_solution(plotting_data, stations_data, 160)
+
+
+    #plot_trajectories(df, stations_data, full_connection_dict)
+
     # ----------------------------
 
     # TEST THE ANNEALING_STEPS ALGORITHM

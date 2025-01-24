@@ -4,7 +4,6 @@ import copy
 import matplotlib.pyplot as plt
 from code.classes.oplossing_class import Solution
 from code.algorithms.annealing_steps import create_solution_annealing
-from code.visualisation.representation import plot_trajectories
 
 def annealing_steps_with_time_limit(time_limit, min_trains, max_trains, original_connection_dict,
     station_dictionary, possible_directions, full_connection_dict, penalty_weight,
@@ -77,6 +76,8 @@ def handle_annealing_steps(args, possible_directions, full_connection_dict, orig
     # create a dataframe from the scores
     dataframe = best_solution.create_dataframe_from_solution(original_connection_dict,
         total_connections)
+
+    best_solution.simulate_solution(station_dictionary)
 
     # save the dataframe to a csv file under the right name
     if args.holland_nationaal == 'holland':

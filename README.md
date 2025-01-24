@@ -66,8 +66,10 @@ Hieronder een lijst met de mogelijke argumenten per 'categorie', de verschillend
   - **nationaal**: Gebruikt de data van heel Nederland
 
 - **algoritme: standaard = baseline**
-  - **baseline**: Gebruikt een willekeurig algoritme.
   - **simulated_annealing**: Gebruikt simulated annealing. Slaat de beste oplossing en een histogram op in de map data/output onder de respectievelijke namen simulated_best_solution_nationaal.csv (of .holland.csv) en simulated_annealing_histogram_nationaal.png (of .holland.png).
+  - **baseline**: Gebruikt een willekeurig algoritme. Slaat de beste oplossing en een histogram op onder de namen baseline_best_solution_nationaal.csv en baseline_histogram_nationaal.csv.
+  - **annealing_steps**: Gebruikt het annealing steps algoritme. Slaat de beste oplossing en een histogram op onder de namen annealing_steps_best_solution_nationaal.csv en annealing_steps_histogram_nationaal.csv.
+  - **greedy**: Gebruikt een greedy algoritme. Slaat de beste oplossing en een histogram op onder de namen greedy_best_solution_nationaal.csv en greedy_histogram_nationaal.csv.
 
 - **tijd: standaard = 60**
   - **--time [0-oneindig]**: Bepaalt hoe lang het gekozen algoritme draait.

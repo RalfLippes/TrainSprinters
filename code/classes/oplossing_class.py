@@ -95,29 +95,27 @@ class Solution:
         return dataframe
 
     def create_map(self, station_locations):
-        #reads the csv file with coordinates
-        stations = pd.read_csv(station_locations)
-
-        #dictionary with station coordinates of every station
-        coordinates_stations = {}
+        """
+        creates a with all stations plotted on it
+        """
 
         # Create a plot figure
         fig, ax = plt.subplots(figsize=(6, 10))
-        #plt.style.use("dark_background")
 
-        for index, row in stations.iterrows():
+        for key, value in station_locations.items():
+            ax.scatter(value.x, value.y, marker='o', color='red')
+            ax.text(value.x, value.y - 0.02, value.name, fontsize=6)
 
-            #safe the name of the station name and its coordinates in a dictionary for easy access
-            coordinates_stations[row.iloc[0]]= [row.iloc[1], row.iloc[2]]
-
-
-            ax.scatter(row.iloc[2], row.iloc[1], marker='o')
-            ax.text(row.iloc[2], row.iloc[1] - 0.02, row.iloc[0], fontsize=6, color='white')
-
-
-        return fig, ax, coordinates_stations
+        return fig, ax
 
     def create_simulation_data(self):
+
+        """
+        makes a dictionary that contains a dictionary for every trajectory
+        that holds information about the x and y coords that need to be plotted
+        the index of the connection that is being plotted and the time in current
+        connection
+        """
 
         #create a list with all the data necessery to plot a simulation
         plotting_data = []
@@ -131,13 +129,13 @@ class Solution:
 
         return plotting_data
 
-    def plot_step(self, plotting_data, stations_data, ax, station_coordinates):
+    def plot_step(self, plotting_data, stations_data, ax, station_dictionary):
 
         ax.clear()
 
-        for station, coords in station_coordinates.items():
-            ax.scatter(coords[1], coords[0], marker='o', color='red')
-            ax.text(coords[1], coords[0] - 0.02, station, fontsize=6, color='blue')
+        for key, value in station_dictionary.items():
+            ax.scatter(value.x, value.y, marker='o', color = 'blue')
+            ax.text(value.x, value.y - 0.02, value.name, fontsize=6, )
 
 
         for trajectory_data in plotting_data:
@@ -148,22 +146,23 @@ class Solution:
             #make variable for connection_index
             connection_index = trajectory_data["index_of_connection_plotted"]
 
-            connection = trajectory.connection_list[connection_index]
-
-            start_coords = station_coordinates[connection.start_station]
-            end_coords = station_coordinates[connection.end_station]
-            connection_duration = connection.duration
-            time_along_connection = trajectory_data["time_in_current_connection"]
 
             if connection_index >= len(trajectory.connection_list):
                 ax.plot(trajectory_data["x_coords"], trajectory_data["y_coords"],
                         linestyle="--", label=f"Train {self.solution.index(trajectory) + 1}")
                 continue
 
+            connection = trajectory.connection_list[connection_index]
+
+            start_coords = [station_dictionary[connection.start_station].x , station_dictionary[connection.start_station].y]
+            end_coords = [station_dictionary[connection.end_station].x , station_dictionary[connection.end_station].y]
+            connection_duration = connection.duration
+            time_along_connection = trajectory_data["time_in_current_connection"]
+
             if time_along_connection < connection.duration:
                 t = time_along_connection / connection.duration
-                x_step = (1 - t) * start_coords[1] + t * end_coords[1]
-                y_step = (1 - t) * start_coords[0] + t * end_coords[0]
+                x_step = (1 - t) * start_coords[0] + t * end_coords[0]
+                y_step = (1 - t) * start_coords[1] + t * end_coords[1]
 
                 trajectory_data["x_coords"].append(x_step)
                 trajectory_data["y_coords"].append(y_step)
@@ -183,24 +182,28 @@ class Solution:
 
         return
 
-    def simulate_solution(self, plotting_data, stations_data, max_duration):
+    def simulate_solution(self, stations_data, max_duration = 150):
 
         """
-        plots every second of the solution
+        plots every step as a minute of real time simulation
         """
         plt.ion()
-        fig, ax, station_coordinates = self.create_map(stations_data)
+        fig, ax = self.create_map(stations_data)
+        plotting_data = self.create_simulation_data()
 
         for step in range(max_duration):
 
-            self.plot_step(plotting_data, stations_data, ax, station_coordinates)
+            self.plot_step(plotting_data, stations_data, ax, stations_data)
 
             plt.pause(0.01)
 
 
+        for key, value in stations_data.items():
+            ax.scatter(value.x, value.y, marker='o', color='blue')
+            ax.text(value.x, value.y - 0.02, value.name, fontsize=6)
 
-        ax.plot(trajectory_data["x_coords"], trajectory_data["y_coords"],
-                linestyle="--", label=f"Train {self.solution.index(trajectory) + 1}")
 
+        plt.ioff()
+        plt.show()
 
-        return plt.show()
+        return

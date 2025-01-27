@@ -5,6 +5,8 @@ from code.algorithms.annealing_steps import annealing_cost_function
 from code.algorithms.baseline import choose_random_connections
 from code.other_functions.calculate_score import calculate_score
 from code.classes.oplossing_class import Solution
+import matplotlib.pyplot as plt
+
 
 def find_connection_amount(trajectories, original_connection_dict):
     """
@@ -37,6 +39,8 @@ def hill_climber(trajectories, connection_function, connection_object_dict,
     """
     final_solution = Solution()
 
+    scores = []
+
     # set current objects to input values
     current_trajectories = trajectories.solution
     current_connections = trajectories.amount_connection(original_connection_dict)
@@ -66,6 +70,21 @@ def hill_climber(trajectories, connection_function, connection_object_dict,
             current_trajectories = new_trajectories
             current_connections = new_connections
             current_score = new_score
+
+        scores.append(current_score)
+
+
+    iterations = list(range(1, len(scores) + 1))
+
+    # create a plot of scores vs iteration
+    plt.plot(iterations, scores, linestyle='-', color='b', label='High Scores')
+    plt.title('High Scores vs Iterations')
+    plt.xlabel('Iteration Number')
+    plt.ylabel('High Score')
+    plt.xlim(0, len(scores))
+
+    plt.show()
+
 
 
     for trajectory in current_trajectories:

@@ -3,6 +3,11 @@ from code.classes.verbinding_class import Connection
 from code.classes.station_class import Station
 
 def get_possible_directions(csv_file):
+    """
+    Finds every possible direction a train can go in from a certain station, by
+    taking in a csv file. Outputs a dictionary with the station as the key, and
+    possible directions as the values.
+    """
     original_df = pd.read_csv(csv_file)
 
     # Create an empty DF with twice the rows of the original (both directions)
@@ -77,6 +82,10 @@ def load_station_objects(csv_file):
 
 def set_parameters(holland_national, connections_path_1, stations_path_1,
     connections_path_2, stations_path_2):
+    """
+    Sets a bunch of parameters according to whether holland or nationaal was chosen
+    in the command line. 
+    """
 
     if holland_national.lower() == 'holland':
         possible_directions, corrected_df, original_df = get_possible_directions(connections_path_2)
@@ -92,7 +101,7 @@ def set_parameters(holland_national, connections_path_1, stations_path_1,
         max_trains = 7
         iterations = 2000
         max_duration = 120
-        depth = 5               # n_deep
+        depth = 5
         plot_title = 'Average Scores by Temperature and Cooling Rate for Holland'
 
     elif holland_national.lower() == 'nationaal':
@@ -109,7 +118,7 @@ def set_parameters(holland_national, connections_path_1, stations_path_1,
         max_trains = 20
         iterations = 8000
         max_duration = 180
-        depth = 5               # n_deep
+        depth = 5
         plot_title = 'Average Scores by Temperature and Cooling Rate for the Netherlands'
 
     penalty_weight = 0.1

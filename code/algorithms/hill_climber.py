@@ -30,7 +30,7 @@ def find_duration(trajectories):
 
 def hill_climber(trajectories, connection_function, connection_object_dict,
     possible_connections_dict, connection_amount, trajectory_amount,
-    iterations, original_connection_dict):
+    iterations, original_connection_dict, max_duration):
     """
     Takes a list of trajectory objects. Removes 1 trajectory and makes a new one.
     Calculates score of current and new trajectory.
@@ -50,8 +50,8 @@ def hill_climber(trajectories, connection_function, connection_object_dict,
         new_trajectories.pop(random.randrange(len(new_trajectories)))
 
         # create new random trajectory
-        trajectory = connection_function(connection_object_dict, possible_connections_dict,
-            connection_amount)
+        trajectory = choose_random_connections(connection_object_dict, possible_connections_dict,
+            connection_amount, max_duration)
 
         # add trajectory to the schedule
         new_trajectories.append(trajectory)

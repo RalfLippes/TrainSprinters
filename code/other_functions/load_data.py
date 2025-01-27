@@ -84,7 +84,7 @@ def set_parameters(holland_national, connections_path_1, stations_path_1,
     connections_path_2, stations_path_2):
     """
     Sets a bunch of parameters according to whether holland or nationaal was chosen
-    in the command line. 
+    in the command line.
     """
 
     if holland_national.lower() == 'holland':
@@ -101,7 +101,7 @@ def set_parameters(holland_national, connections_path_1, stations_path_1,
         max_trains = 7
         iterations = 2000
         max_duration = 120
-        depth = 5
+        depth = 4
         plot_title = 'Average Scores by Temperature and Cooling Rate for Holland'
 
     elif holland_national.lower() == 'nationaal':
@@ -118,7 +118,7 @@ def set_parameters(holland_national, connections_path_1, stations_path_1,
         max_trains = 20
         iterations = 8000
         max_duration = 180
-        depth = 5
+        depth = 4
         plot_title = 'Average Scores by Temperature and Cooling Rate for the Netherlands'
 
     penalty_weight = 0.1

@@ -89,9 +89,9 @@ def handle_hill_climber(args, possible_directions, full_connection_dict, origina
 
     # save the dataframe to a csv file under the right name
     if args.holland_nationaal == 'holland':
-        dataframe.to_csv("data/output/hill_climber_solution_holland.csv")
+        dataframe.to_csv("data/output/hill_climber_best_solution_holland.csv")
     else:
-        dataframe.to_csv("data/output/hill_climber_solution_national.csv")
+        dataframe.to_csv("data/output/hill_climber_best_solution_national.csv")
 
     # plot if necessary
     if args.plot_scores:

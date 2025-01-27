@@ -29,7 +29,7 @@ if __name__ == "__main__":
             "data/Noord_Holland/StationsHolland.csv")
     except Exception:
         print("-------------------------------------------------------------")
-        print("Please run main in format 'python main.py [holland/nationaal] [algorithm] [time in seconds] [plot? yes/no]'")
+        print("Please carefully look at the README file to see how to run main")
         print("-------------------------------------------------------------")
 
     # run baseline

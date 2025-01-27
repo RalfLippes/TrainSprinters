@@ -101,7 +101,7 @@ def set_parameters(holland_national, connections_path_1, stations_path_1,
         max_trains = 7
         iterations = 30000
         max_duration = 120
-        depth = 5
+        depth = 4
         plot_title = 'Average Scores by Temperature and Cooling Rate for Holland'
 
     elif holland_national.lower() == 'nationaal':
@@ -118,7 +118,7 @@ def set_parameters(holland_national, connections_path_1, stations_path_1,
         max_trains = 20
         iterations = 30000
         max_duration = 180
-        depth = 5
+        depth = 4
         plot_title = 'Average Scores by Temperature and Cooling Rate for the Netherlands'
 
     penalty_weight = 0.1

@@ -1,5 +1,4 @@
 import time
-import pandas as pd
 import copy
 import matplotlib.pyplot as plt
 from code.classes.oplossing_class import Solution
@@ -46,6 +45,26 @@ def n_deep_with_time_limit(time_limit, iterations, depth, min_trains, max_trains
 
     return best_score, best_iteration, best_solution, scores
 
+
+def plot_outcomes_n_deep(scores, national = False):
+    """
+    Creates histogram of the scores that were found in the run_with_time_limit
+    function. Saves it to data/output folder.
+    """
+    # create a histogram
+    plt.hist(scores, bins = 'auto', color = 'blue', edgecolor = 'black')
+
+    # add labels and title
+    plt.title('Histogram of Scores')
+    plt.xlabel('Score')
+    plt.ylabel('Frequency')
+    plt.xlim(0, 10000)
+    if national == True:
+        plt.savefig('data/output/n_deep_histogram_national.png')
+    else:
+        plt.savefig('data/output/n_deep_histogram_holland.png')
+
+
 def handle_n_deep(args, depth, iterations, min_trains, max_trains, full_connection_dict, original_connection_dict, possible_directions, total_connections):
     """
     Handles the n_deep algorithm using the structure of annealing steps.
@@ -62,7 +81,7 @@ def handle_n_deep(args, depth, iterations, min_trains, max_trains, full_connecti
         possible_directions=possible_directions,
         total_connections=total_connections)
 
-    dataframe = best_solution.create_dataframe_from_solution(original_connection_dict, total_connections=28)
+    dataframe = best_solution.create_dataframe_from_solution(original_connection_dict, total_connections)
 
     # Save the results
     if args.holland_nationaal == 'holland':
@@ -72,10 +91,7 @@ def handle_n_deep(args, depth, iterations, min_trains, max_trains, full_connecti
 
     # Optionally plot the scores
     if args.plot_scores:
-        plt.hist(scores, bins='auto', color='blue', edgecolor='black')
-        plt.title('Histogram of Scores')
-        plt.xlabel('Score')
-        plt.ylabel('Frequency')
-        plt.savefig(f"data/output/n_deep_histogram_{args.holland_nationaal}.png")
+        plot_outcomes_n_deep(
+            scores, national = args.holland_nationaal == "nationaal")
 
     print(f"The best iteration was iteration number {best_iteration}")

@@ -8,7 +8,7 @@ from code.algorithms.hill_climber import hill_climber
 from code.algorithms.greedy import generate_trajectory
 from code.algorithms.baseline import choose_random_connections
 
-def create_start_trajectory(start_algorithm = "baseline", a, station_locations,
+def create_start_trajectory(start_algorithm, a, station_locations,
     needed_connections_dict, possible_directions, full_connection_dict,
     penalty_weight, max_duration, max_connections):
 
@@ -107,7 +107,7 @@ def plot_outcomes_hill_climber(scores, high_scores, national = False):
 
 def handle_hill_climber(args, possible_directions, full_connection_dict, original_connection_dict,
     station_locations, total_connections, max_connections, min_trains, max_trains, iterations, max_duration, plot_title,
-    penalty_weight, start_algorithm):
+    penalty_weight, start_algorithm = "baseline"):
     """Runs the hill climber algorithm for a given time and saves the results."""
     # save best scores, best iteration, best solution and all scores
     best_score, best_iteration, best_solution, scores, high_scores = hill_climber_with_time_limit(

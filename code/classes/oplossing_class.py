@@ -100,18 +100,18 @@ class Solution:
         """
 
         # Create a plot figure
-        fig, ax = plt.subplots(figsize=(6, 10))
+        self.fig, self.ax = plt.subplots(figsize=(6, 10))
 
         for key, value in station_locations.items():
-            ax.scatter(value.x, value.y, marker='o', color='red')
-            ax.text(value.x, value.y - 0.02, value.name, fontsize=6)
+            self.ax.scatter(value.x, value.y, marker='o', color='red')
+            self.ax.text(value.x, value.y - 0.02, value.name, fontsize=6)
 
-        return fig, ax
+        return
 
     def create_simulation_data(self):
 
         """
-        makes a dictionary that contains a dictionary for every trajectory
+        makes a list that contains a dictionary for every trajectory
         that holds information about the x and y coords that need to be plotted
         the index of the connection that is being plotted and the time in current
         connection
@@ -129,14 +129,15 @@ class Solution:
 
         return plotting_data
 
-    def plot_step(self, plotting_data, stations_data, ax, station_dictionary):
+    def plot_step(self, plotting_data, stations_data):
 
-        ax.clear()
+        #empty plot
+        self.ax.clear()
 
-        for key, value in station_dictionary.items():
-            ax.scatter(value.x, value.y, marker='o', color = 'blue')
-            ax.text(value.x, value.y - 0.02, value.name, fontsize=6, )
 
+        for key, value in stations_data.items():
+            self.ax.scatter(value.x, value.y, marker='o', color = 'blue')
+            self.ax.text(value.x, value.y - 0.02, value.name, fontsize=6)
 
         for trajectory_data in plotting_data:
 
@@ -148,14 +149,14 @@ class Solution:
 
 
             if connection_index >= len(trajectory.connection_list):
-                ax.plot(trajectory_data["x_coords"], trajectory_data["y_coords"],
+                self.ax.plot(trajectory_data["x_coords"], trajectory_data["y_coords"],
                         linestyle="--", label=f"Train {self.solution.index(trajectory) + 1}")
                 continue
 
             connection = trajectory.connection_list[connection_index]
 
-            start_coords = [station_dictionary[connection.start_station].x , station_dictionary[connection.start_station].y]
-            end_coords = [station_dictionary[connection.end_station].x , station_dictionary[connection.end_station].y]
+            start_coords = [stations_data[connection.start_station].x , stations_data[connection.start_station].y]
+            end_coords = [stations_data[connection.end_station].x , stations_data[connection.end_station].y]
             connection_duration = connection.duration
             time_along_connection = trajectory_data["time_in_current_connection"]
 
@@ -174,7 +175,7 @@ class Solution:
                 trajectory_data["index_of_connection_plotted"] += 1
                 trajectory_data["time_in_current_connection"] = 0
 
-            ax.plot(trajectory_data["x_coords"], trajectory_data["y_coords"],
+            self.ax.plot(trajectory_data["x_coords"], trajectory_data["y_coords"],
                     linestyle="--", label=f"Train {self.solution.index(trajectory) + 1}")
 
         plt.legend()
@@ -182,28 +183,23 @@ class Solution:
 
         return
 
-    def simulate_solution(self, stations_data, max_duration = 150):
+    def simulate_solution(self, stations_data, max_duration):
 
         """
-        plots every step as a minute of real time simulation
+        plots a step that represents a minute of real time in the simulation
         """
-        plt.ion()
-        fig, ax = self.create_map(stations_data)
+
+        #creates a map for the solution
+        self.create_map(stations_data)
+
+        #creates an empty list where we are going to add the plotting data
         plotting_data = self.create_simulation_data()
 
+        #loop over the amount of steps
         for step in range(max_duration):
-
-            self.plot_step(plotting_data, stations_data, ax, stations_data)
-
+            self.plot_step(plotting_data, stations_data)
             plt.pause(0.01)
 
-
-        for key, value in stations_data.items():
-            ax.scatter(value.x, value.y, marker='o', color='blue')
-            ax.text(value.x, value.y - 0.02, value.name, fontsize=6)
-
-
-        plt.ioff()
         plt.show()
 
         return

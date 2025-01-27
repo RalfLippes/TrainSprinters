@@ -28,21 +28,12 @@ def find_duration(trajectories):
 
     return total_duration
 
-def accept_step(old_score, new_score, temperature):
-    """
-    Takes the cost of the old step and the cost of the new step, as well as the
-    current temperature. Decides if the new step will be accepted by using the
-    simulated annealing criterion. Returns true or false according to acceptance.
-    """
-    pass
-
 def hill_climber(trajectories, connection_function, connection_object_dict,
-    possible_connections_dict, connection_amount, trajectory_amount,
-    iterations, original_connection_dict):
+    possible_connections_dict, connection_amount, trajectory_amount, iterations,
+    original_connection_dict, max_duration):
     """
     Takes a list of trajectory objects. Removes 1 trajectory and makes a new one.
-    Calculates score of current and new trajectory and uses acceptance function
-    to decide if new step is accepted. Repeats until temperature is 0.
+    Calculates score of current and new trajectory.
     """
     final_solution = Solution()
 
@@ -60,7 +51,7 @@ def hill_climber(trajectories, connection_function, connection_object_dict,
 
         # create new random trajectory
         trajectory = connection_function(connection_object_dict, possible_connections_dict,
-            connection_amount)
+            connection_amount, max_duration)
 
         # add trajectory to the schedule
         new_trajectories.append(trajectory)
@@ -75,8 +66,6 @@ def hill_climber(trajectories, connection_function, connection_object_dict,
             current_trajectories = new_trajectories
             current_connections = new_connections
             current_score = new_score
-
-
 
 
     for trajectory in current_trajectories:

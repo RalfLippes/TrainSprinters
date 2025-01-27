@@ -53,7 +53,7 @@ def accept_step(old_score, new_score, temperature):
 
 def simulated_annealing(trajectories, connection_function, connection_object_dict,
     possible_connections_dict, connection_amount, trajectory_amount, temperature,
-    cooling_rate, iterations, original_connection_dict, max_duration):
+    cooling_rate, iterations, original_connection_dict, max_duration, total_connections):
     """
     Takes a list of trajectory objects. Removes 1 trajectory and makes a new one.
     Calculates score of current and new trajectory and uses acceptance function
@@ -66,7 +66,7 @@ def simulated_annealing(trajectories, connection_function, connection_object_dic
     current_connections = trajectories.amount_connection(original_connection_dict)
     current_duration = find_duration(current_trajectories)
     current_score = calculate_score(current_connections, trajectory_amount,
-        current_duration, total_connections = 28)
+        current_duration, total_connections)
 
     for i in range(iterations):
         # remove random trajectory from list
@@ -84,7 +84,7 @@ def simulated_annealing(trajectories, connection_function, connection_object_dic
         new_connections = find_connection_amount(new_trajectories, original_connection_dict)
         new_duration = find_duration(new_trajectories)
         new_score = calculate_score(new_connections, trajectory_amount,
-            new_duration, total_connections = 28)
+            new_duration, total_connections)
 
         # check if new step is accepted
         if accept_step(current_score, new_score, temperature):

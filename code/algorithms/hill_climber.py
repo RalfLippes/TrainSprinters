@@ -32,7 +32,7 @@ def find_duration(trajectories):
 
 def hill_climber(trajectories, connection_function, connection_object_dict,
     possible_connections_dict, connection_amount, trajectory_amount, iterations,
-    original_connection_dict, max_duration):
+    original_connection_dict, max_duration, total_connections):
     """
     Takes a list of trajectory objects. Removes 1 trajectory and makes a new one.
     Calculates score of current and new trajectory.

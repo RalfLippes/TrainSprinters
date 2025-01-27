@@ -41,7 +41,8 @@ def simulated_annealing_with_time_limit(time_limit, min_trains, max_trains,
             # apply simulated annealing
             try_out = simulated_annealing(trajectories, choose_random_connections,
                 full_connection_dict, possible_directions, max_connections, a,
-                temperature, cooling_rate, iterations, original_connection_dict, max_duration)
+                temperature, cooling_rate, iterations, original_connection_dict, max_duration,
+                total_connections)
 
             # calculate score and append to list
             current_score = try_out.calculate_solution_score(original_connection_dict, total_connections)

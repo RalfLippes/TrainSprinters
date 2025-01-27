@@ -122,7 +122,10 @@ def set_parameters(holland_national, connections_path_1, stations_path_1,
         plot_title = 'Average Scores by Temperature and Cooling Rate for the Netherlands'
 
     penalty_weight = 0.1
+    temperature_values = [10000, 5000, 2000, 1000, 500, 200, 100, 50]
+    cooling_rate_values = [0.8, 0.9, 0.95, 0.99, 0.999, 0.9999]
 
     return (possible_directions, full_connection_dict, original_connection_dict,
     station_locations, total_connections, max_connections, temperature, cooling_rate,
-    min_trains, max_trains, iterations, depth, max_duration, plot_title, penalty_weight)
+    min_trains, max_trains, iterations, depth, max_duration, plot_title, penalty_weight,
+    temperature_values, cooling_rate_values)

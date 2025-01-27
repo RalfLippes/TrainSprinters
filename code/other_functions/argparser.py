@@ -16,7 +16,8 @@ def create_arg_parser():
     # Optional argument for algorithm
     parser.add_argument(
         "run_algorithm",
-        choices = ["baseline", "simulated_annealing", "annealing_steps", "greedy", "n_deep", "hill_climber"],
+        choices = ["baseline", "simulated_annealing", "annealing_steps", "greedy", "n_deep",
+            "hill_climber", "temp_cool"],
         default = "baseline",
         help = "The algorithm to run (default: simulated_annealing).",
     )

@@ -77,13 +77,14 @@ def handle_annealing_steps(args, possible_directions, full_connection_dict, orig
     dataframe = best_solution.create_dataframe_from_solution(original_connection_dict,
         total_connections)
 
-    best_solution.simulate_solution(station_dictionary)
+    # create visulalisation of best solution
+    best_solution.simulate_solution(station_dictionary, max_duration)
 
     # save the dataframe to a csv file under the right name
     if args.holland_nationaal == 'holland':
-        dataframe.to_csv("data/output/annealing_steps_best_solution_holland.csv")
+        dataframe.to_csv("data/output/annealing_steps_best_solution_holland.csv", index = False)
     else:
-        dataframe.to_csv("data/output/annealing_steps_best_solution_national.csv")
+        dataframe.to_csv("data/output/annealing_steps_best_solution_national.csv", index = False)
 
     # plot if necessary
     if args.plot_scores:

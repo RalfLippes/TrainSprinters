@@ -48,8 +48,8 @@ if __name__ == "__main__":
     # run hill climber
     if args.run_algorithm.lower() == 'hill_climber':
         handle_hill_climber(args, possible_directions, full_connection_dict, original_connection_dict,
-            station_dictionary, total_connections, max_connections, temperature,
-            cooling_rate, min_trains, max_trains, iterations, max_duration, plot_title,
+            station_dictionary, total_connections, max_connections
+            , min_trains, max_trains, iterations, max_duration, plot_title,
             penalty_weight)
 
     # run greedy

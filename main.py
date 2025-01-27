@@ -67,16 +67,19 @@ if __name__ == "__main__":
             cooling_rate, min_trains, max_trains, max_duration, plot_title, penalty_weight,
             total_connections)
 
+    # run n deep algorithm
     if args.run_algorithm.lower() == 'n_deep':
         handle_n_deep(args, depth, iterations, min_trains, max_trains, full_connection_dict,
             original_connection_dict, possible_directions, total_connections)
 
+    # find best cooling rate and temperature
     if args.run_algorithm.lower() == 'temp_cool':
         find_best_temp_and_cooling(full_connection_dict, possible_directions,
             original_connection_dict, station_dictionary, max_duration, max_connections, min_trains,
             max_trains, total_connections, iterations, penalty_weight, temperature_values,
             cooling_rate_values)
 
+    # find best number of iterations for hill climber
     if args.run_algorithm.lower() == 'find_iteration':
         trajectory_amount = random.randint(min_trains, max_trains)
         solution = create_trajectories(trajectory_amount, full_connection_dict,

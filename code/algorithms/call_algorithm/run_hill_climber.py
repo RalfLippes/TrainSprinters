@@ -30,14 +30,12 @@ def create_start_trajectory(start_algorithm, a, station_locations,
 
     elif start_algorithm == "baseline":
         for traj in range(a):
-            new_trajectory = choose_random_connections(connection_object_dict, possible_connections_dict,
+            new_trajectory = choose_random_connections(full_connection_dict, possible_directions,
                 max_connections, max_duration)
             trajectories.add_trajectory(new_trajectory)
 
 
     return trajectories
-
-
 
 def hill_climber_with_time_limit(time_limit, min_trains, max_trains,
     original_connection_dict, station_locations, possible_directions, full_connection_dict,
@@ -121,9 +119,9 @@ def handle_hill_climber(args, possible_directions, full_connection_dict, origina
 
     # save the dataframe to a csv file under the right name
     if args.holland_nationaal == 'holland':
-        dataframe.to_csv("data/output/hill_climber_best_solution_holland.csv", index = False)
+        dataframe.to_csv(f"data/output/hill_climber_best_solution_holland_{start_algorithm}.csv", index = False)
     else:
-        dataframe.to_csv("data/output/hill_climber_best_solution_national.csv", index = False)
+        dataframe.to_csv(f"data/output/hill_climber_best_solution_national_{start_algorithm}.csv", index = False)
 
     # plot if necessary
     if args.plot_scores:

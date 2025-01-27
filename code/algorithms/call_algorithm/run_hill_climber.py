@@ -69,13 +69,12 @@ def plot_outcomes_hill_climber(scores, national = False):
     plt.ylabel('Frequency')
     plt.xlim(0, 10000)
     if national == True:
-        plt.savefig('data/output/simulated_annealing_histogram_national.png')
+        plt.savefig('data/output/hill_climber_histogram_national.png')
     else:
-        plt.savefig('data/output/simulated_annealing_histogram_holland.png')
+        plt.savefig('data/output/hill_climber_histogram_holland.png')
 
 def handle_hill_climber(args, possible_directions, full_connection_dict, original_connection_dict,
-    station_locations, total_connections, max_connections, temperature,
-    cooling_rate, min_trains, max_trains, iterations, max_duration, plot_title,
+    station_locations, total_connections, max_connections, min_trains, max_trains, iterations, max_duration, plot_title,
     penalty_weight):
     """Runs the hill climber algorithm for a given time and saves the results."""
     # save best scores, best iteration, best solution and all scores
@@ -90,13 +89,13 @@ def handle_hill_climber(args, possible_directions, full_connection_dict, origina
 
     # save the dataframe to a csv file under the right name
     if args.holland_nationaal == 'holland':
-        dataframe.to_csv("data/output/simulated_best_solution_holland.csv")
+        dataframe.to_csv("data/output/hill_climber_solution_holland.csv")
     else:
-        dataframe.to_csv("data/output/simulated_best_solution_national.csv")
+        dataframe.to_csv("data/output/hill_climber_solution_national.csv")
 
     # plot if necessary
     if args.plot_scores:
-        plot_outcomes_simulated_annealing(
+        plot_outcomes_hill_climber(
             scores, national = args.holland_nationaal == "nationaal")
 
     print(f"The best iteration was iteration number {best_iteration}")

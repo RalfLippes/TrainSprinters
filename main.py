@@ -50,7 +50,7 @@ if __name__ == "__main__":
         handle_hill_climber(args, possible_directions, full_connection_dict, original_connection_dict,
             station_dictionary, total_connections, max_connections,
             min_trains, max_trains, iterations, max_duration, plot_title,
-            penalty_weight)
+            penalty_weight, start_algorithm = "greedy")
 
     # run greedy
     if args.run_algorithm.lower() == 'greedy':

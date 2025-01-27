@@ -5,12 +5,44 @@ import matplotlib.pyplot as plt
 from code.classes.oplossing_class import Solution
 from code.algorithms.annealing_steps import create_annealing_steps_trajectory
 from code.algorithms.hill_climber import hill_climber
+from code.algorithms.greedy import generate_trajectory
 from code.algorithms.baseline import choose_random_connections
+
+def create_start_trajectory(start_algorithm, a, station_locations,
+    needed_connections_dict, possible_directions, full_connection_dict,
+    penalty_weight, max_duration, max_connections):
+
+    trajectories = Solution()
+
+    if start_algorithm == "annealing_steps":
+        for traj in range(a):
+            new_trajectory, needed_connections_dict = create_annealing_steps_trajectory(station_locations,
+                needed_connections_dict, possible_directions, full_connection_dict,
+                penalty_weight, max_duration, max_connections)
+            trajectories.add_trajectory(new_trajectory)
+
+    elif start_algorithm == "greedy":
+        for traj in range(a):
+
+            new_trajectory, needed_connections_dict = generate_trajectory(full_connection_dict, possible_directions,
+                needed_connections_dict, max_duration)
+            trajectories.add_trajectory(new_trajectory)
+
+    elif start_algorithm == "baseline":
+        for traj in range(a):
+            new_trajectory = choose_random_connections(connection_object_dict, possible_connections_dict,
+                max_connections, max_duration)
+            trajectories.add_trajectory(new_trajectory)
+
+
+    return trajectories
+
+
 
 def hill_climber_with_time_limit(time_limit, min_trains, max_trains,
     original_connection_dict, station_locations, possible_directions, full_connection_dict,
     penalty_weight, max_duration, max_connections,
-    iterations, total_connections):
+    iterations, total_connections, start_algorithm):
     """
     Runs the hill climber algorithm for a given amount of time. Saves and returns
     the best score, the iteration number of the best score and the best solution.
@@ -29,15 +61,12 @@ def hill_climber_with_time_limit(time_limit, min_trains, max_trains,
         # run algorithm once for every possible amount of trajectories
         for a in range(min_trains, max_trains + 1):
             iteration += 1
-            trajectories = Solution()
             needed_connections_dict = copy.deepcopy(original_connection_dict)
 
-            # create a solution with annealing steps algorithm
-            for b in range(a):
-                new_trajectory, needed_connections_dict = create_annealing_steps_trajectory(station_locations,
-                    needed_connections_dict, possible_directions, full_connection_dict,
-                    penalty_weight, max_duration, max_connections)
-                trajectories.add_trajectory(new_trajectory)
+            trajectories = create_start_trajectory(start_algorithm, a, station_locations,
+                needed_connections_dict, possible_directions, full_connection_dict,
+                penalty_weight, max_duration, max_connections)
+
 
             # apply simulated annealing
             try_out = hill_climber(trajectories, choose_random_connections,
@@ -78,13 +107,13 @@ def plot_outcomes_hill_climber(scores, high_scores, national = False):
 
 def handle_hill_climber(args, possible_directions, full_connection_dict, original_connection_dict,
     station_locations, total_connections, max_connections, min_trains, max_trains, iterations, max_duration, plot_title,
-    penalty_weight):
+    penalty_weight, start_algorithm):
     """Runs the hill climber algorithm for a given time and saves the results."""
     # save best scores, best iteration, best solution and all scores
     best_score, best_iteration, best_solution, scores, high_scores = hill_climber_with_time_limit(
         args.time, min_trains, max_trains, original_connection_dict, station_locations,
         possible_directions, full_connection_dict, penalty_weight, max_duration,
-        max_connections, iterations, total_connections)
+        max_connections, iterations, total_connections, start_algorithm)
 
     # create a dataframe from the scores
     dataframe = best_solution.create_dataframe_from_solution(original_connection_dict,

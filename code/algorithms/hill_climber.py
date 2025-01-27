@@ -119,13 +119,4 @@ def find_best_iterations(trajectories, connection_function, connection_object_di
 
         scores.append(current_score)
 
-    iterations = list(range(1, len(scores) + 1))
-
-    # create a plot of scores vs iteration
-    plt.plot(iterations, scores, linestyle='-', color='b', label='High Scores')
-    plt.title('High Scores vs Iterations')
-    plt.xlabel('Iteration Number')
-    plt.ylabel('High Score')
-    plt.xlim(0, len(scores))
-
-    plt.show()
+    return scores

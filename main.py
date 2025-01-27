@@ -11,6 +11,7 @@ from code.algorithms.baseline import create_trajectories, choose_random_connecti
 from code.algorithms.hill_climber import find_best_iterations
 import random
 import argparse
+import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
 
@@ -25,7 +26,7 @@ if __name__ == "__main__":
         (possible_directions, full_connection_dict, original_connection_dict,
             station_dictionary, total_connections, max_connections, temperature,
             cooling_rate, min_trains, max_trains, iterations, depth, max_duration, plot_title,
-            penalty_weight, temperature_values, cooling_rate_values
+            penalty_weight, temperature_values, cooling_rate_values, experiment_iterations
         ) = set_parameters(args.holland_nationaal, "data/Nationaal/ConnectiesNationaal.csv",
             "data/Nationaal/StationsNationaal.csv", "data/Noord_Holland/ConnectiesHolland.csv",
             "data/Noord_Holland/StationsHolland.csv")
@@ -52,7 +53,7 @@ if __name__ == "__main__":
         handle_hill_climber(args, possible_directions, full_connection_dict, original_connection_dict,
             station_dictionary, total_connections, max_connections,
             min_trains, max_trains, iterations, max_duration, plot_title,
-            penalty_weight, start_algorithm = "greedy")
+            penalty_weight, args.hill_climber_args)
 
     # run greedy
     if args.run_algorithm.lower() == 'greedy':
@@ -80,6 +81,17 @@ if __name__ == "__main__":
         trajectory_amount = random.randint(min_trains, max_trains)
         solution = create_trajectories(trajectory_amount, full_connection_dict,
             possible_directions, max_connections, max_duration)
-        find_best_iterations(solution, choose_random_connections, full_connection_dict,
-            possible_directions, max_connections, trajectory_amount, 20000,
-            original_connection_dict, max_duration, total_connections)
+        for i in range(min_trains, max_trains + 1):
+            scores = find_best_iterations(solution, choose_random_connections, full_connection_dict,
+                possible_directions, max_connections, trajectory_amount, experiment_iterations,
+                original_connection_dict, max_duration, total_connections)
+            iterations = list(range(1, len(scores) + 1))
+
+            # create a plot of scores vs iteration
+            plt.plot(iterations, scores, linestyle='-', label='High Scores')
+        plt.title('High Scores vs Iterations')
+        plt.xlabel('Iteration Number')
+        plt.ylabel('High Score')
+        plt.xlim(0, len(scores))
+
+        plt.show()

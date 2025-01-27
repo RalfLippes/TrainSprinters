@@ -65,15 +65,15 @@ Hieronder een lijst met de mogelijke argumenten per 'categorie', de verschillend
   - **holland**: Gebruikt de data van Noord- en Zuid-Holland
   - **nationaal**: Gebruikt de data van heel Nederland
 
-- **algoritme: standaard = baseline**
+- **algoritme**:
   - **simulated_annealing**: Gebruikt simulated annealing. Slaat de beste oplossing en een histogram op in de map data/output onder de respectievelijke namen simulated_best_solution_nationaal.csv (of .holland.csv) en simulated_annealing_histogram_nationaal.png (of .holland.png).
   - **baseline**: Gebruikt een willekeurig algoritme. Slaat de beste oplossing en een histogram op onder de namen baseline_best_solution_nationaal.csv en baseline_histogram_nationaal.csv.
   - **annealing_steps**: Gebruikt het annealing steps algoritme. Slaat de beste oplossing en een histogram op onder de namen annealing_steps_best_solution_nationaal.csv en annealing_steps_histogram_nationaal.csv.
   - **greedy**: Gebruikt een greedy algoritme. Slaat de beste oplossing en een histogram op onder de namen greedy_best_solution_nationaal.csv en greedy_histogram_nationaal.csv.
+  - **hill_climber**: Gebruikt een hill climber algoritme. Slaat de beste oplossing en een histogram op onder de namen hill_climber_best_solution_nationaal.csv en hill_climber_histogram_nationaal.csv. **LET OP** Dit algoritme gebruikt standaard een random algoritme om een initiële oplossing aan hill climber te geven. Om greedy of annealing steps te gebruiken om deze eerste oplossing te maken, voeg je --hill_climber_args greedy of --hill_climber_args annealing_steps toe aan de command line.
 
 - **tijd: standaard = 60**
   - **--time [0-oneindig]**: Bepaalt hoe lang het gekozen algoritme draait.
-
 - **plotten: standaard = nee**
   - **--plot_scores**: Bepaalt of histogram van scores opgeslagen moet worden.
 
@@ -89,6 +89,7 @@ De mogelijke experimenten zijn:
 
 - **experimenten**:
   - **temp_cool**: Vindt de beste temperatuur en cooling rate voor simulated annealing. Zal verschillende waarden vinden voor nationaal en holland.
+  - **find_iteration**: Maakt een plot van het aantal iteraties dat hill_climber gerund heeft, en wat de high score was bij die iteratie.  Werkt voor holland en nationaal.
 
 ### Structuur
 
@@ -96,10 +97,8 @@ De hierop volgende lijst beschrijft de belangrijkste mappen en files in het proj
 
 - **/code**: bevat alle code van dit project
   - **/code/algorithms**: bevat de code voor algoritmes
-    - **/code/algorithms/call_algorithm**: bevat de code om een algoritme aan te roepen
+    - **/code/algorithms/call_algorithm**: bevat de code om een algoritme aan te roepen of een experiment uit te voeren.
   - **/code/classes**: bevat de vier benodigde classes voor deze case
-  - **/code/experiments**: bevat de code om experimenten uit te voeren
-  - **/code/other_functions**: bevat 'extra' code die niet in andere mapjes thuis hoort
   - **/code/visualisation**: bevat de code voor de visualisaties
 - **/data**: bevat de verschillende databestanden die nodig zijn om de programma's te draaien
   - **/data/Noord_Holland**: bevat de data voor Noord- en Zuid-Holland (stations en verbindingen)

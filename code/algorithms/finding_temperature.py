@@ -26,7 +26,7 @@ def find_best_temp_and_cooling(full_connection_dict, possible_directions,
         needed_connections_dict = copy.deepcopy(original_connection_dict)
         for a in range(random.randint(min_trains, max_trains)):
             current_trajectory, needed_connections_dict = create_annealing_steps_trajectory(
-                station_locations, needed_connections_dict, possible_directions,
+                station_dictionary, needed_connections_dict, possible_directions,
                 full_connection_dict, penalty_weight, max_duration, max_connections)
             solution.add_trajectory(current_trajectory)
         solution_list.append(solution)

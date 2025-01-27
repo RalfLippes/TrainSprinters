@@ -3,7 +3,7 @@ import copy
 import math
 from code.algorithms.annealing_steps import annealing_cost_function
 from code.algorithms.baseline import choose_random_connections
-from code.other_functions.calculate_score import calculate_score
+from code.algorithms.calculate_score import calculate_score
 from code.classes.oplossing_class import Solution
 
 def find_connection_amount(trajectories, original_connection_dict):

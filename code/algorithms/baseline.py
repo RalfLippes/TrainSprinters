@@ -4,7 +4,7 @@ import pandas as pd
 from code.classes.traject_class import Trajectory
 from code.classes.oplossing_class import Solution
 from code.classes.verbinding_class import Connection
-from code.other_functions.calculate_score import calculate_score
+from code.algorithms.calculate_score import calculate_score
 
 def choose_random_connections(connection_object_dict, possible_connections_dict,
     max_connections, max_duration):

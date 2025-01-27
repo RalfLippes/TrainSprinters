@@ -1,4 +1,4 @@
-from code.other_functions.calculate_score import calculate_score
+from code.algorithms.calculate_score import calculate_score
 from code.visualisation.representation import create_map
 import pandas as pd
 import time

@@ -112,19 +112,19 @@ def n_deep_algorithm(connection_data, possible_connections, needed_connections, 
             # Explore paths to decide the next connection
             _, best_path = explore_paths(
                 current_station, connection_data, used_connections, remaining_needed_connections,
-                possible_connections, total_time, depth
-            )
+                possible_connections, total_time, depth)
 
             if not best_path:
-                break  # If no valid path is found, stop
+                break
 
             next_connection = best_path[0]
             traject.add_connection(next_connection)
             total_time += next_connection.duration
             current_station = next_connection.end_station
             used_connections.add(f"{next_connection.start_station}{next_connection.end_station}")
-            print(remaining_needed_connections)
-            remaining_needed_connections.pop(f"{next_connection.start_station}-{next_connection.end_station}")
+
+            # remove the connection if it is present in the needed connections
+            remaining_needed_connections.pop(f"{next_connection.start_station}-{next_connection.end_station}", None)
 
             if total_time > 120:
                 break

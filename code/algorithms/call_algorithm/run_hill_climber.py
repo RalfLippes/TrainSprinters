@@ -77,8 +77,7 @@ def plot_outcomes_hill_climber(scores, high_scores, national = False):
         plt.savefig('data/output/hill_climber_histogram_holland.png')
 
 def handle_hill_climber(args, possible_directions, full_connection_dict, original_connection_dict,
-    station_locations, total_connections, max_connections, temperature,
-    cooling_rate, min_trains, max_trains, iterations, max_duration, plot_title,
+    station_locations, total_connections, max_connections, min_trains, max_trains, iterations, max_duration, plot_title,
     penalty_weight):
     """Runs the hill climber algorithm for a given time and saves the results."""
     # save best scores, best iteration, best solution and all scores

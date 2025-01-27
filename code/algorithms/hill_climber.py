@@ -3,7 +3,7 @@ import copy
 import math
 from code.algorithms.annealing_steps import annealing_cost_function
 from code.algorithms.baseline import choose_random_connections
-from code.other_functions.calculate_score import calculate_score
+from code.algorithms.calculate_score import calculate_score
 from code.classes.oplossing_class import Solution
 
 def find_connection_amount(trajectories, original_connection_dict):
@@ -42,7 +42,7 @@ def hill_climber(trajectories, connection_function, connection_object_dict,
     current_connections = trajectories.amount_connection(original_connection_dict)
     current_duration = find_duration(current_trajectories)
     current_score = calculate_score(current_connections, trajectory_amount,
-        current_duration, total_connections = 28)
+        current_duration, total_connections)
 
     for i in range(iterations):
         # remove random trajectory from list
@@ -60,7 +60,7 @@ def hill_climber(trajectories, connection_function, connection_object_dict,
         new_connections = find_connection_amount(new_trajectories, original_connection_dict)
         new_duration = find_duration(new_trajectories)
         new_score = calculate_score(new_connections, trajectory_amount,
-            new_duration, total_connections = 28)
+            new_duration, total_connections)
 
         if new_score > current_score:
             current_trajectories = new_trajectories

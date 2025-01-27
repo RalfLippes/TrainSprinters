@@ -4,7 +4,7 @@ import copy
 from code.classes.verbinding_class import Connection
 from code.classes.traject_class import Trajectory
 from code.classes.oplossing_class import Solution
-from code.other_functions.calculate_score import calculate_score
+from code.algorithms.calculate_score import calculate_score
 
 def generate_trajectory(full_connection_dict, possible_directions,
     needed_connections_dict, max_duration):

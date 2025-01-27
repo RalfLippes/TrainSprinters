@@ -3,7 +3,7 @@ import pandas as pd
 import copy
 from code.classes.traject_class import Trajectory
 from code.classes.verbinding_class import Connection
-from code.other_functions.calculate_score import calculate_score
+from code.algorithms.calculate_score import calculate_score
 from code.classes.oplossing_class import Solution
 import random
 

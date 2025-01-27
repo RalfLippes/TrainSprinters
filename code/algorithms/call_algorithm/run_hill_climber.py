@@ -8,7 +8,7 @@ from code.algorithms.hill_climber import hill_climber
 from code.algorithms.greedy import generate_trajectory
 from code.algorithms.baseline import choose_random_connections
 
-def create_start_trajectory(start_algorithm, a, station_locations,
+def create_start_trajectory(start_algorithm = "baseline", a, station_locations,
     needed_connections_dict, possible_directions, full_connection_dict,
     penalty_weight, max_duration, max_connections):
 

@@ -7,6 +7,8 @@ from code.algorithms.call_algorithm.run_greedy import handle_greedy
 from code.algorithms.call_algorithm.run_n_deep import handle_n_deep
 from code.algorithms.call_algorithm.run_baseline import handle_baseline
 from code.algorithms.finding_temperature import find_best_temp_and_cooling
+from code.algorithms.baseline import create_trajectories, choose_random_connections
+from code.algorithms.hill_climber import find_best_iterations
 import random
 import argparse
 
@@ -74,15 +76,10 @@ if __name__ == "__main__":
             max_trains, total_connections, iterations, penalty_weight, temperature_values,
             cooling_rate_values)
 
-
-        # # get a list of iteration numbers
-        # iterations = list(range(1, len(high_scores) + 1))
-        #
-        # # create a plot of high scores vs iteration
-        # plt.plot(iterations, high_scores, linestyle='-', color='b', label='High Scores')
-        # plt.title('High Scores vs Iterations')
-        # plt.xlabel('Iteration Number')
-        # plt.ylabel('High Score')
-        # plt.xlim(0, len(high_scores))
-        #
-        # plt.show()
+    if args.run_algorithm.lower() == 'find_iteration':
+        trajectory_amount = random.randint(min_trains, max_trains)
+        solution = create_trajectories(trajectory_amount, full_connection_dict,
+            possible_directions, max_connections, max_duration)
+        find_best_iterations(solution, choose_random_connections, full_connection_dict,
+            possible_directions, max_connections, trajectory_amount, 20000,
+            original_connection_dict, max_duration, total_connections)

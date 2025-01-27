@@ -17,7 +17,7 @@ def create_arg_parser():
     parser.add_argument(
         "run_algorithm",
         choices = ["baseline", "simulated_annealing", "annealing_steps", "greedy", "n_deep",
-            "hill_climber", "temp_cool"],
+            "hill_climber", "temp_cool", "find_iteration"],
         default = "baseline",
         help = "The algorithm to run (default: simulated_annealing).",
     )
@@ -35,6 +35,13 @@ def create_arg_parser():
         "--plot_scores",
         action = "store_true",
         help = "Enable plotting of the found scores.",
+    )
+
+    # optional arguments for algorithms
+    parser.add_argument(
+        "--hill_climber_args",
+        choices = ["greedy", "baseline", "annealing_steps"],
+        help = "What algorithm to use for starting hill climber",
     )
 
     return parser

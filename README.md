@@ -77,6 +77,19 @@ Hieronder een lijst met de mogelijke argumenten per 'categorie', de verschillend
 - **plotten: standaard = nee**
   - **--plot_scores**: Bepaalt of histogram van scores opgeslagen moet worden.
 
+### Experimenten uitvoeren
+
+Behalve het runnen van een algoritme is het ook mogelijk om een experiment uit te voeren. De naam van het experiment komt dan op de plaats van het algoritme. Dit vereist verder geen extra argumenten. Een voorbeeld is:
+
+```
+python main.py nationaal temp_cool
+```
+
+De mogelijke experimenten zijn:
+
+- **experimenten**:
+  - **temp_cool**: Vindt de beste temperatuur en cooling rate voor simulated annealing. Zal verschillende waarden vinden voor nationaal en holland.
+
 ### Structuur
 
 De hierop volgende lijst beschrijft de belangrijkste mappen en files in het project, en waar je ze kan vinden:

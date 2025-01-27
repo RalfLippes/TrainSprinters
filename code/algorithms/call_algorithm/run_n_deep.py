@@ -23,7 +23,7 @@ def n_deep_with_time_limit(time_limit, iterations, depth, min_trains, max_trains
             needed_connections_dict = copy.deepcopy(original_connection_dict)
 
             # Create trajectories using the n_deep algorithm
-            solution, current_score = create_deep_trajectories(
+            final_solution = create_deep_trajectories(
                 trajectory_amount=trajectory_amount,
                 connection_algorithm=n_deep_algorithm,
                 full_connection_dict=full_connection_dict,
@@ -31,18 +31,18 @@ def n_deep_with_time_limit(time_limit, iterations, depth, min_trains, max_trains
                 needed_connections_dict=needed_connections_dict,
                 possible_directions=possible_directions,
                 depth=depth,
-                total_connections=total_connections
-            )
+                total_connections=total_connections)
 
             # Track scores
+            current_score = final_solution.calculate_solution_score(original_connection_dict, total_connections)
+
             scores.append(current_score)
-            print(current_score)
 
             # Track the best solution
             if current_score > best_score:
                 best_score = current_score
                 best_iteration = iteration
-                best_solution = solution
+                best_solution = final_solution
 
     return best_score, best_iteration, best_solution, scores
 
@@ -60,11 +60,7 @@ def handle_n_deep(args, depth, iterations, min_trains, max_trains, full_connecti
         full_connection_dict=full_connection_dict,
         original_connection_dict=original_connection_dict,
         possible_directions=possible_directions,
-        total_connections=total_connections
-    )
-
-    # Convert the best_solution (Solution object) to a dataframe
-    print(f"TYPE = {type(best_solution)}")
+        total_connections=total_connections)
 
     dataframe = best_solution.create_dataframe_from_solution(original_connection_dict, total_connections=28)
 

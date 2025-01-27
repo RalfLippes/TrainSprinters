@@ -1,5 +1,6 @@
 import time
 import copy
+import matplotlib.pyplot as plt
 from code.classes.oplossing_class import Solution
 from code.algorithms.baseline import create_trajectories
 
@@ -15,6 +16,7 @@ def baseline_with_time_limit(time_limit, min_trains, max_trains, original_connec
     best_iteration = 0
     best_solution = None
     scores = []
+    high_scores = []
     start_time = time.time()
 
     # keep looping while in time limit
@@ -39,7 +41,9 @@ def baseline_with_time_limit(time_limit, min_trains, max_trains, original_connec
                 best_score = current_score
                 best_iteration = iteration
 
-    return best_score, best_iteration, best_solution, scores
+            high_scores.append(best_score)
+
+    return best_score, best_iteration, best_solution, scores, high_scores
 
 def plot_outcomes_baseline(scores, national = False):
     """
@@ -54,6 +58,8 @@ def plot_outcomes_baseline(scores, national = False):
     plt.xlabel('Score')
     plt.ylabel('Frequency')
     plt.xlim(0, 10000)
+
+    # save figure to appropriate file
     if national == True:
         plt.savefig('data/output/baseline_histogram_national.png')
     else:
@@ -63,7 +69,7 @@ def handle_baseline(args, possible_directions, full_connection_dict, original_co
     total_connections, min_trains, max_trains, max_duration, plot_title, max_connections):
     """Runs the baseline algorithm for a given time and saves the results."""
     # save best scores, best iteration, best solution and all scores
-    best_score, best_iteration, best_solution, scores = baseline_with_time_limit(
+    best_score, best_iteration, best_solution, scores, high_scores = baseline_with_time_limit(
         args.time, min_trains, max_trains, original_connection_dict,
         possible_directions, full_connection_dict, max_duration, total_connections,
         max_connections)
@@ -74,9 +80,9 @@ def handle_baseline(args, possible_directions, full_connection_dict, original_co
 
     # save the dataframe to a csv file under the right name
     if args.holland_nationaal == 'holland':
-        dataframe.to_csv("data/output/baseline_best_solution_holland.csv")
+        dataframe.to_csv("data/output/baseline_best_solution_holland.csv", index = False)
     else:
-        dataframe.to_csv("data/output/baseline_best_solution_national.csv")
+        dataframe.to_csv("data/output/baseline_best_solution_national.csv", index = False)
 
     # plot if necessary
     if args.plot_scores:

@@ -6,6 +6,7 @@ from code.algorithms.call_algorithm.run_annealing_steps import handle_annealing_
 from code.algorithms.call_algorithm.run_greedy import handle_greedy
 from code.algorithms.call_algorithm.run_n_deep import handle_n_deep
 from code.algorithms.call_algorithm.run_baseline import handle_baseline
+from code.algorithms.finding_temperature import find_best_temp_and_cooling
 import random
 import argparse
 
@@ -22,7 +23,7 @@ if __name__ == "__main__":
         (possible_directions, full_connection_dict, original_connection_dict,
             station_dictionary, total_connections, max_connections, temperature,
             cooling_rate, min_trains, max_trains, iterations, depth, max_duration, plot_title,
-            penalty_weight
+            penalty_weight, temperature_values, cooling_rate_values
         ) = set_parameters(args.holland_nationaal, "data/Nationaal/ConnectiesNationaal.csv",
             "data/Nationaal/StationsNationaal.csv", "data/Noord_Holland/ConnectiesHolland.csv",
             "data/Noord_Holland/StationsHolland.csv")
@@ -64,107 +65,24 @@ if __name__ == "__main__":
             total_connections)
 
     if args.run_algorithm.lower() == 'n_deep':
-        handle_n_deep(
-            args=args,
-            depth=depth,
-            iterations=iterations,
-            min_trains=min_trains,
-            max_trains=max_trains,
-            full_connection_dict=full_connection_dict,
-            original_connection_dict=original_connection_dict,
-            possible_directions=possible_directions,
-            total_connections=total_connections
-        )
+        handle_n_deep(args, depth, iterations, min_trains, max_trains, full_connection_dict,
+            original_connection_dict, possible_directions, total_connections)
 
-    # ----------------------------
-
-    # TEST THE BASELINE ALGORITHM ON NATIONAL DATA
-    # ----------------------------
-
-    # total_score, total_connection_list, baseline_dataframe = prepare_data_baseline(89, 1000,
-    #     full_connection_dict, original_connection_dict,
-    #     possible_directions, choose_random_connections, max_connections, max_duration,
-    #     min_trains, max_trains)
-    #
-    # print(baseline_dataframe)
-    #
-    # plot_distribution(baseline_dataframe, 50, 'Title', 'Score', 'Baseline national plot')
-    #
-    # total_score, total_connection_list, baseline_dataframe = prepare_data_baseline(89, 1000,
-    #     full_connection_dict, original_connection_dict,
-    #     possible_directions, choose_random_connections, max_connections, max_duration,
-    #     20, 20)
-    #
-    # plot_distribution(baseline_dataframe, 50, 'Title', 'Score', 'Baseline national plot')
-
-    # ----------------------------
+    if args.run_algorithm.lower() == 'temp_cool':
+        find_best_temp_and_cooling(full_connection_dict, possible_directions,
+            original_connection_dict, station_dictionary, max_duration, max_connections, min_trains,
+            max_trains, total_connections, iterations, penalty_weight, temperature_values,
+            cooling_rate_values)
 
 
-    # TEST THE N_DEEP_ALGORITHM ALGORITHM
-    # ----------------------------
-    # random.seed()
-    # run_n_deep_algorithm(100, 14, loading_popup=False)
-
-    # ----------------------------
-
-    # TEST THE BASE_LINE ALGORITHM
-    # ----------------------------
-
-    # for i in range(4, 8):
-    #
-    #     total_connections = 0
-    #     connections_list = []
-    #     for j in range(1000):
-    #
-    #         # test baseline algorithm
-    #         needed_connections = copy.deepcopy(original_connection_dict)
-    #         dataframe2, connection_number  = create_better_trajectories(i, generate_trajectory, full_connection_dict, original_connection_dict, needed_connections, full_connection_dict, possible_directions)
-    #         # print(dataframe2)
-    #         # print(connection_number)
-    #         if connection_number == 28:
-    #             total_connections += 1
-    #             connections_list.append(dataframe2)
-    #
-    #         dataframe2.to_csv("data/output.csv", index=False)
-    #
-    #     print(f' total = {total_connections} with {i} amount of trajectories')
-    #     print(connections_list)
-    #
-    # print(dataframe2)
-
-    # ----------------------------
-
-
-    # FIND AVERAGE VALUES FROM THE BASELINE ALGORITHM
-    # ----------------------------
-
-    # total_score, total_connections, baseline_dataframe = prepare_data_baseline(100,
-    #     full_connection_dict, original_connection_dict, possible_directions,
-    #     choose_random_connections)
-
-    # score_7_trajectories, connections_7_trajectories, dataframe_7_trajectories = prepare_data_baseline(
-    #     28, 100, full_connection_dict, original_connection_dict, possible_directions,
-    #     choose_random_connections, max_connections, max_duration, min_trains, max_trains)
-    #
-    # # set correct amount of bins
-    # bin_edges = np.linspace(0, 28, 29)
-    #
-    # # plot the values for 7 trajectories
-    # plot_distribution(score_7_trajectories, 10000, "Average distribution of Scores with 7 Trajectories" ,
-    #     "Score", "7_trajectories_score_distribution")
-    # plot_distribution(connections_7_trajectories, bin_edges,
-    #     "Average distribution of unique connections with 7 Trajectories" , "Connections",
-    #     "7_trajectories_connections_distribution")
-
-    # # plot the values for all trajectory amounts
-    # plot_distribution(total_score, 30, "Average distribution of Scores" , "Score",
-    #     "code/visualisation/total_score_distribution")
-    # plot_distribution(total_connections, bin_edges, "Average distribution of Connections",
-    #     "Connections", "code/visualisation/total_connections_distribution")
-
-    # # display the dataframe
-    # baseline_dataframe.to_csv('code/visualisation/trajectories_statistics.csv', index=False)
-    #
-    # create_map(dataframe2, "data/Noord_Holland/StationsHolland.csv")
-
-    # ----------------------------
+        # # get a list of iteration numbers
+        # iterations = list(range(1, len(high_scores) + 1))
+        #
+        # # create a plot of high scores vs iteration
+        # plt.plot(iterations, high_scores, linestyle='-', color='b', label='High Scores')
+        # plt.title('High Scores vs Iterations')
+        # plt.xlabel('Iteration Number')
+        # plt.ylabel('High Score')
+        # plt.xlim(0, len(high_scores))
+        #
+        # plt.show()

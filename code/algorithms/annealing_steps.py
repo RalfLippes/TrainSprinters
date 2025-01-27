@@ -14,11 +14,7 @@ a sort of simulated annealing algorithm.
 def annealing_cost_function(station_dictionary, current_station, step_station,
     destination, full_connection_dict, penalty_weight, total_duration, max_duration):
     """
-    Calculates the cost of riding a connection. Checks the distance, and penalizes
-    for the duration of the connection.
-    Cost function is euclidean distance + penalty weight * 1 if connection has
-    already been ridden and    distance + penalty weight * 0 if connection is still
-    needed. Returns the cost.
+    Calculates the distance from a station to another station.
     """
     # check if total duration goes over max duration
     if total_duration + full_connection_dict[current_station + '-' + step_station].duration > max_duration:
@@ -31,32 +27,7 @@ def annealing_cost_function(station_dictionary, current_station, step_station,
     # calculate euclidean distance
     euclidean_distance = math.sqrt((station_2.x - station_1.x) ** 2 + (station_2.y - station_1.y) ** 2)
 
-    duration = full_connection_dict[current_station + '-' + step_station].duration
-
-    # calculate outcome of cost function
-    cost = euclidean_distance + penalty_weight * duration
-
-    return cost
-
-def accept_solution(old_cost, new_cost, temperature):
-    """
-    Takes the cost of the old step and the cost of the new step, as well as the
-    current temperature. Decides if the new step will be accepted by using the
-    simulated annealing criterion. Returns true or false according to acceptance.
-    """
-    cost_difference = new_cost - old_cost
-
-    # if new solution is better, always accept
-    if cost_difference < 0:
-        return True
-
-    # if the new solution is worse, accept with a probability
-    else:
-        # Calculate the acceptance criterion
-        criterion = math.exp(-cost_difference / temperature)
-
-        # accept only if criterion is larger than random number between 0-1
-        return random.random() < criterion
+    return euclidean_distance
 
 def find_nearest_connection(station_dictionary, current_station, needed_connections_dict):
     """
@@ -212,10 +183,10 @@ def find_best_annealing_move(current_station, nearest_connection, total_duration
             penalty_weight, total_duration, max_duration)
 
         # decide if the new step will be accepted
-        if temperature == 0:
-            acceptance = False
+        if station_cost < current_cost:
+            acceptance = True
         else:
-            acceptance = accept_solution(current_cost, station_cost, temperature)
+            acceptance = False
 
         # check next station if it is not accepted
         if not acceptance:
@@ -291,7 +262,9 @@ def create_annealing_steps_trajectory(station_dictionary, needed_connections_dic
     possible_connections_dict, full_connection_dict, penalty_weight, max_duration,
     max_connections):
     """
-    Creates a trajectory using the 'annealing steps' algorithm.
+    Creates a trajectory using the 'annealing steps' algorithm. Finds nearest
+    connection that has not been ridden yet. Chooses a random move, and only makes it
+    if it gets us closer to the found connection.
     """
     # initialize the trajectory
     (trajectory, new_needed_connections_dict, total_duration, current_station,
@@ -303,6 +276,7 @@ def create_annealing_steps_trajectory(station_dictionary, needed_connections_dic
         nearest_connection = find_nearest_connection(station_dictionary,
             current_station, new_needed_connections_dict)
 
+        # move towards nearest connection
         (trajectory, new_needed_connections_dict, total_duration, temperature,
         current_station, time_limit_exceeded) = move_towards_nearest_connection(
             station_dictionary, current_station, nearest_connection, total_duration,

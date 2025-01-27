@@ -21,6 +21,7 @@ def hill_climber_with_time_limit(time_limit, min_trains, max_trains,
     best_iteration = 0
     best_solution = None
     scores = []
+    high_scores = []
     start_time = time.time()
 
     # keep looping while in time limit
@@ -53,9 +54,11 @@ def hill_climber_with_time_limit(time_limit, min_trains, max_trains,
                 best_score = current_score
                 best_iteration = iteration
 
-    return best_score, best_iteration, best_solution, scores
+            high_scores.append(best_score)
 
-def plot_outcomes_hill_climber(scores, national = False):
+    return best_score, best_iteration, best_solution, scores, high_scores
+
+def plot_outcomes_hill_climber(scores, high_scores, national = False):
     """
     Creates histogram of the scores that were found in the run_with_time_limit
     function. Saves it to data/output folder.
@@ -79,7 +82,7 @@ def handle_hill_climber(args, possible_directions, full_connection_dict, origina
     penalty_weight):
     """Runs the hill climber algorithm for a given time and saves the results."""
     # save best scores, best iteration, best solution and all scores
-    best_score, best_iteration, best_solution, scores = hill_climber_with_time_limit(
+    best_score, best_iteration, best_solution, scores, high_scores = hill_climber_with_time_limit(
         args.time, min_trains, max_trains, original_connection_dict, station_locations,
         possible_directions, full_connection_dict, penalty_weight, max_duration,
         max_connections, iterations, total_connections)
@@ -90,13 +93,13 @@ def handle_hill_climber(args, possible_directions, full_connection_dict, origina
 
     # save the dataframe to a csv file under the right name
     if args.holland_nationaal == 'holland':
-        dataframe.to_csv("data/output/hill_climber_best_solution_holland.csv")
+        dataframe.to_csv("data/output/hill_climber_best_solution_holland.csv", index = False)
     else:
-        dataframe.to_csv("data/output/hill_climber_best_solution_national.csv")
+        dataframe.to_csv("data/output/hill_climber_best_solution_national.csv", index = False)
 
     # plot if necessary
     if args.plot_scores:
         plot_outcomes_hill_climber(
-            scores, national = args.holland_nationaal == "nationaal")
+            scores, high_scores, national = args.holland_nationaal == "nationaal")
 
     print(f"The best iteration was iteration number {best_iteration}")

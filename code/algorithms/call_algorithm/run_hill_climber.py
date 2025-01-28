@@ -125,7 +125,8 @@ def handle_hill_climber(args, possible_directions, full_connection_dict, origina
         #second iteration of hill_climber on best_solution
         best_solution = hill_climber(best_solution, choose_random_connections,
             full_connection_dict, possible_directions, max_connections, trajectories_in_solution,
-            second_round_iterations, original_connection_dict, max_duration, total_connections)
+            second_round_iterations, original_connection_dict, max_duration, total_connections,
+            creating_algorithm, station_locations)
 
     # save the dataframe to a csv file under the right name
     if args.holland_nationaal == 'holland':

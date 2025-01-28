@@ -66,9 +66,7 @@ Hieronder een lijst met de mogelijke argumenten per 'categorie', de verschillend
   - **nationaal**: Gebruikt de data van heel Nederland
 
 - **algoritme**:
-  - **simulated_annealing**: Gebruikt simulated annealing. Slaat de beste oplossing en een histogram op in de map data/output onder de respectievelijke namen simulated_best_solution_nationaal.csv (of .holland.csv) en simulated_annealing_histogram_nationaal.png (of .holland.png).
-
- voorbeeld:
+  - **simulated_annealing**: Gebruikt simulated annealing. Slaat de beste oplossing en een histogram op in de map data/output onder de respectievelijke namen simulated_best_solution_nationaal.csv (of .holland.csv) en simulated_annealing_histogram_nationaal.png (of .holland.png). voorbeeld:
  ```
 python main.py holland simulated_annealing --time 100 --plot_scores 
 ```

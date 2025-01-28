@@ -66,7 +66,7 @@ def hill_climber_with_time_limit(time_limit, min_trains, max_trains,
                 penalty_weight, max_duration, max_connections)
 
 
-            # apply simulated annealing
+            # apply hill climber
             try_out = hill_climber(trajectories, choose_random_connections,
                 full_connection_dict, possible_directions, max_connections, a,
                 iterations, original_connection_dict, max_duration, total_connections,

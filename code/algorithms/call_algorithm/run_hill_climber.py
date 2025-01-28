@@ -85,7 +85,7 @@ def hill_climber_with_time_limit(time_limit, min_trains, max_trains,
 
     return best_score, best_iteration, best_solution, scores, high_scores
 
-def plot_outcomes_hill_climber(scores, high_scores, national = False):
+def plot_outcomes_hill_climber(scores, high_scores, start_algorithm, national = False):
     """
     Creates histogram of the scores that were found in the run_with_time_limit
     function. Saves it to data/output folder.
@@ -99,9 +99,9 @@ def plot_outcomes_hill_climber(scores, high_scores, national = False):
     plt.ylabel('Frequency')
     plt.xlim(0, 10000)
     if national == True:
-        plt.savefig('data/output/hill_climber_histogram_national.png')
+        plt.savefig(f"data/output/hill_climber_histogram_national_{start_algorithm}.png")
     else:
-        plt.savefig('data/output/hill_climber_histogram_holland.png')
+        plt.savefig(f"data/output/hill_climber_histogram_holland_{start_algorithm}.png")
 
 def handle_hill_climber(args, possible_directions, full_connection_dict, original_connection_dict,
     station_locations, total_connections, max_connections, min_trains, max_trains, iterations, max_duration, plot_title,
@@ -126,6 +126,6 @@ def handle_hill_climber(args, possible_directions, full_connection_dict, origina
     # plot if necessary
     if args.plot_scores:
         plot_outcomes_hill_climber(
-            scores, high_scores, national = args.holland_nationaal == "nationaal")
+            scores, high_scores, start_algorithm, national = args.holland_nationaal == "nationaal")
 
     print(f"The best iteration was iteration number {best_iteration}")

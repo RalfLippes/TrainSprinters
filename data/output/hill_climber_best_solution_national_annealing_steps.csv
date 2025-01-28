@@ -1,0 +1,17 @@
+train,stations
+train_1,"[Dordrecht, Rotterdam Blaak, Rotterdam Alexander, Gouda, Alphen a/d Rijn, Leiden Centraal, Schiphol Airport, Amsterdam Zuid, Amsterdam Sloterdijk, Haarlem]"
+train_2,"[Utrecht Centraal, Amsterdam Amstel, Almere Centrum, Lelystad Centrum]"
+train_3,"[Breda, Dordrecht, Rotterdam Centraal, Rotterdam Alexander, Rotterdam Centraal, Schiedam Centrum, Delft, Den Haag Centraal, Gouda]"
+train_4,"[Leeuwarden, Heerenveen, Steenwijk, Zwolle, Deventer, Apeldoorn, Amersfoort]"
+train_5,"[Eindhoven, Tilburg, Eindhoven, s-Hertogenbosch, Tilburg, s-Hertogenbosch, Tilburg, Breda, Etten-Leur, Breda, Etten-Leur, Roosendaal, Dordrecht]"
+train_6,"[Deventer, Almelo, Zwolle, Amersfoort, Apeldoorn, Zutphen, Deventer, Zutphen, Dieren]"
+train_7,"[Amsterdam Amstel, Amsterdam Zuid, Schiphol Airport, Utrecht Centraal, Alphen a/d Rijn, Utrecht Centraal, Schiphol Airport, Utrecht Centraal]"
+train_8,"[Amsterdam Centraal, Utrecht Centraal, Amersfoort, Utrecht Centraal, Gouda, Den Haag HS, Gouda, Den Haag Laan v NOI, Gouda]"
+train_9,"[Den Haag HS, Leiden Centraal, Heemstede-Aerdenhout, Haarlem, Amsterdam Sloterdijk, Amsterdam Centraal, Amsterdam Sloterdijk, Zaandam, Castricum, Zaandam, Beverwijk, Zaandam, Hoorn]"
+train_10,"[Leeuwarden, Groningen, Assen, Zwolle, Almelo, Hengelo, Almelo, Hengelo, Enschede]"
+train_11,"[Gouda, Utrecht Centraal, s-Hertogenbosch, Oss, Nijmegen, Arnhem Centraal, Dieren, Arnhem Centraal, Ede-Wageningen, Utrecht Centraal, Hilversum, Utrecht Centraal]"
+train_12,"[Sittard, Heerlen, Sittard, Maastricht, Sittard, Roermond, Weert, Eindhoven, Helmond, Venlo, Helmond]"
+train_13,"[Leiden Centraal, Heemstede-Aerdenhout, Haarlem, Beverwijk, Castricum, Alkmaar, Den Helder, Alkmaar, Castricum, Alkmaar, Hoorn]"
+train_14,"[Gouda, Rotterdam Alexander, Rotterdam Blaak, Schiedam Centrum, Delft, Den Haag Laan v NOI, Leiden Centraal, Den Haag HS, Delft, Den Haag HS, Leiden Centraal, Alphen a/d Rijn, Leiden Centraal, Den Haag Centraal, Leiden Centraal, Alphen a/d Rijn, Leiden Centraal]"
+train_15,"[Utrecht Centraal, Ede-Wageningen, Utrecht Centraal, Amsterdam Centraal, Almere Centrum, Amsterdam Amstel, Amsterdam Centraal, Amsterdam Amstel, Hilversum]"
+score,6011.2808988764045

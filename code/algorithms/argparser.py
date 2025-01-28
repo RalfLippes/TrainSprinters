@@ -39,9 +39,16 @@ def create_arg_parser():
 
     # optional arguments for algorithms
     parser.add_argument(
-        "--hill_climber_args",
+        "--start_algorithm",
         choices = ["greedy", "baseline", "annealing_steps"],
         help = "What algorithm to use for starting hill climber",
+    )
+
+    # argument to choose creating algorithm for hill climber
+    parser.add_argument(
+        "--creating_algorithm",
+        choices = ["baseline", "annealing_steps"],
+        help = "What algorithm to use for creating a new trajectory in hill climber",
     )
 
     return parser

@@ -67,9 +67,23 @@ Hieronder een lijst met de mogelijke argumenten per 'categorie', de verschillend
 
 - **algoritme**:
   - **simulated_annealing**: Gebruikt simulated annealing. Slaat de beste oplossing en een histogram op in de map data/output onder de respectievelijke namen simulated_best_solution_nationaal.csv (of .holland.csv) en simulated_annealing_histogram_nationaal.png (of .holland.png).
+
+ voorbeeld:
+ ```
+python main.py holland simulated_annealing --time 100 --plot_scores 
+```
   - **baseline**: Gebruikt een willekeurig algoritme. Slaat de beste oplossing en een histogram op onder de namen baseline_best_solution_nationaal.csv en baseline_histogram_nationaal.csv.
+ ```
+python main.py holland baseline --time 100 --plot_scores 
+```
   - **annealing_steps**: Gebruikt het annealing steps algoritme. Slaat de beste oplossing en een histogram op onder de namen annealing_steps_best_solution_nationaal.csv en annealing_steps_histogram_nationaal.csv.
+ ```
+python main.py holland annealing_steps --time 100 --plot_scores 
+```
   - **greedy**: Gebruikt een greedy algoritme. Slaat de beste oplossing en een histogram op onder de namen greedy_best_solution_nationaal.csv en greedy_histogram_nationaal.csv.
+ ```
+python main.py holland greedy --time 100 --plot_scores 
+```
   - **hill_climber**: Gebruikt een hill climber algoritme. Slaat de beste oplossing en een histogram op onder de namen hill_climber_best_solution_nationaal.csv en hill_climber_histogram_nationaal.csv. **LET OP** Dit algoritme vereist specificatie van wat voor algoritme algoritme een initiële oplossing aan hill climber geeft, en welk algoritme nieuwe trajecten toevoegt. De opties hiervoor zijn:
     - **--start_algorithm**:
       - **greedy**: Gebruikt greedy als start algoritme.
@@ -78,11 +92,19 @@ Hieronder een lijst met de mogelijke argumenten per 'categorie', de verschillend
     - **--creating_algorithm**
       - **baseline**: Gebruikt random algoritme om nieuwe trajecten te maken.
       - **annealing_steps**: Gebruikt annealing steps om nieuwe trajecten te maken
-  - **hill_climber2**: gebruikt een hill climber algoritme op iteratieve wijze. Runt het hill climber algoritme eerst een aantal keer met laag aantal iteraties. Voor de beste oplossing runt hij het hill_climber algoritme nogmaals met 2000000 iteraties. Dit algoritme vereist dezelfde specificaties als de reguliere hill_climber
+  
 Een voorbeeld van het runnen van hill climber op nationale data met een random (baseline) initiële oplossing en annealing steps om nieuwe trajecten te maken, voor 100 seconden plus het maken van een histogram van de scores:
 
 ```
 python main.py nationaal hill_climber --time 100 --plot_scores --start_algorithm baseline --creating_algorithm annealing_steps
+```
+
+- **hill_climber2**: gebruikt een hill climber algoritme op iteratieve wijze. Runt het hill climber algoritme eerst een aantal keer met laag aantal iteraties. Voor de beste oplossing runt hij het hill_climber algoritme nogmaals met 2000000 iteraties. Dit algoritme vereist dezelfde specificaties als de reguliere hill_climber
+
+een voorbeeld van het runnen van hill climber2 op holland data met een annealing initiële oplossing en annealing steps om nieuwe trajecten te maken, voor 100 seconden plus het maken van een histogram van de scores:
+
+```
+python main.py nationaal hill_climber2 --time 200 --plot_scores --start_algorithm baseline --creating_algorithm annealing_steps
 ```
 
 - **tijd: standaard = 60**

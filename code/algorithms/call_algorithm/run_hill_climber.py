@@ -109,7 +109,7 @@ def hill_climber2_with_time_limit(time_limit, min_trains, max_trains,
         best_score_so_far = 0
         iteration += 1
 
-        for i in range(10):
+        for i in range(100):
 
             # run algorithm once for every possible amount of trajectories
             for a in range(min_trains, max_trains + 1):
@@ -201,5 +201,10 @@ def handle_hill_climber(args, possible_directions, full_connection_dict, origina
     if args.plot_scores:
         plot_outcomes_hill_climber(
             args, scores, high_scores, start_algorithm, creating_algorithm, national = args.holland_nationaal == "nationaal")
+
+    #simulate the best_solution when necessary
+    if args.simulate:
+        best_solution.simulate_solution(station_locations, max_duration)
+
 
     print(f"The best iteration was iteration number {best_iteration}")

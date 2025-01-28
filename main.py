@@ -53,13 +53,13 @@ if __name__ == "__main__":
         handle_hill_climber(args, possible_directions, full_connection_dict, original_connection_dict,
             station_dictionary, total_connections, max_connections,
             min_trains, max_trains, iterations, max_duration, plot_title,
-            penalty_weight, args.hill_climber_args, second_round_iterations = None)
+            penalty_weight, args.start_algorithm, args.creating_algorithm, second_round_iterations = None)
 
     if args.run_algorithm.lower() == 'hill_climber2':
         handle_hill_climber(args, possible_directions, full_connection_dict, original_connection_dict,
             station_dictionary, total_connections, max_connections,
             min_trains, max_trains, iterations, max_duration, plot_title,
-            penalty_weight, args.hill_climber_args, second_round_iterations)
+            penalty_weight, args.start_algorithm, args.creating_algorithm, second_round_iterations)
 
     # run greedy
     if args.run_algorithm.lower() == 'greedy':
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     if args.run_algorithm.lower() == 'annealing_steps':
         handle_annealing_steps(args, possible_directions, full_connection_dict,
             original_connection_dict, station_dictionary, max_connections, temperature,
-            cooling_rate, min_trains, max_trains, max_duration, plot_title, penalty_weight,
+            cooling_rate, min_trains, max_trains, max_duration, plot_title,
             total_connections)
 
     # run n deep algorithm

@@ -18,7 +18,7 @@ def create_start_trajectory(start_algorithm, a, station_locations,
         for traj in range(a):
             new_trajectory, needed_connections_dict = create_annealing_steps_trajectory(station_locations,
                 needed_connections_dict, possible_directions, full_connection_dict,
-                penalty_weight, max_duration, max_connections)
+                max_duration, max_connections)
             trajectories.add_trajectory(new_trajectory)
 
     elif start_algorithm == "greedy":
@@ -40,8 +40,7 @@ def create_start_trajectory(start_algorithm, a, station_locations,
 def hill_climber_with_time_limit(time_limit, min_trains, max_trains,
     original_connection_dict, station_locations, possible_directions, full_connection_dict,
     penalty_weight, max_duration, max_connections,
-    iterations, total_connections, start_algorithm):
-
+    iterations, total_connections, start_algorithm, creating_algorithm):
     """
     Runs the hill climber algorithm for a given amount of time. Saves and returns
     the best score, the iteration number of the best score and the best solution.
@@ -70,7 +69,8 @@ def hill_climber_with_time_limit(time_limit, min_trains, max_trains,
             # apply simulated annealing
             try_out = hill_climber(trajectories, choose_random_connections,
                 full_connection_dict, possible_directions, max_connections, a,
-                iterations, original_connection_dict, max_duration, total_connections)
+                iterations, original_connection_dict, max_duration, total_connections,
+                creating_algorithm, station_locations)
 
             # calculate score and append to list
             current_score = try_out.calculate_solution_score(original_connection_dict, total_connections)
@@ -86,7 +86,7 @@ def hill_climber_with_time_limit(time_limit, min_trains, max_trains,
 
     return best_score, best_iteration, best_solution, scores, high_scores
 
-def plot_outcomes_hill_climber(scores, high_scores, start_algorithm, national = False):
+def plot_outcomes_hill_climber(scores, high_scores, start_algorithm, creating_algorithm, national = False):
     """
     Creates histogram of the scores that were found in the run_with_time_limit
     function. Saves it to data/output folder.
@@ -99,27 +99,27 @@ def plot_outcomes_hill_climber(scores, high_scores, start_algorithm, national = 
     plt.xlabel('Score')
     plt.ylabel('Frequency')
     plt.xlim(0, 10000)
+
     if national == True:
-        plt.savefig(f'data/output/hill_climber_histogram_national_{start_algorithm}.png')
+        plt.savefig(f"data/output/hill_climber_histogram_national_{start_algorithm}_{creating_algorithm}.png")
     else:
-        plt.savefig(f'data/output/hill_climber_histogram_holland_{start_algorithm}.png')
+        plt.savefig(f"data/output/hill_climber_histogram_holland_{start_algorithm}_{creating_algorithm}.png")
 
 def handle_hill_climber(args, possible_directions, full_connection_dict, original_connection_dict,
     station_locations, total_connections, max_connections, min_trains, max_trains, iterations, max_duration, plot_title,
-    penalty_weight, start_algorithm, second_round_iterations):
+    penalty_weight, start_algorithm, creating_algorithm, second_round_iterations):
     """Runs the hill climber algorithm for a given time and saves the results."""
     # save best scores, best iteration, best solution and all scores
     best_score, best_iteration, best_solution, scores, high_scores = hill_climber_with_time_limit(
         args.time, min_trains, max_trains, original_connection_dict, station_locations,
         possible_directions, full_connection_dict, penalty_weight, max_duration,
-        max_connections, iterations, total_connections, start_algorithm)
+        max_connections, iterations, total_connections, start_algorithm, creating_algorithm)
 
     # create a dataframe from the scores
     dataframe = best_solution.create_dataframe_from_solution(original_connection_dict,
         total_connections)
 
     trajectories_in_solution = len(best_solution.solution)
-    print(trajectories_in_solution)
 
     if second_round_iterations != None:
         #second iteration of hill_climber on best_solution
@@ -129,13 +129,13 @@ def handle_hill_climber(args, possible_directions, full_connection_dict, origina
 
     # save the dataframe to a csv file under the right name
     if args.holland_nationaal == 'holland':
-        dataframe.to_csv(f"data/output/hill_climber_best_solution_holland_{start_algorithm}.csv", index = False)
+        dataframe.to_csv(f"data/output/hill_climber_best_solution_holland_{start_algorithm}_{creating_algorithm}.csv", index = False)
     else:
-        dataframe.to_csv(f"data/output/hill_climber_best_solution_national_{start_algorithm}.csv", index = False)
+        dataframe.to_csv(f"data/output/hill_climber_best_solution_national_{start_algorithm}_{creating_algorithm}.csv", index = False)
 
     # plot if necessary
     if args.plot_scores:
         plot_outcomes_hill_climber(
-            scores, high_scores, start_algorithm , national = args.holland_nationaal == "nationaal")
+            scores, high_scores, start_algorithm, creating_algorithm, national = args.holland_nationaal == "nationaal")
 
     print(f"The best iteration was iteration number {best_iteration}")

@@ -41,10 +41,10 @@ python main.py nationaal
 
 ### Algoritmes gebruiken
 
-Vervolgens roep je een van de algoritmes aan door de naam van dit algoritme mee te geven. Deze algoritmes slaan altijd een dataframe van de beste oplossing op als csv bestand in de map data/output. Per algoritme moet je soms ook nog een of meerdere extra argumenten meegeven. De structuur van de mee te geven argumenten is [holland/nationaal] [algoritme] [tijd] [plotten]. Algoritme, tijd en plotten hebben standaard waarden: respectievelijk 'baseline', '60 seconden' en 'niet plotten'. Om andere waarden dan deze standaard waarden te krijgen, moet je expliciet argumenten meegeven. Als je dus de baseline voor 60 seconden zou willen runnen zonder te plotten (voor de holland data), dan voer je in:
+Vervolgens roep je een van de algoritmes aan door de naam van dit algoritme mee te geven. Deze algoritmes slaan altijd een dataframe van de beste oplossing op als csv bestand in de map data/output. Per algoritme moet je soms ook nog een of meerdere extra argumenten meegeven. De structuur van de mee te geven argumenten is [holland/nationaal] [algoritme] [tijd] [plotten]. Tijd en plotten hebben standaard waarden: respectievelijk '60 seconden' en 'niet plotten'. Om andere waarden dan deze standaard waarden te krijgen, moet je expliciet argumenten meegeven. Als je dus de baseline voor 60 seconden zou willen runnen zonder te plotten (voor de holland data), dan voer je in:
 
 ```
-python main.py holland 
+python main.py holland baseline
 ```
 
 Als je Simulated annealing op nationale data zou willen runnen met de standaardwaarden zou je dat algoritme kunnen runnen met: 
@@ -53,7 +53,7 @@ Als je Simulated annealing op nationale data zou willen runnen met de standaardw
 python main.py nationaal simulated_annealing 
 ```
 
-Om greedy 1000 seconden te laten lopen en van de gevonden scores een plot te maken zou je bijvoorbeeld dit invoeren:
+Om greedy 1000 seconden te laten lopen en van de gevonden scores een histogram te maken zou je bijvoorbeeld dit invoeren:
 
 ```
 python main.py nationaal greedy --time 1000 --plot_scores
@@ -70,7 +70,20 @@ Hieronder een lijst met de mogelijke argumenten per 'categorie', de verschillend
   - **baseline**: Gebruikt een willekeurig algoritme. Slaat de beste oplossing en een histogram op onder de namen baseline_best_solution_nationaal.csv en baseline_histogram_nationaal.csv.
   - **annealing_steps**: Gebruikt het annealing steps algoritme. Slaat de beste oplossing en een histogram op onder de namen annealing_steps_best_solution_nationaal.csv en annealing_steps_histogram_nationaal.csv.
   - **greedy**: Gebruikt een greedy algoritme. Slaat de beste oplossing en een histogram op onder de namen greedy_best_solution_nationaal.csv en greedy_histogram_nationaal.csv.
-  - **hill_climber**: Gebruikt een hill climber algoritme. Slaat de beste oplossing en een histogram op onder de namen hill_climber_best_solution_nationaal.csv en hill_climber_histogram_nationaal.csv. **LET OP** Dit algoritme gebruikt standaard een random algoritme om een initiële oplossing aan hill climber te geven. Om greedy of annealing steps te gebruiken om deze eerste oplossing te maken, voeg je --hill_climber_args greedy of --hill_climber_args annealing_steps toe aan de command line.
+  - **hill_climber**: Gebruikt een hill climber algoritme. Slaat de beste oplossing en een histogram op onder de namen hill_climber_best_solution_nationaal.csv en hill_climber_histogram_nationaal.csv. **LET OP** Dit algoritme vereist specificatie van wat voor algoritme algoritme een initiële oplossing aan hill climber geeft, en welk algoritme nieuwe trajecten toevoegt. De opties hiervoor zijn:
+    - **--start_algorithm**:
+      - **greedy**
+      - **baseline**
+      - **annealing_steps**
+    - **--creating_algorithm**
+      - **baseline**
+      - **annealing_steps**
+
+Een voorbeeld van het runnen van hill climber op nationale data met een random (baseline) initiële oplossing en annealing steps om nieuwe trajecten te maken, voor 100 seconden plus het maken van een histogram van de scores:
+
+```
+python main.py nationaal hill_climber --time 100 --plot_scores --start_algorithm baseline --creating_algorithm annealing_steps
+```
 
 - **tijd: standaard = 60**
   - **--time [0-oneindig]**: Bepaalt hoe lang het gekozen algoritme draait.

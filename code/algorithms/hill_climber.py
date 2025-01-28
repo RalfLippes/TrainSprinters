@@ -52,7 +52,7 @@ def create_hill_climber_trajectory(station_dictionary, needed_connections_dict,
     """
     if creating_algorithm == 'baseline':
         trajectory = choose_random_connections(full_connection_dict, possible_connections_dict,
-            connection_amount, max_duration)
+            max_connections, max_duration)
 
     else:
         trajectory, temp = create_annealing_steps_trajectory(station_dictionary,

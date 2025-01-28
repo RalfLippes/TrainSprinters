@@ -53,13 +53,13 @@ if __name__ == "__main__":
         handle_hill_climber(args, possible_directions, full_connection_dict, original_connection_dict,
             station_dictionary, total_connections, max_connections,
             min_trains, max_trains, iterations, max_duration, plot_title,
-            penalty_weight, args.start_algorithm, args.creating_algorithm, second_round_iterations = None)
+            penalty_weight, args.start_algorithm, args.creating_algorithm, first_round_iterations = None)
 
     if args.run_algorithm.lower() == 'hill_climber2':
         handle_hill_climber(args, possible_directions, full_connection_dict, original_connection_dict,
             station_dictionary, total_connections, max_connections,
-            min_trains, max_trains, first_round_iterations, max_duration, plot_title,
-            penalty_weight, args.start_algorithm, args.creating_algorithm, iterations)
+            min_trains, max_trains, iterations, max_duration, plot_title,
+            penalty_weight, args.start_algorithm, args.creating_algorithm, first_round_iterations)
 
     # run greedy
     if args.run_algorithm.lower() == 'greedy':

@@ -73,14 +73,17 @@ Hieronder een lijst met de mogelijke argumenten per 'categorie', de verschillend
 python main.py holland simulated_annealing --time 100 --plot_scores 
 ```
   - **baseline**: Gebruikt een willekeurig algoritme. Slaat de beste oplossing en een histogram op onder de namen baseline_best_solution_nationaal.csv en baseline_histogram_nationaal.csv.
+ voorbeeld:
  ```
 python main.py holland baseline --time 100 --plot_scores 
 ```
   - **annealing_steps**: Gebruikt het annealing steps algoritme. Slaat de beste oplossing en een histogram op onder de namen annealing_steps_best_solution_nationaal.csv en annealing_steps_histogram_nationaal.csv.
+ voorbeeld:
  ```
 python main.py holland annealing_steps --time 100 --plot_scores 
 ```
   - **greedy**: Gebruikt een greedy algoritme. Slaat de beste oplossing en een histogram op onder de namen greedy_best_solution_nationaal.csv en greedy_histogram_nationaal.csv.
+ voorbeeld:
  ```
 python main.py holland greedy --time 100 --plot_scores 
 ```

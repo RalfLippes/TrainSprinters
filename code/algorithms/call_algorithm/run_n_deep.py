@@ -94,4 +94,7 @@ def handle_n_deep(args, depth, iterations, min_trains, max_trains, full_connecti
         plot_outcomes_n_deep(
             scores, national = args.holland_nationaal == "nationaal")
 
+    if args.simulate:
+        best_solution.simulate_solution(station_locations, max_duration)
+
     print(f"The best iteration was iteration number {best_iteration}")

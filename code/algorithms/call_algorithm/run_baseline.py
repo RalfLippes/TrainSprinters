@@ -89,4 +89,7 @@ def handle_baseline(args, possible_directions, full_connection_dict, original_co
         plot_outcomes_baseline(
             scores, national = args.holland_nationaal == "nationaal")
 
+    if args.simulate:
+        best_solution.simulate_solution(station_locations, max_duration)
+
     print(f"The best iteration was iteration number {best_iteration}")

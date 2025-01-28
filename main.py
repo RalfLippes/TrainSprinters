@@ -26,7 +26,7 @@ if __name__ == "__main__":
         (possible_directions, full_connection_dict, original_connection_dict,
             station_dictionary, total_connections, max_connections, temperature,
             cooling_rate, min_trains, max_trains, iterations, depth, max_duration, plot_title,
-            penalty_weight, temperature_values, cooling_rate_values, experiment_iterations, second_round_iterations
+            penalty_weight, temperature_values, cooling_rate_values, experiment_iterations, first_round_iterations
         ) = set_parameters(args.holland_nationaal, "data/Nationaal/ConnectiesNationaal.csv",
             "data/Nationaal/StationsNationaal.csv", "data/Noord_Holland/ConnectiesHolland.csv",
             "data/Noord_Holland/StationsHolland.csv")
@@ -58,8 +58,8 @@ if __name__ == "__main__":
     if args.run_algorithm.lower() == 'hill_climber2':
         handle_hill_climber(args, possible_directions, full_connection_dict, original_connection_dict,
             station_dictionary, total_connections, max_connections,
-            min_trains, max_trains, iterations, max_duration, plot_title,
-            penalty_weight, args.start_algorithm, args.creating_algorithm, second_round_iterations)
+            min_trains, max_trains, first_round_iterations, max_duration, plot_title,
+            penalty_weight, args.start_algorithm, args.creating_algorithm, iterations)
 
     # run greedy
     if args.run_algorithm.lower() == 'greedy':

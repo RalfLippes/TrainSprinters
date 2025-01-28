@@ -72,12 +72,12 @@ Hieronder een lijst met de mogelijke argumenten per 'categorie', de verschillend
   - **greedy**: Gebruikt een greedy algoritme. Slaat de beste oplossing en een histogram op onder de namen greedy_best_solution_nationaal.csv en greedy_histogram_nationaal.csv.
   - **hill_climber**: Gebruikt een hill climber algoritme. Slaat de beste oplossing en een histogram op onder de namen hill_climber_best_solution_nationaal.csv en hill_climber_histogram_nationaal.csv. **LET OP** Dit algoritme vereist specificatie van wat voor algoritme algoritme een initiële oplossing aan hill climber geeft, en welk algoritme nieuwe trajecten toevoegt. De opties hiervoor zijn:
     - **--start_algorithm**:
-      - **greedy**
-      - **baseline**
-      - **annealing_steps**
+      - **greedy**: Gebruikt greedy als start algoritme.
+      - **baseline**: Gebruikt baseline als start algoritme.
+      - **annealing_steps**: Gebruikt annealing steps als start algoritme.
     - **--creating_algorithm**
-      - **baseline**
-      - **annealing_steps**
+      - **baseline**: Gebruikt random algoritme om nieuwe trajecten te maken.
+      - **annealing_steps**: Gebruikt annealing steps om nieuwe trajecten te maken.
 
 Een voorbeeld van het runnen van hill climber op nationale data met een random (baseline) initiële oplossing en annealing steps om nieuwe trajecten te maken, voor 100 seconden plus het maken van een histogram van de scores:
 
@@ -90,9 +90,9 @@ python main.py nationaal hill_climber --time 100 --plot_scores --start_algorithm
 - **plotten: standaard = nee**
   - **--plot_scores**: Bepaalt of histogram van scores opgeslagen moet worden.
 
-### Experimenten uitvoeren
+### Andere experimenten uitvoeren
 
-Behalve het runnen van een algoritme is het ook mogelijk om een experiment uit te voeren. De naam van het experiment komt dan op de plaats van het algoritme. Dit vereist verder geen extra argumenten. Een voorbeeld is:
+Behalve het runnen van een algoritme en de scores te plotten is het ook mogelijk om een ander experiment uit te voeren. De naam van het experiment komt dan op de plaats van het algoritme. Dit vereist verder geen extra argumenten. Een voorbeeld is:
 
 ```
 python main.py nationaal temp_cool

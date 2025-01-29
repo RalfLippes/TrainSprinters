@@ -47,7 +47,7 @@ def baseline_with_time_limit(time_limit, min_trains, max_trains, original_connec
 
 def plot_outcomes_baseline(scores, national = False):
     """
-    Creates histogram of the scores that were found in the run_with_time_limit
+    Creates histogram of the scores that were found in the baseline_with_time_limit
     function. Saves it to data/output folder.
     """
     # create a histogram
@@ -88,5 +88,9 @@ def handle_baseline(args, possible_directions, full_connection_dict, original_co
     if args.plot_scores:
         plot_outcomes_baseline(
             scores, national = args.holland_nationaal == "nationaal")
+
+    # simulate solution if necessary
+    if args.simulate:
+        best_solution.simulate_solution(station_locations, max_duration)
 
     print(f"The best iteration was iteration number {best_iteration}")

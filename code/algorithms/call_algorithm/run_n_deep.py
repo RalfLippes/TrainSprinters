@@ -5,7 +5,12 @@ from code.classes.oplossing_class import Solution
 from code.algorithms.n_deep import create_deep_trajectories, n_deep_algorithm
 
 def n_deep_with_time_limit(time_limit, iterations, depth, min_trains, max_trains,
-                           full_connection_dict, original_connection_dict, possible_directions, total_connections):
+    full_connection_dict, original_connection_dict, possible_directions, total_connections):
+    """
+    Finds a solution by looking for connections n deep. By checking the score that
+    would be gained by that path, decides which route is the best. Does this for given
+    amount of time. Returns best solution, best score and list of all scores.
+    """
     best_score = 0
     best_iteration = 0
     best_solution = None
@@ -48,7 +53,7 @@ def n_deep_with_time_limit(time_limit, iterations, depth, min_trains, max_trains
 
 def plot_outcomes_n_deep(scores, national = False):
     """
-    Creates histogram of the scores that were found in the run_with_time_limit
+    Creates histogram of the scores that were found in the n_deep_with_time_limit
     function. Saves it to data/output folder.
     """
     # create a histogram
@@ -59,6 +64,8 @@ def plot_outcomes_n_deep(scores, national = False):
     plt.xlabel('Score')
     plt.ylabel('Frequency')
     plt.xlim(0, 10000)
+
+    # save plot under correct name
     if national == True:
         plt.savefig('data/output/n_deep_histogram_national.png')
     else:
@@ -93,5 +100,9 @@ def handle_n_deep(args, depth, iterations, min_trains, max_trains, full_connecti
     if args.plot_scores:
         plot_outcomes_n_deep(
             scores, national = args.holland_nationaal == "nationaal")
+
+    # simulate solution if necessary
+    if args.simulate:
+        best_solution.simulate_solution(station_locations, max_duration)
 
     print(f"The best iteration was iteration number {best_iteration}")

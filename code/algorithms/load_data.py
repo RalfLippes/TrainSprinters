@@ -86,7 +86,7 @@ def set_parameters(holland_national, connections_path_1, stations_path_1,
     Sets a bunch of parameters according to whether holland or nationaal was chosen
     in the command line.
     """
-
+    # set parameters
     if holland_national.lower() == 'holland':
         possible_directions, corrected_df, original_df = get_possible_directions(connections_path_2)
         stations_csv = pd.read_csv(stations_path_2)
@@ -100,6 +100,7 @@ def set_parameters(holland_national, connections_path_1, stations_path_1,
         min_trains = 4
         max_trains = 7
         iterations = 20000
+        first_round_iterations = 200
         max_duration = 120
         depth = 5
         plot_title = 'Average Scores by Temperature and Cooling Rate for Holland'
@@ -118,6 +119,7 @@ def set_parameters(holland_national, connections_path_1, stations_path_1,
         min_trains = 9
         max_trains = 20
         iterations = 200000
+        first_round_iterations = 500
         max_duration = 180
         depth = 5
         plot_title = 'Average Scores by Temperature and Cooling Rate for the Netherlands'
@@ -130,4 +132,4 @@ def set_parameters(holland_national, connections_path_1, stations_path_1,
     return (possible_directions, full_connection_dict, original_connection_dict,
     station_locations, total_connections, max_connections, temperature, cooling_rate,
     min_trains, max_trains, iterations, depth, max_duration, plot_title, penalty_weight,
-    temperature_values, cooling_rate_values, experiment_iterations)
+    temperature_values, cooling_rate_values, experiment_iterations, first_round_iterations)

@@ -11,17 +11,22 @@ class Solution:
     to add a trajectory to the list of trajectories.
     """
     def __init__(self):
+        #stores trajectory objects in a list
         self.solution = []
 
     def add_trajectory(self, trajectory):
+        """adds a trajectory to the solution"""
         self.solution.append(trajectory)
 
     def calculate_solution_score(self, original_connection_dict, total_connections):
         """Calculates the score of this schedule"""
         connection_set = set()
         duration = 0
+
+        #checks how many trajectories the solution has
         trajectory_amount = len(self.solution)
 
+        #checks which connection are driven in solution and checks the total duration
         for trajectory in self.solution:
             for connection in trajectory.connection_list:
                 if connection.start_station + '-' + connection.end_station in original_connection_dict:
@@ -29,6 +34,8 @@ class Solution:
                     connection_set.add(connection_key)
                 duration += connection.duration
         connections = len(connection_set)
+
+        #calculates score with the amount of connections driven, the trajectories and the duration of the solution
         return calculate_score(connections, trajectory_amount,
             duration, total_connections)
 
@@ -56,6 +63,7 @@ class Solution:
         """
         Creates dataframe in correct format from solution object.
         """
+
         score = self.calculate_solution_score(original_connection_dict, total_connections)
         dataframe = pd.DataFrame(columns = ['train', 'stations'])
         row_index = 0
@@ -82,13 +90,13 @@ class Solution:
 
                 iteration += 1
 
-            # fill in dataframe with correct data
+            # adds the stations of trajectory to a row
             stations_string = f"[{', '.join(station_list)}]"
             dataframe.loc[row_index, 'stations'] = stations_string
             dataframe.loc[row_index, 'train'] = 'train_' + str(row_index + 1)
-
             row_index += 1
 
+        #in the final row it adds the score of the solution
         dataframe.loc[row_index, 'train'] = 'score'
         dataframe.loc[row_index, 'stations'] = score
 
@@ -99,9 +107,10 @@ class Solution:
         creates a with all stations plotted on it
         """
 
-        # Create a plot figure
+        # Creates a map to add the stations and traj. to
         self.fig, self.ax = plt.subplots(figsize=(6, 10))
 
+        #plot all stations on the map
         for key, value in station_locations.items():
             self.ax.scatter(value.x, value.y, marker='o', color='red')
             self.ax.text(value.x, value.y - 0.02, value.name, fontsize=6)
@@ -120,12 +129,14 @@ class Solution:
         #create a list with all the data necessery to plot a simulation
         plotting_data = []
 
+        #creates a dictionary for every trajectory
         for trajectory in self.solution:
+
+            #adds a place to store data for plotting
             plotting_data.append({"x_coords": [], "y_coords": [],
                 "index_of_connection_plotted": 0,
                 "time_in_current_connection": 0,
             "trajectory": trajectory})
-
 
         return plotting_data
 
@@ -134,33 +145,40 @@ class Solution:
         #empty plot
         self.ax.clear()
 
-
+        #plots stations on the map
         for key, value in stations_data.items():
             self.ax.scatter(value.x, value.y, marker='o', color = 'blue')
             self.ax.text(value.x, value.y - 0.02, value.name, fontsize=6)
 
+        #
         for trajectory_data in plotting_data:
 
             #save trajectory object
             trajectory = trajectory_data["trajectory"]
 
-            #make variable for connection_index
             connection_index = trajectory_data["index_of_connection_plotted"]
 
-
+            #check if trajectory is finished it does not add coords
             if connection_index >= len(trajectory.connection_list):
                 self.ax.plot(trajectory_data["x_coords"], trajectory_data["y_coords"],
                         linestyle="--", label=f"Train {self.solution.index(trajectory) + 1}")
                 continue
 
+            #check which connection we are plotting
             connection = trajectory.connection_list[connection_index]
 
+            #check what the start and end coords are of current connection to indicate step direction
             start_coords = [stations_data[connection.start_station].x , stations_data[connection.start_station].y]
             end_coords = [stations_data[connection.end_station].x , stations_data[connection.end_station].y]
+
+            #save the connections duration and how far we are along the connection
             connection_duration = connection.duration
             time_along_connection = trajectory_data["time_in_current_connection"]
 
+            #check if the connection is not finished
             if time_along_connection < connection.duration:
+
+                #add a step to the simulation
                 t = time_along_connection / connection.duration
                 x_step = (1 - t) * start_coords[0] + t * end_coords[0]
                 y_step = (1 - t) * start_coords[1] + t * end_coords[1]
@@ -171,10 +189,12 @@ class Solution:
                 #add to the time counter
                 trajectory_data["time_in_current_connection"] += 1
 
+            #check if the connection is finished
             if trajectory_data["time_in_current_connection"] >= connection_duration:
                 trajectory_data["index_of_connection_plotted"] += 1
                 trajectory_data["time_in_current_connection"] = 0
 
+            #plot coordinates with the next step
             self.ax.plot(trajectory_data["x_coords"], trajectory_data["y_coords"],
                     linestyle="--", label=f"Train {self.solution.index(trajectory) + 1}")
 

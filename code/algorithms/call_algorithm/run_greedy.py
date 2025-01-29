@@ -46,7 +46,7 @@ def greedy_with_time_limit(time_limit, min_trains, max_trains, original_connecti
 
 def plot_outcomes_greedy(scores, national = False):
     """
-    Creates histogram of the scores that were found in the run_with_time_limit
+    Creates histogram of the scores that were found in the greedy_with_time_limit
     function. Saves it to data/output folder.
     """
     # create a histogram
@@ -84,5 +84,9 @@ def handle_greedy(args, possible_directions, full_connection_dict, original_conn
     if args.plot_scores:
         plot_outcomes_greedy(
             scores, national = args.holland_nationaal == "nationaal")
+
+    # simulate solution if necessary
+    if args.simulate:
+        best_solution.simulate_solution(station_locations, max_duration)
 
     print(f"The best iteration was iteration number {best_iteration}")

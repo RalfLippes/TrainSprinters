@@ -12,9 +12,9 @@ a sort of simulated annealing algorithm.
 """
 
 def annealing_cost_function(station_dictionary, current_station, step_station,
-    destination, full_connection_dict, penalty_weight, total_duration, max_duration):
+    destination, full_connection_dict, total_duration, max_duration):
     """
-    Calculates the distance from a station to another station.
+    Calculates the Euclidean distance from a station to another station.
     """
     # check if total duration goes over max duration
     if total_duration + full_connection_dict[current_station + '-' + step_station].duration > max_duration:
@@ -61,6 +61,7 @@ def trim_trajectory(trajectory, needed_connections_dict):
     trimmed connection objects.
     """
     last_valid_index = -1
+
     # iterate backwards through the trajectory to find the last valid connection
     for index in range(len(trajectory.connection_list) - 1, -1, -1):
         connection = trajectory.connection_list[index]
@@ -71,6 +72,7 @@ def trim_trajectory(trajectory, needed_connections_dict):
             last_valid_index = index
             break
 
+    # keep only useful connections
     if last_valid_index != -1:
         trajectory.keep_connections(last_valid_index)
 
@@ -102,7 +104,10 @@ def initialize_trajectory(station_dictionary, needed_connections_dict, max_conne
 
 def attempt_direct_connection(station_dictionary, current_station, nearest_connection, total_duration,
     new_needed_connections_dict, trajectory, full_connection_dict, temperature):
-    """Attempts to connect directly to the nearest connection's start station."""
+    """
+    Attempts to connect directly to the nearest connection's start station or
+    drive that connection if we are already at start station.
+    """
     # check if station is start point of nearest connection
     if current_station.name == nearest_connection.start_station:
         if total_duration + nearest_connection.duration <= 120:
@@ -151,7 +156,7 @@ def attempt_direct_connection(station_dictionary, current_station, nearest_conne
 
 def find_best_annealing_move(current_station, nearest_connection, total_duration,
     new_needed_connections_dict, trajectory, full_connection_dict, temperature,
-    station_dictionary, penalty_weight, max_duration):
+    station_dictionary, max_duration):
     """Does a random move and checks if that move will be executed."""
     possible_connections = [key.split('-')[1]
         for key in full_connection_dict if key.split('-')[0] == current_station.name]
@@ -171,16 +176,16 @@ def find_best_annealing_move(current_station, nearest_connection, total_duration
         if connection_key not in full_connection_dict:
             continue
 
-        # check current and step cost
+        # check current and step cost (distance)
         current_connection = trajectory.connection_list[-1]
         current_cost = annealing_cost_function(station_dictionary,
             current_connection.start_station, current_station.name,
             nearest_connection.start_station, full_connection_dict,
-            penalty_weight, total_duration, max_duration)
+            total_duration, max_duration)
         station_cost = annealing_cost_function(station_dictionary,
             current_station.name, random_station,
             nearest_connection.start_station, full_connection_dict,
-            penalty_weight, total_duration, max_duration)
+            total_duration, max_duration)
 
         # decide if the new step will be accepted
         if station_cost < current_cost:
@@ -212,7 +217,7 @@ def find_best_annealing_move(current_station, nearest_connection, total_duration
 
 def move_towards_nearest_connection(station_dictionary, current_station, nearest_connection,
     total_duration, new_needed_connections_dict, trajectory, full_connection_dict,
-    max_duration, temperature, penalty_weight):
+    max_duration, temperature):
     """Tries to move toward the nearest connection."""
     at_destination = False
     max_attempts = 1000
@@ -248,7 +253,7 @@ def move_towards_nearest_connection(station_dictionary, current_station, nearest
         current_station, accepted_any) = find_best_annealing_move(current_station,
             nearest_connection, total_duration, new_needed_connections_dict,
             trajectory, full_connection_dict, temperature, station_dictionary,
-            penalty_weight, max_duration)
+            max_duration)
 
         # if nothing is accepted, trajectory is done
         if not accepted_any:
@@ -259,8 +264,7 @@ def move_towards_nearest_connection(station_dictionary, current_station, nearest
         current_station, False)
 
 def create_annealing_steps_trajectory(station_dictionary, needed_connections_dict,
-    possible_connections_dict, full_connection_dict, penalty_weight, max_duration,
-    max_connections):
+    possible_connections_dict, full_connection_dict, max_duration, max_connections):
     """
     Creates a trajectory using the 'annealing steps' algorithm. Finds nearest
     connection that has not been ridden yet. Chooses a random move, and only makes it
@@ -281,7 +285,7 @@ def create_annealing_steps_trajectory(station_dictionary, needed_connections_dic
         current_station, time_limit_exceeded) = move_towards_nearest_connection(
             station_dictionary, current_station, nearest_connection, total_duration,
             new_needed_connections_dict, trajectory, full_connection_dict,
-            max_duration, temperature, penalty_weight)
+            max_duration, temperature)
 
         if time_limit_exceeded:
               break
@@ -291,8 +295,8 @@ def create_annealing_steps_trajectory(station_dictionary, needed_connections_dic
     return trajectory, new_needed_connections_dict
 
 def create_solution_annealing(station_locations, original_connection_dict,
-    possible_directions, full_connection_dict, penalty_weight,
-    max_duration, max_connections, trajectory_amount):
+    possible_directions, full_connection_dict, max_duration, max_connections,
+    trajectory_amount):
     """
     Runs annealing steps for a certain amount of iterations to create a solution.
     Returns this solution object.
@@ -305,7 +309,7 @@ def create_solution_annealing(station_locations, original_connection_dict,
     for trajectory in range(trajectory_amount):
         current_trajectory, needed_connections_dict = create_annealing_steps_trajectory(
             station_locations, needed_connections_dict, possible_directions,
-            full_connection_dict, penalty_weight, max_duration, max_connections)
+            full_connection_dict, max_duration, max_connections)
 
         # add trajectory to solution
         solution.add_trajectory(current_trajectory)

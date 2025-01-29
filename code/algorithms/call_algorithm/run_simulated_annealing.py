@@ -58,7 +58,7 @@ def simulated_annealing_with_time_limit(time_limit, min_trains, max_trains,
 
 def plot_outcomes_simulated_annealing(scores, national = False):
     """
-    Creates histogram of the scores that were found in the run_with_time_limit
+    Creates histogram of the scores that were found in the simulated_annealing_with_time_limit
     function. Saves it to data/output folder.
     """
     # create a histogram
@@ -69,6 +69,8 @@ def plot_outcomes_simulated_annealing(scores, national = False):
     plt.xlabel('Score')
     plt.ylabel('Frequency')
     plt.xlim(0, 10000)
+
+    # saves plot under correct name
     if national == True:
         plt.savefig('data/output/simulated_annealing_histogram_national.png')
     else:
@@ -78,7 +80,10 @@ def handle_simulated_annealing(args, possible_directions, full_connection_dict, 
     station_locations, total_connections, max_connections, temperature,
     cooling_rate, min_trains, max_trains, iterations, max_duration, plot_title,
     penalty_weight):
-    """Runs the simulated annealing algorithm for a given time and saves the results."""
+    """
+    Runs the simulated annealing algorithm for a given time and saves the results
+    in a csv file and plot.
+    """
     # save best scores, best iteration, best solution and all scores
     best_score, best_iteration, best_solution, scores = simulated_annealing_with_time_limit(
         args.time, min_trains, max_trains, original_connection_dict, station_locations,
@@ -99,5 +104,9 @@ def handle_simulated_annealing(args, possible_directions, full_connection_dict, 
     if args.plot_scores:
         plot_outcomes_simulated_annealing(
             scores, national = args.holland_nationaal == "nationaal")
+
+    # simulate solution if necessary
+    if args.simulate:
+        best_solution.simulate_solution(station_locations, max_duration)
 
     print(f"The best iteration was iteration number {best_iteration}")

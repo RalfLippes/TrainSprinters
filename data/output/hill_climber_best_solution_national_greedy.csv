@@ -1,0 +1,14 @@
+train,stations
+train_1,"[Leeuwarden, Heerenveen, Steenwijk, Zwolle, Amersfoort, Utrecht Centraal, Amsterdam Amstel, Amsterdam Zuid, Amsterdam Amstel, Amsterdam Centraal, Almere Centrum]"
+train_2,"[Delft, Den Haag Centraal, Leiden Centraal, Den Haag HS, Gouda, Rotterdam Alexander, Rotterdam Blaak, Schiedam Centrum, Rotterdam Blaak, Schiedam Centrum, Delft, Den Haag Centraal, Gouda, Alphen a/d Rijn]"
+train_3,"[Breda, Dordrecht, Rotterdam Blaak, Rotterdam Alexander, Rotterdam Centraal, Rotterdam Alexander, Rotterdam Blaak, Rotterdam Alexander, Gouda, Utrecht Centraal, Amsterdam Centraal, Amsterdam Sloterdijk, Zaandam, Hoorn]"
+train_4,"[Dordrecht, Rotterdam Centraal, Schiedam Centrum, Delft, Den Haag Laan v NOI, Gouda, Rotterdam Alexander, Gouda, Den Haag Laan v NOI, Leiden Centraal, Den Haag Centraal, Leiden Centraal, Schiphol Airport, Amsterdam Zuid, Schiphol Airport]"
+train_5,"[Utrecht Centraal, Gouda, Utrecht Centraal, Hilversum, Almere Centrum, Lelystad Centrum, Almere Centrum, Amsterdam Amstel, Hilversum, Utrecht Centraal]"
+train_6,"[Zaandam, Amsterdam Sloterdijk, Amsterdam Zuid, Amsterdam Sloterdijk, Haarlem, Beverwijk, Zaandam, Castricum, Beverwijk, Castricum, Alkmaar, Hoorn]"
+train_7,"[Leeuwarden, Groningen, Assen, Zwolle, Deventer, Apeldoorn, Zutphen, Dieren, Arnhem Centraal, Dieren]"
+train_8,"[Deventer, Zutphen, Apeldoorn, Amersfoort, Utrecht Centraal, s-Hertogenbosch, Tilburg, Eindhoven, Helmond, Venlo]"
+train_9,"[Den Haag Centraal, Delft, Den Haag HS, Leiden Centraal, Den Haag HS, Leiden Centraal, Heemstede-Aerdenhout, Haarlem, Amsterdam Sloterdijk, Zaandam, Beverwijk, Castricum, Alkmaar, Den Helder]"
+train_10,"[Utrecht Centraal, Ede-Wageningen, Utrecht Centraal, Amersfoort, Zwolle, Almelo, Hengelo, Enschede, Hengelo, Enschede, Hengelo]"
+train_11,"[s-Hertogenbosch, Oss, Nijmegen, Arnhem Centraal, Ede-Wageningen, Utrecht Centraal, Schiphol Airport, Utrecht Centraal, Alphen a/d Rijn]"
+train_12,"[Maastricht, Sittard, Roermond, Weert, Eindhoven, Tilburg, Breda, Etten-Leur, Roosendaal, Vlissingen]"
+score,6061.842696629214

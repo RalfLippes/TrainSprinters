@@ -1,0 +1,15 @@
+train,stations
+train_1,"[Delft, Den Haag Laan v NOI, Leiden Centraal, Heemstede-Aerdenhout, Haarlem, Beverwijk, Zaandam, Beverwijk, Haarlem, Amsterdam Sloterdijk, Amsterdam Zuid, Amsterdam Amstel, Amsterdam Zuid, Schiphol Airport]"
+train_2,"[Den Haag HS, Delft, Den Haag Centraal, Gouda, Utrecht Centraal, Amsterdam Centraal, Almere Centrum, Amsterdam Amstel, Amsterdam Centraal, Amsterdam Sloterdijk, Zaandam, Castricum, Alkmaar]"
+train_3,"[Deventer, Apeldoorn, Zutphen, Apeldoorn, Amersfoort, Utrecht Centraal, Amsterdam Amstel, Amsterdam Centraal, Amsterdam Amstel, Amsterdam Zuid, Amsterdam Sloterdijk, Haarlem, Amsterdam Sloterdijk, Amsterdam Centraal]"
+train_4,"[Rotterdam Alexander, Rotterdam Centraal, Rotterdam Alexander, Gouda, Alphen a/d Rijn, Utrecht Centraal, s-Hertogenbosch, Tilburg, Breda, Etten-Leur, Roosendaal, Dordrecht]"
+train_5,"[Beverwijk, Castricum, Alkmaar, Den Helder, Alkmaar, Hoorn, Zaandam, Hoorn]"
+train_6,"[Hilversum, Utrecht Centraal, Hilversum, Amsterdam Amstel, Hilversum, Almere Centrum, Amsterdam Amstel, Almere Centrum, Lelystad Centrum]"
+train_7,"[Sittard, Maastricht, Sittard, Heerlen, Sittard, Roermond, Weert, Eindhoven, s-Hertogenbosch, Oss, Nijmegen, Arnhem Centraal, Dieren]"
+train_8,"[Ede-Wageningen, Arnhem Centraal, Ede-Wageningen, Utrecht Centraal, Amersfoort, Zwolle, Amersfoort, Utrecht Centraal, Schiphol Airport]"
+train_9,"[Eindhoven, Helmond, Venlo, Helmond, Eindhoven, Tilburg, Breda, Dordrecht, Rotterdam Blaak, Schiedam Centrum, Rotterdam Blaak, Dordrecht]"
+train_10,"[Leeuwarden, Heerenveen, Leeuwarden, Heerenveen, Steenwijk, Zwolle, Deventer, Almelo, Hengelo, Enschede, Hengelo]"
+train_11,"[Leeuwarden, Groningen, Assen, Zwolle, Almelo, Deventer, Zutphen, Dieren]"
+train_12,"[Rotterdam Blaak, Rotterdam Alexander, Rotterdam Blaak, Schiedam Centrum, Rotterdam Centraal, Dordrecht, Rotterdam Centraal, Schiedam Centrum, Rotterdam Blaak, Schiedam Centrum, Delft, Den Haag HS, Gouda, Den Haag HS, Leiden Centraal, Den Haag HS]"
+train_13,"[Den Haag Centraal, Leiden Centraal, Schiphol Airport, Utrecht Centraal, Amsterdam Centraal, Utrecht Centraal, Alphen a/d Rijn, Leiden Centraal, Alphen a/d Rijn]"
+score,5996.561797752809

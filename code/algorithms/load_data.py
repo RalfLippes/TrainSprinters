@@ -119,7 +119,7 @@ def set_parameters(holland_national, connections_path_1, stations_path_1,
         min_trains = 9
         max_trains = 20
         iterations = 200000
-        first_round_iterations = 2000
+        first_round_iterations = 500
         max_duration = 180
         depth = 5
         plot_title = 'Average Scores by Temperature and Cooling Rate for the Netherlands'

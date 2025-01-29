@@ -109,7 +109,7 @@ def hill_climber2_with_time_limit(time_limit, min_trains, max_trains,
         best_score_so_far = 0
         iteration += 1
 
-        for i in range(100):
+        for i in range(10):
 
             # run algorithm once for every possible amount of trajectories
             for a in range(min_trains, max_trains + 1):

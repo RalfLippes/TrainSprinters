@@ -50,6 +50,7 @@ def create_hill_climber_trajectory(station_dictionary, needed_connections_dict,
     Creates a new trajectory with either the baseline or the annealing_steps
     algorithm. Returns trajectory object.
     """
+    # check which algorithm to use and make a trajectory
     if creating_algorithm == 'baseline':
         trajectory = choose_random_connections(full_connection_dict, possible_connections_dict,
             max_connections, max_duration)
@@ -67,7 +68,8 @@ def hill_climber(trajectories, connection_function, connection_object_dict,
     creating_algorithm, station_dictionary):
     """
     Takes a list of trajectory objects. Removes 1 trajectory and makes a new one.
-    Calculates score of current and new trajectory.
+    Calculates score of current and new trajectory. Accepts this new solution if
+    score gets better. Returns the best final solution.
     """
     final_solution = Solution()
 
@@ -102,6 +104,7 @@ def hill_climber(trajectories, connection_function, connection_object_dict,
         new_score = calculate_score(new_connections, trajectory_amount,
             new_duration, total_connections)
 
+        # keep track of best variables
         if new_score > current_score:
             current_trajectories = new_trajectories
             current_connections = new_connections
@@ -109,6 +112,7 @@ def hill_climber(trajectories, connection_function, connection_object_dict,
 
         scores.append(current_score)
 
+    # add trajectories to solution
     for trajectory in current_trajectories:
         final_solution.add_trajectory(trajectory)
 
@@ -122,7 +126,6 @@ def find_best_iterations(trajectories, connection_function, connection_object_di
     Calculates score of current and new trajectory.
     """
     final_solution = Solution()
-
     scores = []
 
     # set current objects to input values

@@ -14,7 +14,7 @@ a sort of simulated annealing algorithm.
 def annealing_cost_function(station_dictionary, current_station, step_station,
     destination, full_connection_dict, total_duration, max_duration):
     """
-    Calculates the distance from a station to another station.
+    Calculates the Euclidean distance from a station to another station.
     """
     # check if total duration goes over max duration
     if total_duration + full_connection_dict[current_station + '-' + step_station].duration > max_duration:
@@ -61,6 +61,7 @@ def trim_trajectory(trajectory, needed_connections_dict):
     trimmed connection objects.
     """
     last_valid_index = -1
+
     # iterate backwards through the trajectory to find the last valid connection
     for index in range(len(trajectory.connection_list) - 1, -1, -1):
         connection = trajectory.connection_list[index]
@@ -71,6 +72,7 @@ def trim_trajectory(trajectory, needed_connections_dict):
             last_valid_index = index
             break
 
+    # keep only useful connections
     if last_valid_index != -1:
         trajectory.keep_connections(last_valid_index)
 
@@ -102,7 +104,10 @@ def initialize_trajectory(station_dictionary, needed_connections_dict, max_conne
 
 def attempt_direct_connection(station_dictionary, current_station, nearest_connection, total_duration,
     new_needed_connections_dict, trajectory, full_connection_dict, temperature):
-    """Attempts to connect directly to the nearest connection's start station."""
+    """
+    Attempts to connect directly to the nearest connection's start station or
+    drive that connection if we are already at start station.
+    """
     # check if station is start point of nearest connection
     if current_station.name == nearest_connection.start_station:
         if total_duration + nearest_connection.duration <= 120:
@@ -171,7 +176,7 @@ def find_best_annealing_move(current_station, nearest_connection, total_duration
         if connection_key not in full_connection_dict:
             continue
 
-        # check current and step cost
+        # check current and step cost (distance)
         current_connection = trajectory.connection_list[-1]
         current_cost = annealing_cost_function(station_dictionary,
             current_connection.start_station, current_station.name,

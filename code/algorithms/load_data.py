@@ -86,7 +86,7 @@ def set_parameters(holland_national, connections_path_1, stations_path_1,
     Sets a bunch of parameters according to whether holland or nationaal was chosen
     in the command line.
     """
-
+    # set parameters
     if holland_national.lower() == 'holland':
         possible_directions, corrected_df, original_df = get_possible_directions(connections_path_2)
         stations_csv = pd.read_csv(stations_path_2)

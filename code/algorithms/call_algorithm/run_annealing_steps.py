@@ -58,6 +58,8 @@ def plot_outcomes_annealing_steps(scores, national = False):
     plt.xlabel('Score')
     plt.ylabel('Frequency')
     plt.xlim(0, 10000)
+
+    # save plot under correct name
     if national == True:
         plt.savefig('data/output/annealing_steps_histogram_national.png')
     else:
@@ -66,7 +68,10 @@ def plot_outcomes_annealing_steps(scores, national = False):
 def handle_annealing_steps(args, possible_directions, full_connection_dict, original_connection_dict,
     station_dictionary, max_connections, temperature, cooling_rate, min_trains, max_trains,
     max_duration, plot_title, total_connections):
-    """Runs the annealing steps algorithm for a given time and saves the results."""
+    """
+    Runs the annealing steps algorithm for a given time and saves the results
+    in a csv file and a plot.
+    """
     # save best scores, best iteration, best solution and all scores
     best_score, best_iteration, best_solution, scores = annealing_steps_with_time_limit(
         args.time, min_trains, max_trains, original_connection_dict, station_dictionary,
@@ -88,6 +93,7 @@ def handle_annealing_steps(args, possible_directions, full_connection_dict, orig
         plot_outcomes_annealing_steps(
             scores, national = args.holland_nationaal == "nationaal")
 
+    # simulate solution if necessary
     if args.simulate:
         best_solution.simulate_solution(station_locations, max_duration)
 

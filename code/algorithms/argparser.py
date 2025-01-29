@@ -51,6 +51,7 @@ def create_arg_parser():
         help = "What algorithm to use for creating a new trajectory in hill climber",
     )
 
+    # optional argument for simulating the solution
     parser.add_argument(
         "--simulate",
         action = "store_true",

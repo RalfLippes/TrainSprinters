@@ -17,6 +17,7 @@ def get_valid_next_connections(current_station, available_connections, possible_
     """
     Retrieves all valid next connections from the current station.
     """
+    # find valid connections
     next_stations = possible_connections.get(current_station, [])
     valid_connections = []
     for next_station in next_stations:
@@ -117,6 +118,7 @@ def n_deep_algorithm(connection_data, possible_connections, needed_connections, 
             if not best_path:
                 break
 
+            # add info
             next_connection = best_path[0]
             traject.add_connection(next_connection)
             total_time += next_connection.duration
@@ -136,9 +138,8 @@ def create_deep_trajectories(trajectory_amount, connection_algorithm,
     possible_directions, depth, total_connections):
     """
     Creates a given number of trajectories using the specified algorithm.
-    Returns a Solution object containing the trajectories and the total score.
+    Returns a Solution object containing the trajectories.
     """
-
     final_solution = Solution()
     needed_connections = copy.deepcopy(needed_connections_dict)
 

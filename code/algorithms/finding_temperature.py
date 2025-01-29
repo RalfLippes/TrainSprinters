@@ -24,6 +24,8 @@ def find_best_temp_and_cooling(full_connection_dict, possible_directions,
     for i in range(50):
         solution = Solution()
         needed_connections_dict = copy.deepcopy(original_connection_dict)
+
+        # create random amount of trajectories and add to solution
         for a in range(random.randint(min_trains, max_trains)):
             current_trajectory, needed_connections_dict = create_annealing_steps_trajectory(
                 station_dictionary, needed_connections_dict, possible_directions,
@@ -37,6 +39,7 @@ def find_best_temp_and_cooling(full_connection_dict, possible_directions,
         for cooling_rate in cooling_rate_values:
             print(f"current cooling rate: {cooling_rate}")
             combinations_dictionary[str(temperature) + '-' + str(cooling_rate)] = []
+
             # use current temperature and cooling rate to improve all 50 solutions
             for x in solution_list:
                 # create trajectories according to how many are in original solution

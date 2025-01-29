@@ -13,6 +13,7 @@ def find_connection_amount(trajectories, original_connection_dict):
     original_connections = set()
     for trajectory in trajectories:
         for connection in trajectory.connection_list:
+            # check if connection is a needed connection and add to set
             if connection.start_station + '-' + connection.end_station in original_connection_dict:
                 connection_key = f"{connection.start_station}-{connection.end_station}"
                 original_connections.add(connection_key)
@@ -57,7 +58,8 @@ def simulated_annealing(trajectories, connection_function, connection_object_dic
     """
     Takes a list of trajectory objects. Removes 1 trajectory and makes a new one.
     Calculates score of current and new trajectory and uses acceptance function
-    to decide if new step is accepted. Repeats until temperature is 0.
+    to decide if new step is accepted. Repeats until temperature is 0 or maximum
+    amount of iterations is reached. Returns final solution.
     """
     final_solution = Solution()
 

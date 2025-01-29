@@ -112,6 +112,12 @@ python main.py nationaal hill_climber2 --time 200 --plot_scores --start_algorith
   - **--time [0-oneindig]**: Bepaalt hoe lang het gekozen algoritme draait.
 - **plotten: standaard = nee**
   - **--plot_scores**: Bepaalt of histogram van scores opgeslagen moet worden.
+- **simuleren: standaard = nee**
+  - **--simulate**: bepaalt of er een simulatie van de oplossing wordt weergegeven
+
+ ```
+python main.py nationaal basline --time 100 --plot_scores --simulate
+```
 
 ### Andere experimenten uitvoeren
 

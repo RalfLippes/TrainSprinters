@@ -95,6 +95,6 @@ def handle_annealing_steps(args, possible_directions, full_connection_dict, orig
 
     # simulate solution if necessary
     if args.simulate:
-        best_solution.simulate_solution(station_locations, max_duration)
+        best_solution.simulate_solution(station_dictionary, max_duration)
 
     print(f"The best iteration was iteration number {best_iteration}")

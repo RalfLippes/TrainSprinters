@@ -72,7 +72,8 @@ def plot_outcomes_n_deep(scores, national = False):
         plt.savefig('data/output/n_deep_histogram_holland.png')
 
 
-def handle_n_deep(args, depth, iterations, min_trains, max_trains, full_connection_dict, original_connection_dict, possible_directions, total_connections):
+def handle_n_deep(args, depth, iterations, min_trains, max_trains, full_connection_dict,
+    original_connection_dict, possible_directions, total_connections, station_dictionary):
     """
     Handles the n_deep algorithm using the structure of annealing steps.
     """
@@ -103,6 +104,6 @@ def handle_n_deep(args, depth, iterations, min_trains, max_trains, full_connecti
 
     # simulate solution if necessary
     if args.simulate:
-        best_solution.simulate_solution(station_locations, max_duration)
+        best_solution.simulate_solution(station_dictionary, max_duration)
 
     print(f"The best iteration was iteration number {best_iteration}")

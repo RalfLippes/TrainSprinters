@@ -66,7 +66,8 @@ def plot_outcomes_baseline(scores, national = False):
         plt.savefig('data/output/baseline_histogram_holland.png')
 
 def handle_baseline(args, possible_directions, full_connection_dict, original_connection_dict,
-    total_connections, min_trains, max_trains, max_duration, plot_title, max_connections):
+    total_connections, min_trains, max_trains, max_duration, plot_title, max_connections,
+    station_dictionary):
     """Runs the baseline algorithm for a given time and saves the results."""
     # save best scores, best iteration, best solution and all scores
     best_score, best_iteration, best_solution, scores, high_scores = baseline_with_time_limit(
@@ -91,6 +92,6 @@ def handle_baseline(args, possible_directions, full_connection_dict, original_co
 
     # simulate solution if necessary
     if args.simulate:
-        best_solution.simulate_solution(station_locations, max_duration)
+        best_solution.simulate_solution(station_dictionary, max_duration)
 
     print(f"The best iteration was iteration number {best_iteration}")

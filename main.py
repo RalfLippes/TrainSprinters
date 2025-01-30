@@ -39,7 +39,7 @@ if __name__ == "__main__":
     if args.run_algorithm.lower() == 'baseline':
         handle_baseline(args, possible_directions, full_connection_dict,
             original_connection_dict, total_connections, min_trains, max_trains,
-            max_duration, plot_title, max_connections)
+            max_duration, plot_title, max_connections, station_dictionary)
 
     # run simulated annealing
     if args.run_algorithm.lower() == 'simulated_annealing':
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     # run greedy
     if args.run_algorithm.lower() == 'greedy':
         handle_greedy(args, possible_directions, full_connection_dict, original_connection_dict,
-            total_connections, min_trains, max_trains, max_duration, plot_title)
+            total_connections, min_trains, max_trains, max_duration, plot_title, station_dictionary)
 
     # run annealing steps
     if args.run_algorithm.lower() == 'annealing_steps':
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     # run n deep algorithm
     if args.run_algorithm.lower() == 'n_deep':
         handle_n_deep(args, depth, iterations, min_trains, max_trains, full_connection_dict,
-            original_connection_dict, possible_directions, total_connections)
+            original_connection_dict, possible_directions, total_connections, station_dictionary)
 
     # find best cooling rate and temperature
     if args.run_algorithm.lower() == 'temp_cool':
